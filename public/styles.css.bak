@@ -5,6 +5,80 @@
    never stacked two layers deep (a control sitting on a glass card gets a
    flat tint, not its own blur). See the --glass-* tokens below. */
 :root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --bg-raised: #ffffff;
+  --border: #d2d2d7;
+  --text: #1d1d1f;
+  --text-dim: #6e6e73;
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-rgb: 0, 113, 227;
+  --green: #15803d;
+  --green-bg: rgba(52, 199, 89, 0.12);
+  --orange: #9a3412;
+  --orange-bg: rgba(255, 159, 10, 0.16);
+  --radius: 18px;
+  --radius-lg: 26px;
+  --max-width: 1024px;
+  color-scheme: light dark;
+
+  --bloom-1: rgba(56, 189, 248, 0.22);
+  --bloom-2: rgba(249, 115, 22, 0.15);
+  --chip-bg: rgba(255, 255, 255, 0.6);
+  --flat-tint: rgba(0, 0, 0, 0.035);
+  --flat-tint-hover: rgba(0, 0, 0, 0.06);
+
+  /* Liquid Glass material */
+  --glass-fill: rgba(255, 255, 255, 0.55);
+  --glass-fill-strong: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(0, 0, 0, 0.065);
+  --glass-highlight: rgba(255, 255, 255, 0.75);
+  --glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --glass-shadow-hover: 0 16px 44px rgba(0, 0, 0, 0.13), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --glass-blur: blur(22px) saturate(180%);
+}
+
+/* Dark tokens apply when the system prefers dark (unless the toggle has
+   forced light) — see /nav.js — or unconditionally once the toggle has
+   forced dark, regardless of the system setting. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000;
+    --bg-alt: #1c1c1e;
+    --bg-raised: #1c1c1e;
+    --border: rgba(255, 255, 255, 0.14);
+    --text: #f5f5f7;
+    --text-dim: #98989d;
+    --accent: #2997ff;
+    --accent-hover: #55a9ff;
+    --accent-rgb: 41, 151, 255;
+    --green: #30d158;
+    --green-bg: rgba(48, 209, 88, 0.16);
+    --orange: #ffb340;
+    --orange-bg: rgba(255, 159, 10, 0.18);
+    color-scheme: dark;
+
+    --glass-fill: rgba(255, 255, 255, 0.07);
+    --glass-fill-strong: rgba(28, 28, 30, 0.96);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-highlight: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --glass-shadow-hover: 0 16px 44px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.32);
+
+    --bloom-1: rgba(56, 189, 248, 0.16);
+    --bloom-2: rgba(249, 115, 22, 0.12);
+    --chip-bg: rgba(255, 255, 255, 0.08);
+    --flat-tint: rgba(255, 255, 255, 0.06);
+    --flat-tint-hover: rgba(255, 255, 255, 0.1);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
   --bg: #000000;
   --bg-alt: #1c1c1e;
   --bg-raised: #1c1c1e;
@@ -18,27 +92,21 @@
   --green-bg: rgba(48, 209, 88, 0.16);
   --orange: #ffb340;
   --orange-bg: rgba(255, 159, 10, 0.18);
-  --radius: 18px;
-  --radius-lg: 26px;
-  --max-width: 1024px;
   color-scheme: dark;
 
-  --bloom-1: rgba(56, 189, 248, 0.26);
-  --bloom-2: rgba(249, 115, 22, 0.2);
-  --chip-bg: rgba(255, 255, 255, 0.08);
-  --flat-tint: rgba(255, 255, 255, 0.06);
-  --flat-tint-hover: rgba(255, 255, 255, 0.1);
-
-  /* Liquid Glass material */
   --glass-fill: rgba(255, 255, 255, 0.07);
   --glass-fill-strong: rgba(28, 28, 30, 0.96);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-highlight: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.3);
   --glass-shadow-hover: 0 16px 44px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.32);
-  --glass-blur: blur(22px) saturate(180%);
-}
 
+  --bloom-1: rgba(56, 189, 248, 0.16);
+  --bloom-2: rgba(249, 115, 22, 0.12);
+  --chip-bg: rgba(255, 255, 255, 0.08);
+  --flat-tint: rgba(255, 255, 255, 0.06);
+  --flat-tint-hover: rgba(255, 255, 255, 0.1);
+}
 
 * { box-sizing: border-box; }
 
@@ -158,6 +226,29 @@ nav.site-nav a:hover {
   color: var(--text);
   text-decoration: none;
 }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--flat-tint);
+  color: var(--text-dim);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--flat-tint-hover);
+  color: var(--text);
+}
+
+.theme-toggle svg { display: block; }
 
 main {
   padding: 64px 0 96px;
@@ -441,46 +532,6 @@ button.button:disabled {
   .profile-card { max-width: 320px; }
 }
 
-/* The scroll-driven clone of .profile-card used by the intro's shared
-   element transition (see home.html) — same layout/padding as the real
-   card, but its own background/border/shadow are stripped out in favor of
-   .fc-chrome (a separate layer) so the photo, chrome, and text content can
-   each fade in independently as the animation progresses. */
-.profile-card.flying-card {
-  position: fixed;
-  top: 0;
-  left: 0;
-  margin: 0;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  z-index: 20;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-/* Real glass, matching .profile-card exactly — the clone crossfades into
-   that card at the landing, so any difference in fill or blur here shows up
-   as a pop at the handoff. It has to be an actual backdrop-filter and not a
-   heavier flat fill: --glass-fill is only 7% white, and everything on this
-   site is legible over it because the 22px blur behind smears whatever it
-   covers. Without the filter the card is effectively transparent and the
-   page content reads straight through its own text. */
-.fc-chrome {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: var(--radius-lg);
-  background: var(--glass-fill);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
-  opacity: 0;
-}
-
 section { margin-top: 88px; }
 
 section h2 {
@@ -699,182 +750,21 @@ section h2 {
    fi-5 is the one icon deliberately placed *inside* the content column,
    drifting behind the headline (it sits under the text in z-index, so the
    letters stay legible) — left as a fixed percentage on purpose. */
-/* max() with a fixed-px floor keeps every icon at least that far inside
-   the viewport edge (padding in the extra ~22px for the anime.js drift),
-   so on viewports narrower than --max-width plus their side gap, they sit
-   just inside the edge instead of going negative and being clipped by
-   .floating-icons' overflow:hidden — always on screen. */
-.fi-1 { top: 24%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 96px)); }
-.fi-2 { top: 16%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 76px)); }
-.fi-3 { top: 64%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 88px)); }
-.fi-4 { top: 56%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 80px)); }
+.fi-1 { top: 24%; left: calc(50% - (var(--max-width) / 2) - 48px - 96px); }
+.fi-2 { top: 16%; right: calc(50% - (var(--max-width) / 2) - 48px - 76px); }
+.fi-3 { top: 64%; left: calc(50% - (var(--max-width) / 2) - 48px - 88px); }
+.fi-4 { top: 56%; right: calc(50% - (var(--max-width) / 2) - 48px - 80px); }
 .fi-5 { top: 30%; left: 45%; }
 
-/* Below 720px the content column fills almost the full viewport width, so
-   there's no side margin for icons to sit in like on desktop — instead of
-   hiding them, shrink them and tuck them into the corners (top corners
-   above the photo, bottom corners below it) where they clear the centered
-   text/photo column. fi-5 stays hidden: it's the one icon meant to drift
-   *behind* the headline, and there's no room for that without covering the
-   centered mobile text. */
 @media (max-width: 720px) {
-  .floating-icons { height: 520px; }
-  .floating-icon { width: 52px; height: 52px; opacity: 0.6; }
-  .fi-1 { top: 12%; left: 3%; }
-  .fi-2 { top: 12%; right: 3%; }
-  .fi-3 { top: 66%; left: 3%; }
-  .fi-4 { top: 66%; right: 3%; }
-  .fi-5 { display: none; }
+  .floating-icons { display: none; }
 }
 
 /* App Store page — shorter hero, so the floating-icon band is shorter too. */
 .floating-icons.short { height: 360px; }
 
-@media (max-width: 720px) {
-  .floating-icons.short { height: 100%; }
-  .fi-a1 { top: 4%; left: 3%; }
-  .fi-a2 { top: 4%; right: 3%; }
-  .fi-a3 { top: 82%; left: 3%; }
-  .fi-a4 { top: 82%; right: 3%; }
-  .fi-a5 { display: none; }
-}
-
-.fi-a1 { top: 34%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 88px)); }
-.fi-a2 { top: 26%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 70px)); }
-.fi-a3 { top: 68%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 80px)); }
-.fi-a4 { top: 56%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 72px)); }
+.fi-a1 { top: 34%; left: calc(50% - (var(--max-width) / 2) - 48px - 88px); }
+.fi-a2 { top: 26%; right: calc(50% - (var(--max-width) / 2) - 48px - 70px); }
+.fi-a3 { top: 68%; left: calc(50% - (var(--max-width) / 2) - 48px - 80px); }
+.fi-a4 { top: 56%; right: calc(50% - (var(--max-width) / 2) - 48px - 72px); }
 .fi-a5 { top: 46%; left: 46%; }
-
-/* ---- Intro hero ("Hello, World!") ---- */
-.intro-pin {
-  min-height: calc(100svh - 120px);
-  display: flex;
-  align-items: center;
-  padding: 12px 0 48px;
-}
-
-/* While the shared-element card-build animation is running (see home.html),
-   #intro is given a class + extra height by JS so .intro-pin (position:
-   sticky, top set to the header's height) stays parked on screen for that
-   extra scroll distance — the page doesn't visually scroll until the card
-   has finished forming. Only added outside prefers-reduced-motion, so
-   reduced-motion visitors just get the plain, non-pinned block above. */
-.intro.pin-active {
-  min-height: calc(100svh - 120px + 120vh);
-}
-
-.intro.pin-active .intro-pin {
-  position: sticky;
-}
-
-@media (max-width: 720px) {
-  .intro.pin-active { min-height: calc(100svh - 120px + 70vh); }
-}
-
-.intro-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 56px;
-  align-items: center;
-  width: 100%;
-}
-
-.intro-photo-wrap {
-  position: relative;
-  width: min(360px, 66vw);
-  aspect-ratio: 1 / 1;
-}
-
-.intro-photo-ghost {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-}
-
-.hero-flyer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  will-change: transform, opacity;
-  z-index: 15;
-  /* Fades the cutout's own bottom edge to transparent, only over its final
-     stretch, so its hard silhouette line dissolves rather than stopping
-     abruptly — the blurred layer behind picks up right where it fades. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 97%);
-  mask-image: linear-gradient(to bottom, #000 82%, transparent 97%);
-}
-
-/* A softly blurred duplicate of the same cutout, sitting just behind the
-   sharp photo and only visible (via its own mask) in a thin band near the
-   bottom — visible only long enough to hand off from the sharp edge, then
-   faded back to transparent before it reaches the box's own bottom edge,
-   so the whole thing dissolves into the page background instead of ending
-   in a hard cut (blurred or not). */
-.hero-flyer-blur {
-  position: absolute;
-  inset: 0;
-  background-image: url("/assets/profile-clear.png");
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  filter: blur(8px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 78%, #000 90%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 78%, #000 90%, transparent 100%);
-  pointer-events: none;
-  z-index: 14;
-  will-change: opacity;
-}
-
-.hero-flyer.is-fixed {
-  position: fixed;
-  inset: auto;
-  top: 0;
-  left: 0;
-  transform-origin: top left;
-}
-
-.intro-copy {
-  will-change: clip-path, opacity;
-}
-
-.intro-copy .intro-heading {
-  font-size: clamp(2.4rem, 6.5vw, 3.75rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
-  margin: 0 0 14px;
-}
-
-.intro-copy .wave {
-  display: inline-block;
-  animation: wave 2.4s ease-in-out infinite;
-  transform-origin: 70% 70%;
-}
-
-@keyframes wave {
-  0%, 55%, 100% { transform: rotate(0deg); }
-  10% { transform: rotate(14deg); }
-  20% { transform: rotate(-8deg); }
-  30% { transform: rotate(14deg); }
-  40% { transform: rotate(-4deg); }
-}
-
-.intro-sub {
-  font-size: 1.3rem;
-  color: var(--text-dim);
-  margin: 0;
-  max-width: 38ch;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .intro-copy .wave { animation: none; }
-}
-
-@media (max-width: 720px) {
-  .intro { min-height: auto; padding: 32px 0 16px; }
-  .intro-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 24px; }
-  .intro-photo-wrap { width: min(264px, 60vw); }
-}

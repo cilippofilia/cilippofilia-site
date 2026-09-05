@@ -3,21 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script>
-    // Applied before first paint so a saved theme choice doesn't flash the
-    // system default for a frame. The toggle itself lives in nav.js.
-    try {
-      var t = localStorage.getItem("theme");
-      if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-    } catch (e) {}
-  </script>
   <title>cilippofilia.co.uk</title>
   <link rel="stylesheet" href="/styles.css" />
   <meta name="description" content="An app in development from Filippo Cilia's SwiftUI app portfolio." />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#000000" />
 </head>
 <body>
   <main>

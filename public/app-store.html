@@ -3,21 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script>
-    // Applied before first paint so a saved theme choice doesn't flash the
-    // system default for a frame. The toggle itself lives in nav.js.
-    try {
-      var t = localStorage.getItem("theme");
-      if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-    } catch (e) {}
-  </script>
   <title>App Store — cilippofilia.co.uk</title>
   <link rel="stylesheet" href="/styles.css" />
   <meta name="description" content="Everything Filippo Cilia has shipped on the App Store, plus what's still in development." />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#000000" />
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js" defer></script>
 </head>
 <body>
