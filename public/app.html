@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    // Applied before first paint so a saved theme choice doesn't flash the
+    // system default for a frame. The toggle itself lives in nav.js.
+    try {
+      var t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  </script>
+  <title>cilippofilia.co.uk</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <meta name="description" content="An app in development from Filippo Cilia's SwiftUI app portfolio." />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+</head>
+<body>
+  <main>
+    <div class="wrap" id="content">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </main>
+  <script src="/nav.js"></script>
+  <script>
+    const badgeClass = (status) => {
+      const s = (status || "").toLowerCase();
+      if (s.includes("dev")) return "dev";
+      if (s.includes("concept")) return "concept";
+      return "example";
+    };
+
+    const slug = window.location.pathname.replace(/^\/+|\/+$/g, "");
+
+    fetch("/apps.json")
+      .then((r) => r.json())
+      .then((apps) => {
+        const app = apps.find((a) => a.slug === slug);
+        const content = document.getElementById("content");
+
+        if (!app) {
+          content.innerHTML = `
+            <section class="hero" style="margin-top:0">
+              <h1>Nothing here yet</h1>
+              <p class="lede">There's no app at <code>/${slug}</code>. Add an entry with this
+              slug to <code>data/apps.json</code> to give it a page.</p>
+              <a class="button secondary" href="/app-store">← Back to App Store</a>
+            </section>
+          `;
+          document.title = "Not found — cilippofilia.co.uk";
+          return;
+        }
+
+        document.title = `${app.name} — cilippofilia.co.uk`;
+        content.innerHTML = `
+          <section class="hero app-detail" style="margin-top:0">
+            <div class="app-detail-head">
+              <span class="icon-lg">${app.icon || "📱"}</span>
+              <div class="app-detail-meta">
+                <span class="badge ${badgeClass(app.status)}">${app.status || ""}</span>
+                <h1>${app.name}</h1>
+                <p class="lede">${app.tagline || ""}</p>
+              </div>
+            </div>
+            <div class="app-detail-body">
+              <p style="margin:0; color:var(--text); max-width:60ch; font-size:1.05rem; line-height:1.6">${app.description || ""}</p>
+              <div class="app-detail-side">
+                <div>
+                  <h4>Platforms</h4>
+                  <div class="platforms">
+                    ${(app.platforms || []).map((p) => `<span class="chip">${p}</span>`).join("")}
+                  </div>
+                </div>
+                <div>
+                  ${
+                    app.appStoreUrl
+                      ? `<a class="button" href="${app.appStoreUrl}">View on the App Store</a>`
+                      : `<button type="button" class="button secondary" disabled>Not yet published</button>`
+                  }
+                </div>
+                <div>
+                  <a class="button secondary" href="/app-store">← Back to App Store</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        `;
+      })
+      .catch(() => {
+        document.getElementById("content").innerHTML =
+          '<p class="empty-state">Couldn\'t load apps.json.</p>';
+      });
+  </script>
+</body>
+</html>

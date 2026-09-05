@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Style Guide — cilippofilia.co.uk</title>
+<style>
+  /* Tokens pulled from apple.com/uk's own computed styles: SF Pro stack,
+     #1d1d1f / #6e6e73 text, #f5f5f7 section grey, #0071e3 link blue,
+     980px pill buttons, 1024px content column, 44px translucent nav. */
+  :root {
+    --sg-bg: #ffffff;
+    --sg-bg-alt: #f5f5f7;
+    --sg-text: #1d1d1f;
+    --sg-text-dim: #6e6e73;
+    --sg-blue: #0071e3;
+    --sg-blue-hover: #0077ed;
+    --sg-border: #d2d2d7;
+    --sg-max: 1024px;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background: var(--sg-bg);
+    color: var(--sg-text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--sg-blue); text-decoration: none; }
+  a:hover { color: var(--sg-blue-hover); text-decoration: underline; }
+
+  code {
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    background: var(--sg-bg-alt);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+
+  .sg-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 245, 247, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--sg-border);
+  }
+
+  .sg-nav .sg-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .sg-nav a {
+    color: var(--sg-text);
+    font-size: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .sg-nav a:hover { color: var(--sg-text); opacity: 0.7; text-decoration: none; }
+
+  .sg-nav .sg-brand { font-size: 13px; font-weight: 600; }
+
+  .sg-wrap {
+    max-width: var(--sg-max);
+    margin: 0 auto;
+    padding: 0 22px;
+  }
+
+  section.sg-section {
+    padding: 96px 0;
+  }
+
+  section.sg-section.sg-alt { background: var(--sg-bg-alt); }
+
+  .sg-hero {
+    text-align: center;
+    padding: 120px 0 96px;
+  }
+
+  .sg-eyebrow {
+    font-size: 21px;
+    color: var(--sg-text-dim);
+    margin: 0 0 8px;
+    font-weight: 400;
+  }
+
+  .sg-hero h1 {
+    font-size: 56px;
+    line-height: 1.07;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    margin: 0 0 12px;
+  }
+
+  .sg-hero p.sg-sub {
+    font-size: 24px;
+    line-height: 1.38;
+    color: var(--sg-text-dim);
+    max-width: 640px;
+    margin: 0 auto 32px;
+    font-weight: 400;
+  }
+
+  .sg-kicker {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--sg-text-dim);
+    margin: 0 0 8px;
+  }
+
+  h2.sg-title {
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.003em;
+    margin: 0 0 12px;
+  }
+
+  p.sg-desc {
+    font-size: 19px;
+    line-height: 1.42;
+    color: var(--sg-text-dim);
+    max-width: 640px;
+    margin: 0 0 48px;
+  }
+
+  /* Buttons */
+  .sg-btn-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+
+  .sg-btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: 17px;
+    padding: 11px 21px;
+    border-radius: 980px;
+    font-weight: 400;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .sg-btn-primary { background: var(--sg-blue); color: #fff; }
+  .sg-btn-primary:hover { background: var(--sg-blue-hover); text-decoration: none; }
+
+  .sg-btn-secondary { background: transparent; color: var(--sg-text); border-color: var(--sg-border); }
+  .sg-btn-secondary:hover { border-color: var(--sg-text-dim); text-decoration: none; }
+
+  .sg-link-chevron {
+    font-size: 21px;
+    color: var(--sg-blue);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .sg-link-chevron:hover { text-decoration: underline; }
+
+  /* Color swatches */
+  .sg-swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .sg-swatch {
+    border: 1px solid var(--sg-border);
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .sg-swatch-color { height: 88px; }
+
+  .sg-swatch-meta { padding: 14px 16px; }
+
+  .sg-swatch-meta .sg-name { font-size: 15px; font-weight: 600; margin: 0 0 2px; }
+  .sg-swatch-meta .sg-hex { font-size: 13px; color: var(--sg-text-dim); margin: 0; }
+
+  /* Type specimens */
+  .sg-specimen { border-top: 1px solid var(--sg-border); padding: 28px 0; }
+  .sg-specimen:first-child { border-top: none; }
+  .sg-specimen .sg-meta {
+    font-size: 13px;
+    color: var(--sg-text-dim);
+    margin: 8px 0 0;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  /* Card component */
+  .sg-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .sg-card {
+    background: #fff;
+    border: 1px solid var(--sg-border);
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sg-card-head { display: flex; align-items: center; gap: 12px; }
+
+  .sg-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(160deg, #2997ff, #0057b8);
+    flex-shrink: 0;
+  }
+
+  .sg-card-title h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .sg-card-title p { margin: 0; font-size: 14px; color: var(--sg-text-dim); }
+
+  .sg-pill {
+    display: inline-flex;
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 4px 11px;
+    border-radius: 980px;
+    background: rgba(0, 113, 227, 0.1);
+    color: var(--sg-blue);
+  }
+
+  .sg-card p.sg-body { margin: 0; font-size: 14px; line-height: 1.5; color: var(--sg-text-dim); }
+
+  /* Spacing scale */
+  .sg-space-row { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+  .sg-space-block { background: var(--sg-blue); border-radius: 4px; }
+  .sg-space-label { font-size: 13px; color: var(--sg-text-dim); margin-top: 8px; font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+  .sg-space-item { display: flex; flex-direction: column; align-items: center; }
+
+  footer.sg-footer {
+    border-top: 1px solid var(--sg-border);
+    padding: 40px 0 60px;
+    color: var(--sg-text-dim);
+    font-size: 13px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+  <nav class="sg-nav">
+    <div class="sg-wrap">
+      <span class="sg-brand"></span>
+      <a href="/home">← Back to cilippofilia.co.uk</a>
+    </div>
+  </nav>
+
+  <header class="sg-hero sg-wrap">
+    <p class="sg-eyebrow">Style Guide</p>
+    <h1>Design, considered.</h1>
+    <p class="sg-sub">
+      A reference for the tokens behind this look — measured straight off
+      apple.com/uk, not eyeballed. Use it if any page here moves to this
+      lighter, quieter visual language.
+    </p>
+    <div class="sg-btn-row" style="justify-content:center">
+      <a class="sg-btn sg-btn-primary" href="#colors">Explore the tokens</a>
+      <a class="sg-link-chevron" href="/home">Back home <span>›</span></a>
+    </div>
+  </header>
+
+  <section class="sg-section" id="colors">
+    <div class="sg-wrap">
+      <p class="sg-kicker">Colour</p>
+      <h2 class="sg-title">A quiet palette.</h2>
+      <p class="sg-desc">
+        Mostly white and near-black, one grey for secondary text and section
+        backgrounds, one blue reserved for anything interactive.
+      </p>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch-color" style="background:#ffffff; border-bottom:1px solid var(--sg-border)"></div>
+          <div class="sg-swatch-meta"><p class="sg-name">Background</p><p class="sg-hex">#ffffff</p></div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch-color" style="background:#f5f5f7"></div>
+          <div class="sg-swatch-meta"><p class="sg-name">Background — alt</p><p class="sg-hex">#f5f5f7</p></div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch-color" style="background:#1d1d1f"></div>
+          <div class="sg-swatch-meta"><p class="sg-name">Text — primary</p><p class="sg-hex">#1d1d1f</p></div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch-color" style="background:#6e6e73"></div>
+          <div class="sg-swatch-meta"><p class="sg-name">Text — secondary</p><p class="sg-hex">#6e6e73</p></div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch-color" style="background:#0071e3"></div>
+          <div class="sg-swatch-meta"><p class="sg-name">Blue — links &amp; CTAs</p><p class="sg-hex">#0071e3</p></div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch-color" style="background:#d2d2d7"></div>
+          <div class="sg-swatch-meta"><p class="sg-name">Border / hairline</p><p class="sg-hex">#d2d2d7</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section sg-alt" id="type">
+    <div class="sg-wrap">
+      <p class="sg-kicker">Typography</p>
+      <h2 class="sg-title">One typeface, a few sizes.</h2>
+      <p class="sg-desc">
+        San Francisco on Apple devices, a system sans everywhere else. Tight,
+        slightly negative letter-spacing on anything large; nothing is ever
+        bolder than semibold (600).
+      </p>
+
+      <div class="sg-specimen">
+        <div style="font-size:56px; line-height:1.07; font-weight:600; letter-spacing:-0.005em;">Display</div>
+        <p class="sg-meta">56px / 1.07 / weight 600 / -0.005em — hero headlines</p>
+      </div>
+      <div class="sg-specimen">
+        <div style="font-size:40px; line-height:1.1; font-weight:600; letter-spacing:-0.003em;">Section title</div>
+        <p class="sg-meta">40px / 1.1 / weight 600 — one per section</p>
+      </div>
+      <div class="sg-specimen">
+        <div style="font-size:24px; line-height:1.38; font-weight:400; color:var(--sg-text-dim)">Subhead / lede</div>
+        <p class="sg-meta">24px / 1.38 / weight 400 / secondary colour</p>
+      </div>
+      <div class="sg-specimen">
+        <div style="font-size:17px; line-height:1.47; font-weight:400;">Body copy sits at 17px, Apple's base size — noticeably larger than most sites' default 16px, which is part of why the page feels calm rather than dense.</div>
+        <p class="sg-meta">17px / 1.47 / weight 400 — body</p>
+      </div>
+      <div class="sg-specimen">
+        <div style="font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--sg-text-dim)">Eyebrow label</div>
+        <p class="sg-meta">12px / weight 600 / +0.06em tracking, uppercase — kicker above a title</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="buttons">
+    <div class="sg-wrap">
+      <p class="sg-kicker">Buttons &amp; links</p>
+      <h2 class="sg-title">Pills and chevrons.</h2>
+      <p class="sg-desc">
+        Two button weights, both fully rounded (radius 980px reads as "just
+        make it a pill" regardless of height), plus a plain link with a
+        trailing chevron for anything lower-commitment than a button.
+      </p>
+      <div class="sg-btn-row">
+        <a class="sg-btn sg-btn-primary" href="#">Buy</a>
+        <a class="sg-btn sg-btn-secondary" href="#">Learn more</a>
+        <a class="sg-link-chevron" href="#">Learn more <span>›</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section sg-alt" id="spacing">
+    <div class="sg-wrap">
+      <p class="sg-kicker">Spacing &amp; layout</p>
+      <h2 class="sg-title">Room to breathe.</h2>
+      <p class="sg-desc">
+        Content sits in a 1024px column. Sections run 96–120px of vertical
+        padding — roughly double what a typical dense app UI would use — and
+        alternate white / #f5f5f7 to separate them without drawing a line.
+      </p>
+      <div class="sg-space-row">
+        <div class="sg-space-item"><div class="sg-space-block" style="width:8px;height:8px"></div><div class="sg-space-label">8</div></div>
+        <div class="sg-space-item"><div class="sg-space-block" style="width:16px;height:16px"></div><div class="sg-space-label">16</div></div>
+        <div class="sg-space-item"><div class="sg-space-block" style="width:24px;height:24px"></div><div class="sg-space-label">24</div></div>
+        <div class="sg-space-item"><div class="sg-space-block" style="width:48px;height:48px"></div><div class="sg-space-label">48</div></div>
+        <div class="sg-space-item"><div class="sg-space-block" style="width:96px;height:96px"></div><div class="sg-space-label">96</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="components">
+    <div class="sg-wrap">
+      <p class="sg-kicker">Components</p>
+      <h2 class="sg-title">The app card, restyled.</h2>
+      <p class="sg-desc">
+        Same information as the dark App Store cards on this site today —
+        icon, name, status, description — in this lighter language: bigger
+        radius, a hairline border instead of a filled panel, and the status
+        pill tinted instead of solid.
+      </p>
+      <div class="sg-card-grid">
+        <div class="sg-card">
+          <div class="sg-card-head">
+            <div class="sg-card-icon"></div>
+            <div class="sg-card-title">
+              <h3>Drinko</h3>
+              <p>Cocktail Recipes</p>
+            </div>
+          </div>
+          <span class="sg-pill">Live</span>
+          <p class="sg-body">Drinko helps you make better cocktails at home with classic recipes, bartending tutorials, and a smart cabinet.</p>
+        </div>
+        <div class="sg-card">
+          <div class="sg-card-head">
+            <div class="sg-card-icon" style="background:linear-gradient(160deg,#ff9f43,#e8590c)"></div>
+            <div class="sg-card-title">
+              <h3>9 Tiles Puzzle</h3>
+              <p></p>
+            </div>
+          </div>
+          <span class="sg-pill" style="background:rgba(232,89,12,0.12); color:#e8590c">Preorder</span>
+          <p class="sg-body">Turn any photo into a sliding puzzle. Releases 28 Sept 2026.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="sg-footer">
+    <div class="sg-wrap">
+      Reference only — nothing else on cilippofilia.co.uk uses these styles yet.
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "the-relay",
+    "name": "The Relay",
+    "tagline": "An analog signal-sorting mystery for iPhone, iPad, and Mac.",
+    "description": "A decommissioned coastal signal relay station. Old analog transmissions come in, and it's your job to sort them into the right archive channels — until the story hidden inside the static starts to piece itself together. Free to start, with a single premium unlock for the full Archive.",
+    "platforms": ["iPhone", "iPad", "Mac"],
+    "status": "In development",
+    "icon": "📡",
+    "appStoreUrl": ""
+  },
+  {
+    "slug": "running-plan",
+    "name": "Running Plan",
+    "tagline": "Turn a markdown training plan into adaptive watch workouts.",
+    "description": "Upload a training plan — half marathon, marathon, whatever your coach wrote up — as a markdown file. On-device intelligence turns it into HealthKit workouts on iPhone and Apple Watch, then adapts the plan as it learns from your heart rate, pace, and how each run actually went.",
+    "platforms": ["iPhone", "Apple Watch"],
+    "status": "In development",
+    "icon": "🏃",
+    "appStoreUrl": ""
+  },
+  {
+    "slug": "supplement-tracker",
+    "name": "Supplement Tracker",
+    "tagline": "A widget-first way to stay on top of supplements and meds.",
+    "description": "A supplement and medication tracker built around interactive widgets rather than a clinical checklist. Smart scheduling handles things like cycles and take-with-food rules, with streaks to keep you consistent.",
+    "platforms": ["iPhone"],
+    "status": "Concept",
+    "icon": "💊",
+    "appStoreUrl": ""
+  },
+  {
+    "slug": "rear-approach-safety",
+    "name": "Rear-Approach Safety",
+    "tagline": "Back Tap your phone to check what's behind you on a run.",
+    "description": "Double or triple Back Tap while you're running, and the front camera checks the road behind you — no chest mount required. The whole screen goes green, yellow, or red depending on whether something's approaching and how fast.",
+    "platforms": ["iPhone"],
+    "status": "Concept",
+    "icon": "🚦",
+    "appStoreUrl": ""
+  }
+]

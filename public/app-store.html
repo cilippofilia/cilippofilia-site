@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    // Applied before first paint so a saved theme choice doesn't flash the
+    // system default for a frame. The toggle itself lives in nav.js.
+    try {
+      var t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  </script>
+  <title>App Store — cilippofilia.co.uk</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <meta name="description" content="Everything Filippo Cilia has shipped on the App Store, plus what's still in development." />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js" defer></script>
+</head>
+<body>
+  <div class="floating-icons short" aria-hidden="true">
+    <img class="floating-icon fi-a1" src="/assets/app-icons/thumb/9tiles-icon.png" alt="" width="88" height="88" />
+    <img class="floating-icon fi-a2" src="/assets/app-icons/thumb/drinko-icon.png" alt="" width="70" height="70" />
+    <img class="floating-icon fi-a3" src="/assets/app-icons/thumb/iterly-icon.png" alt="" width="80" height="80" />
+    <img class="floating-icon fi-a4" src="/assets/app-icons/thumb/itsWritten-icon.png" alt="" width="72" height="72" />
+    <img class="floating-icon fi-a5" src="/assets/app-icons/thumb/relay-icon.png" alt="" width="84" height="84" />
+  </div>
+  <main>
+    <div class="wrap">
+      <section class="hero" style="margin-top:0">
+        <h1>App Store</h1>
+        <p class="lede" id="store-lede">Everything shipped, plus what's still in development.</p>
+      </section>
+
+      <section>
+        <h2>Published</h2>
+        <div class="grid" id="published-grid">
+          <p class="empty-state">Loading from the App Store…</p>
+        </div>
+      </section>
+
+      <section id="dev-section" hidden>
+        <h2>In development</h2>
+        <div class="grid" id="dev-grid"></div>
+      </section>
+    </div>
+  </main>
+  <script src="/nav.js"></script>
+  <script>
+    // Continuous idle drift for the floating app icons, via anime.js.
+    // Each icon wanders to a fresh random point (with a small rotation)
+    // every time it finishes a leg — see /home for the same pattern.
+    document.addEventListener("DOMContentLoaded", () => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion || typeof anime !== "function") return;
+
+      document.querySelectorAll(".floating-icon").forEach((el, i) => {
+        const wander = () => {
+          anime({
+            targets: el,
+            translateX: () => anime.random(-22, 22),
+            translateY: () => anime.random(-20, 20),
+            rotate: () => anime.random(-10, 10),
+            duration: () => anime.random(6000, 10000),
+            easing: "easeInOutSine",
+            complete: wander,
+          });
+        };
+        setTimeout(wander, i * 300);
+      });
+    });
+  </script>
+  <script>
+    // Flip this to true to bring the "In development" section back.
+    const SHOW_IN_DEVELOPMENT = true;
+    // While only The Relay is ready to show publicly, filter the rest of
+    // apps.json out here rather than deleting their entries — the other
+    // ideas stay tracked in the data file for whenever they're ready too.
+    const DEV_SLUGS_TO_SHOW = ["the-relay"];
+
+    const devSection = document.getElementById("dev-section");
+    devSection.hidden = !SHOW_IN_DEVELOPMENT;
+    document.getElementById("store-lede").textContent = SHOW_IN_DEVELOPMENT
+      ? "Everything shipped, plus what's still in development."
+      : "Everything I've shipped so far.";
+
+    const badgeClass = (status) => {
+      const s = (status || "").toLowerCase();
+      if (s.includes("dev")) return "dev";
+      if (s.includes("concept")) return "concept";
+      return "example";
+    };
+
+    // "Drinko: Cocktail Recipes" -> title "Drinko", subtitle "Cocktail Recipes".
+    // Names with no colon (e.g. "9 Tiles Puzzle") just get a title, no subtitle.
+    const splitName = (name) => {
+      const idx = (name || "").indexOf(":");
+      if (idx === -1) return { title: name || "", subtitle: "" };
+      return { title: name.slice(0, idx).trim(), subtitle: name.slice(idx + 1).trim() };
+    };
+
+    // Published apps — live from Apple, via the server's /api/appstore-apps.
+    fetch("/api/appstore-apps")
+      .then((r) => r.json())
+      .then((apps) => {
+        const grid = document.getElementById("published-grid");
+        if (!apps.length) {
+          grid.innerHTML =
+            '<p class="empty-state">Couldn\'t reach the App Store right now — check your connection and refresh.</p>';
+          return;
+        }
+        const fmtDate = (iso) =>
+          new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+        grid.innerHTML = apps
+          .map((app) => {
+            const isUpcoming = app.releaseDate && new Date(app.releaseDate) > new Date();
+            const href = app.localUrl || app.url;
+            const external = !app.localUrl;
+            const { title, subtitle } = splitName(app.name);
+            return `
+            <a class="card" href="${href}" ${external ? 'target="_blank" rel="noopener"' : ""}>
+              <div class="card-head">
+                ${
+                  app.icon
+                    ? `<img class="icon-img" src="${app.icon}" alt="" width="48" height="48" />`
+                    : `<span class="icon">📱</span>`
+                }
+                <div class="card-title">
+                  <h3>${title}</h3>
+                  ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}
+                </div>
+              </div>
+              <span class="badge ${isUpcoming ? "concept" : "dev"}">${isUpcoming ? "Preorder" : "Live"}</span>
+              <p>${app.tagline || app.genre || ""}</p>
+              ${isUpcoming ? `<p style="margin-top:-4px">Releases ${fmtDate(app.releaseDate)}</p>` : ""}
+            </a>
+          `;
+          })
+          .join("");
+      })
+      .catch(() => {
+        document.getElementById("published-grid").innerHTML =
+          '<p class="empty-state">Couldn\'t reach the App Store right now — check your connection and refresh.</p>';
+      });
+
+    // In-development / concept apps — local, from data/apps.json.
+    if (SHOW_IN_DEVELOPMENT) fetch("/apps.json")
+      .then((r) => r.json())
+      .then((allApps) => {
+        const apps = allApps.filter((app) => DEV_SLUGS_TO_SHOW.includes(app.slug));
+        const grid = document.getElementById("dev-grid");
+        if (!apps.length) {
+          grid.outerHTML = '<p class="empty-state">Nothing in the pipeline right now.</p>';
+          return;
+        }
+        grid.innerHTML = apps
+          .map((app) => {
+            const { title, subtitle } = splitName(app.name);
+            return `
+            <a class="card" href="/${app.slug}">
+              <div class="card-head">
+                <span class="icon">${app.icon || "📱"}</span>
+                <div class="card-title">
+                  <h3>${title}</h3>
+                  ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}
+                </div>
+              </div>
+              <span class="badge ${badgeClass(app.status)}">${app.status || ""}</span>
+              <p>${app.tagline || ""}</p>
+            </a>
+          `;
+          })
+          .join("");
+      })
+      .catch(() => {
+        document.getElementById("dev-grid").outerHTML =
+          '<p class="empty-state">Couldn\'t load apps.json.</p>';
+      });
+  </script>
+</body>
+</html>
