@@ -49,13 +49,15 @@ that's out of scope for this migration.
 
 ## anime.js
 
-`web/js/intro-flip.js` currently depends on a CDN-loaded `anime.min.js`
-`<script defer>` tag in `index.html`'s `<head>`, with a code comment
-documenting a script-ordering dependency (`nav.js` must run before deferred
-modules). This migration replaces that with an npm dependency:
-`bun add animejs`, imported directly inside `IntroFlip.svelte`. This removes
-the CDN tag and the load-order dependency entirely — Bun bundles animejs
-like any other module.
+`web/js/floating-icons.js` (not `intro-flip.js` — that one is pure
+`requestAnimationFrame`/`getBoundingClientRect` code with no anime.js
+dependency) currently depends on a CDN-loaded `anime.min.js` `<script
+defer>` tag in `index.html`'s `<head>`, with a code comment documenting a
+script-ordering dependency (`nav.js` must run before deferred modules).
+This migration replaces that with an npm dependency: `bun add animejs`,
+imported directly inside `FloatingIcons.svelte`. This removes the CDN tag
+and the load-order dependency entirely — Bun bundles animejs like any
+other module.
 
 ## Server
 
