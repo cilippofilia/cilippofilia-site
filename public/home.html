@@ -40,15 +40,11 @@
       <section class="hero">
         <div class="hero-grid">
           <div>
-            <h1>Small, native apps — built one at a time.</h1>
+            <h1>Small yet powerful native apps — built with user experience in mind.</h1>
             <p class="lede">
               A hub for everything that ships out of this workspace — iOS, iPadOS, macOS, and
               watchOS apps, built with SwiftUI.
             </p>
-            <div class="button-row">
-              <a class="button" href="/app-store">See the App Store</a>
-              <a class="button secondary" href="/style-guide">Style guide</a>
-            </div>
           </div>
           <aside class="profile-card">
             <img class="profile-photo" src="/assets/profile.jpg" alt="Filippo Cilia" width="96" height="96" />
@@ -75,9 +71,72 @@
       </section>
 
       <div class="featured" id="featured-strip" hidden></div>
+
+      <section id="published-section" hidden>
+        <div class="grid" id="published-grid"></div>
+      </section>
+
+      <section id="dev-section" hidden>
+        <div class="grid" id="dev-grid"></div>
+      </section>
     </div>
   </main>
   <script src="/nav.js"></script>
+  <script>
+    // "In development" — the same local apps.json feed the App Store page
+    // used to render, now shown here under the preorder card.
+    // While only The Relay is ready to show publicly, filter the rest of
+    // apps.json out here rather than deleting their entries.
+    const DEV_SLUGS_TO_SHOW = ["the-relay"];
+
+    const badgeClass = (status) => {
+      const s = (status || "").toLowerCase();
+      if (s.includes("dev")) return "dev";
+      if (s.includes("concept")) return "concept";
+      return "example";
+    };
+
+    // Icons in apps.json are either an emoji or a path to a real app icon.
+    const isImageIcon = (icon) => typeof icon === "string" && /^(\/|https?:)/.test(icon);
+
+    // "Drinko: Cocktail Recipes" -> title "Drinko", subtitle "Cocktail Recipes".
+    const splitName = (name) => {
+      const idx = (name || "").indexOf(":");
+      if (idx === -1) return { title: name || "", subtitle: "" };
+      return { title: name.slice(0, idx).trim(), subtitle: name.slice(idx + 1).trim() };
+    };
+
+    fetch("/apps.json")
+      .then((r) => r.json())
+      .then((allApps) => {
+        const apps = allApps.filter((app) => DEV_SLUGS_TO_SHOW.includes(app.slug));
+        if (!apps.length) return;
+        document.getElementById("dev-grid").innerHTML = apps
+          .map((app) => {
+            const { title, subtitle } = splitName(app.name);
+            return `
+            <a class="card" href="/${app.slug}">
+              <div class="card-head">
+                ${
+                  isImageIcon(app.icon)
+                    ? `<img class="icon-img" src="${app.icon}" alt="" width="48" height="48" />`
+                    : `<span class="icon">${app.icon || "📱"}</span>`
+                }
+                <div class="card-title">
+                  <h3>${title}</h3>
+                  ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}
+                </div>
+              </div>
+              <span class="badge ${badgeClass(app.status)}">${app.status || ""}</span>
+              <p>${app.tagline || ""}</p>
+            </a>
+          `;
+          })
+          .join("");
+        document.getElementById("dev-section").hidden = false;
+      })
+      .catch(() => {});
+  </script>
   <script>
     // Continuous idle drift for the floating app icons, via anime.js.
     // Each icon wanders to a fresh random point (with a small rotation)
@@ -106,14 +165,47 @@
   <script>
     // Highlight whichever published app is still a preorder, if any —
     // computed live from the same feed the App Store page uses, never hardcoded.
+    // The same response fills the "Published" grid below it, so the grid can
+    // skip whichever app is already featured as the preorder up top.
     fetch("/api/appstore-apps")
       .then((r) => r.json())
       .then((apps) => {
         const upcoming = apps.find((a) => a.releaseDate && new Date(a.releaseDate) > new Date());
-        if (!upcoming) return;
-        const strip = document.getElementById("featured-strip");
         const fmtDate = (iso) =>
           new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+        // Published — everything already out, minus the featured preorder.
+        const live = apps.filter((a) => a !== upcoming);
+        if (live.length) {
+          document.getElementById("published-grid").innerHTML = live
+            .map((app) => {
+              const href = app.localUrl || app.url;
+              const external = !app.localUrl;
+              const { title, subtitle } = splitName(app.name);
+              return `
+              <a class="card" href="${href}" ${external ? 'target="_blank" rel="noopener"' : ""}>
+                <div class="card-head">
+                  ${
+                    isImageIcon(app.icon)
+                      ? `<img class="icon-img" src="${app.icon}" alt="" width="48" height="48" />`
+                      : `<span class="icon">📱</span>`
+                  }
+                  <div class="card-title">
+                    <h3>${title}</h3>
+                    ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}
+                  </div>
+                </div>
+                <span class="badge live">Live</span>
+                <p>${app.tagline || app.genre || ""}</p>
+              </a>
+            `;
+            })
+            .join("");
+          document.getElementById("published-section").hidden = false;
+        }
+
+        if (!upcoming) return;
+        const strip = document.getElementById("featured-strip");
         strip.innerHTML = `
           ${
             upcoming.icon

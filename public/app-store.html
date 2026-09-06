@@ -65,8 +65,9 @@
     });
   </script>
   <script>
-    // Flip this to true to bring the "In development" section back.
-    const SHOW_IN_DEVELOPMENT = true;
+    // "In development" now lives on the home page, under the preorder card.
+    // Flip this to true to bring the section back here as well.
+    const SHOW_IN_DEVELOPMENT = false;
     // While only The Relay is ready to show publicly, filter the rest of
     // apps.json out here rather than deleting their entries — the other
     // ideas stay tracked in the data file for whenever they're ready too.
@@ -84,6 +85,9 @@
       if (s.includes("concept")) return "concept";
       return "example";
     };
+
+    // Icons in apps.json are either an emoji or a path to a real app icon.
+    const isImageIcon = (icon) => typeof icon === "string" && /^(\/|https?:)/.test(icon);
 
     // "Drinko: Cocktail Recipes" -> title "Drinko", subtitle "Cocktail Recipes".
     // Names with no colon (e.g. "9 Tiles Puzzle") just get a title, no subtitle.
@@ -125,7 +129,7 @@
                   ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}
                 </div>
               </div>
-              <span class="badge ${isUpcoming ? "concept" : "dev"}">${isUpcoming ? "Preorder" : "Live"}</span>
+              <span class="badge ${isUpcoming ? "concept" : "live"}">${isUpcoming ? "Preorder" : "Live"}</span>
               <p>${app.tagline || app.genre || ""}</p>
               ${isUpcoming ? `<p style="margin-top:-4px">Releases ${fmtDate(app.releaseDate)}</p>` : ""}
             </a>
@@ -154,7 +158,11 @@
             return `
             <a class="card" href="/${app.slug}">
               <div class="card-head">
-                <span class="icon">${app.icon || "📱"}</span>
+                ${
+                  isImageIcon(app.icon)
+                    ? `<img class="icon-img" src="${app.icon}" alt="" width="48" height="48" />`
+                    : `<span class="icon">${app.icon || "📱"}</span>`
+                }
                 <div class="card-title">
                   <h3>${title}</h3>
                   ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}

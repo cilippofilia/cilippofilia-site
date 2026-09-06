@@ -33,7 +33,7 @@
       <section class="hero" style="margin-top:0">
         <div class="hero-grid">
           <div>
-            <h1>Small, native apps — built one at a time.</h1>
+            <h1>Small yet powerful native apps — built with user experience in mind.</h1>
             <p class="lede">
               A hub for everything that ships out of this workspace — iOS, iPadOS, macOS, and
               watchOS apps, built with SwiftUI.

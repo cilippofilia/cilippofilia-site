@@ -6,7 +6,7 @@
     "description": "A decommissioned coastal signal relay station. Old analog transmissions come in, and it's your job to sort them into the right archive channels — until the story hidden inside the static starts to piece itself together. Free to start, with a single premium unlock for the full Archive.",
     "platforms": ["iPhone", "iPad", "Mac"],
     "status": "In development",
-    "icon": "📡",
+    "icon": "/assets/app-icons/thumb/relay-icon.png",
     "appStoreUrl": ""
   },
   {

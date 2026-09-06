@@ -18,6 +18,8 @@
   --green-bg: rgba(48, 209, 88, 0.16);
   --orange: #ffb340;
   --orange-bg: rgba(255, 159, 10, 0.18);
+  --purple: #bf5af2;
+  --purple-bg: rgba(191, 90, 242, 0.18);
   --radius: 18px;
   --radius-lg: 26px;
   --max-width: 1024px;
@@ -572,7 +574,8 @@ section h2 {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.badge.dev { color: var(--green); background: var(--green-bg); }
+.badge.dev { color: var(--purple); background: var(--purple-bg); }
+.badge.live { color: var(--green); background: var(--green-bg); }
 .badge.concept { color: var(--orange); background: var(--orange-bg); }
 .badge.example { color: var(--text-dim); background: var(--bg-alt); }
 
@@ -603,6 +606,13 @@ section h2 {
   justify-content: center;
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* A real app icon fills the tile edge to edge, no plate showing through. */
+.app-detail img.icon-lg {
+  background: none;
+  object-fit: cover;
+  display: block;
 }
 
 .app-detail-meta h1 { margin: 0 0 6px; }
@@ -683,67 +693,63 @@ section h2 {
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   opacity: 0.78;
   will-change: transform;
+  /* Each icon is sized to the space actually available beside the content
+     column, never to a fixed number of pixels: 50% resolves against this
+     layer (the full page width), so `50% - max-width/2` is the gutter on
+     one side, and subtracting --fi-clear reserves room for the inset plus
+     the anime.js drift. --fi-max is each icon's natural size, which it
+     reaches once the window is wide enough. Because the width can never
+     exceed the gutter, an icon can never reach the text column. */
+  --fi-max: 88px;
+  --fi-clear: 64px;
+  width: clamp(0px, calc(50% - (var(--max-width) / 2) - var(--fi-clear)), var(--fi-max));
+  /* The width/height attributes on the <img> are presentational hints, so
+     the height must be overridden explicitly or the icons come out squashed
+     as the width shrinks. */
+  height: auto;
+  aspect-ratio: 1;
 }
 
 /* Rest positions — anime.js (loaded in home.html) animates small,
    randomized drifts around each of these via inline transforms.
 
-   fi-1..fi-4 are anchored to the *content column's* edge rather than a
-   raw viewport percentage: calc(50% - (max-width / 2) - gap - size) always
-   keeps them exactly `gap`px outside the .wrap, on either side, whatever
-   the viewport width — so they can never drift in front of the hero text
-   or the profile card / app-store copy the way a plain "left: 4%" does at
-   narrower desktop widths. As the viewport narrows past --max-width, the
-   value goes negative and .floating-icons' own overflow:hidden clips the
-   icon out of view instead of it landing on top of the content.
-   fi-5 is the one icon deliberately placed *inside* the content column,
-   drifting behind the headline (it sits under the text in z-index, so the
-   letters stay legible) — left as a fixed percentage on purpose. */
-/* max() with a fixed-px floor keeps every icon at least that far inside
-   the viewport edge (padding in the extra ~22px for the anime.js drift),
-   so on viewports narrower than --max-width plus their side gap, they sit
-   just inside the edge instead of going negative and being clipped by
-   .floating-icons' overflow:hidden — always on screen. */
-.fi-1 { top: 24%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 96px)); }
-.fi-2 { top: 16%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 76px)); }
-.fi-3 { top: 64%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 88px)); }
-.fi-4 { top: 56%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 80px)); }
-.fi-5 { top: 30%; left: 45%; }
+   Every icon is inset a fixed 32px from the viewport edge and lives
+   entirely in the gutter beside .wrap; the width rule above shrinks it to
+   fit whatever gutter exists. 32px of inset absorbs the ±22px drift (plus
+   the ~8px a ±10deg rotation adds to the bounding box) without any part of
+   an icon leaving the screen, and --fi-clear reserves the same margin on
+   the inner side so drift can't carry one over the text either.
 
-/* Below 720px the content column fills almost the full viewport width, so
-   there's no side margin for icons to sit in like on desktop — instead of
-   hiding them, shrink them and tuck them into the corners (top corners
-   above the photo, bottom corners below it) where they clear the centered
-   text/photo column. fi-5 stays hidden: it's the one icon meant to drift
-   *behind* the headline, and there's no room for that without covering the
-   centered mobile text. */
-@media (max-width: 720px) {
-  .floating-icons { height: 520px; }
-  .floating-icon { width: 52px; height: 52px; opacity: 0.6; }
-  .fi-1 { top: 12%; left: 3%; }
-  .fi-2 { top: 12%; right: 3%; }
-  .fi-3 { top: 66%; left: 3%; }
-  .fi-4 { top: 66%; right: 3%; }
-  .fi-5 { display: none; }
+   Below the breakpoint at the end of this block there is no gutter worth
+   the name and the whole layer is hidden — on a narrow window the column
+   spans the full width, so "on screen" and "clear of the text" cannot both
+   be true. */
+.fi-1 { top: 20%; left: 32px; --fi-max: 96px; }
+.fi-2 { top: 14%; right: 32px; --fi-max: 76px; }
+.fi-3 { top: 68%; left: 32px; --fi-max: 88px; }
+.fi-4 { top: 56%; right: 32px; --fi-max: 80px; }
+/* fi-5 used to drift behind the headline inside the content column. It now
+   sits in the left gutter between fi-1 and fi-3 so no icon passes under
+   any text. */
+.fi-5 { top: 44%; left: 32px; --fi-max: 92px; }
+
+/* App Store page — shorter hero, so the floating-icon band is shorter too,
+   and the five icons are spaced more tightly down the two gutters. */
+.floating-icons.short { height: 460px; }
+
+.fi-a1 { top: 8%; left: 32px; --fi-max: 88px; }
+.fi-a2 { top: 22%; right: 32px; --fi-max: 70px; }
+.fi-a3 { top: 72%; left: 32px; --fi-max: 80px; }
+.fi-a4 { top: 58%; right: 32px; --fi-max: 72px; }
+.fi-a5 { top: 40%; left: 32px; --fi-max: 84px; }
+
+/* Under ~1200px the gutter is too thin to hold an icon big enough to read
+   as one (the clamp would leave it below ~24px), and a zero-width <img>
+   would still paint its box-shadow as a smudge — so the layer comes out
+   entirely rather than shrinking into nothing. */
+@media (max-width: 1199px) {
+  .floating-icons { display: none; }
 }
-
-/* App Store page — shorter hero, so the floating-icon band is shorter too. */
-.floating-icons.short { height: 360px; }
-
-@media (max-width: 720px) {
-  .floating-icons.short { height: 100%; }
-  .fi-a1 { top: 4%; left: 3%; }
-  .fi-a2 { top: 4%; right: 3%; }
-  .fi-a3 { top: 82%; left: 3%; }
-  .fi-a4 { top: 82%; right: 3%; }
-  .fi-a5 { display: none; }
-}
-
-.fi-a1 { top: 34%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 88px)); }
-.fi-a2 { top: 26%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 70px)); }
-.fi-a3 { top: 68%; left: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 80px)); }
-.fi-a4 { top: 56%; right: max(24px, calc(50% - (var(--max-width) / 2) - 48px - 72px)); }
-.fi-a5 { top: 46%; left: 46%; }
 
 /* ---- Intro hero ("Hello, World!") ---- */
 .intro-pin {

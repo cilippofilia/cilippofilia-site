@@ -25,6 +25,9 @@
       return "example";
     };
 
+    // Icons in apps.json are either an emoji or a path to a real app icon.
+    const isImageIcon = (icon) => typeof icon === "string" && /^(\/|https?:)/.test(icon);
+
     const slug = window.location.pathname.replace(/^\/+|\/+$/g, "");
 
     fetch("/apps.json")
@@ -50,7 +53,11 @@
         content.innerHTML = `
           <section class="hero app-detail" style="margin-top:0">
             <div class="app-detail-head">
-              <span class="icon-lg">${app.icon || "📱"}</span>
+              ${
+                isImageIcon(app.icon)
+                  ? `<img class="icon-lg icon-img" src="${app.icon}" alt="" width="88" height="88" />`
+                  : `<span class="icon-lg">${app.icon || "📱"}</span>`
+              }
               <div class="app-detail-meta">
                 <span class="badge ${badgeClass(app.status)}">${app.status || ""}</span>
                 <h1>${app.name}</h1>
