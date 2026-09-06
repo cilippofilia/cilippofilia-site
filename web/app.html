@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cilippofilia.co.uk</title>
+  <title>cilippofilia.dev</title>
   <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/layout.css" />
@@ -48,11 +48,11 @@
               <a class="button secondary" href="/home#apps">← Back to App Store</a>
             </section>
           `;
-          document.title = "Not found — cilippofilia.co.uk";
+          document.title = "Not found — cilippofilia.dev";
           return;
         }
 
-        document.title = `${app.name} — cilippofilia.co.uk`;
+        document.title = `${app.name} — cilippofilia.dev`;
         content.innerHTML = `
           <section class="hero app-detail" style="margin-top:0">
             <div class="app-detail-head">
@@ -68,7 +68,7 @@
               </div>
             </div>
             <div class="app-detail-body">
-              <p style="margin:0; color:var(--text); max-width:60ch; font-size:1.05rem; line-height:1.6">${app.description || ""}</p>
+              <p class="app-detail-description">${app.description || ""}</p>
               <div class="app-detail-side">
                 <div>
                   <h4>Platforms</h4>
@@ -84,7 +84,7 @@
                   }
                 </div>
                 <div>
-                  <a class="button secondary" href="/home#apps">← Back to App Store</a>
+                  <a class="back-link" href="/home#apps">‹ Back to the App Store</a>
                 </div>
               </div>
             </div>

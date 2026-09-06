@@ -23,7 +23,7 @@ body::after {
   content: "";
   position: fixed;
   border-radius: 50%;
-  filter: blur(70px);
+  filter: blur(80px);
   pointer-events: none;
   z-index: 0;
 }
@@ -37,10 +37,10 @@ body::before {
 }
 
 body::after {
-  top: 260px;
+  top: 22vh;
   right: -180px;
-  width: 560px;
-  height: 560px;
+  width: 640px;
+  height: 640px;
   background: radial-gradient(circle, var(--bloom-2), rgba(249, 115, 22, 0) 70%);
 }
 

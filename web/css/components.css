@@ -333,31 +333,38 @@ section h2,
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
-  padding: 24px;
+  padding: 22px 24px 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   color: var(--text);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .card:hover {
   text-decoration: none;
   transform: translateY(-3px);
+  border-color: rgba(var(--accent-rgb), 0.35);
   box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow-hover);
 }
 
 .card-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
-.card .icon { font-size: 1.8rem; }
+.card .icon { font-size: 2rem; }
 
+/* A real icon at 56px is big enough to read as an app icon in its own right;
+   the width/height attributes on the <img> are 48 for layout stability and
+   are overridden here. */
 .card-head img.icon-img {
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
   flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .card-title {
@@ -371,6 +378,7 @@ section h2,
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
+  line-height: 1.25;
 }
 
 .card-subtitle {
@@ -379,10 +387,16 @@ section h2,
   font-size: 0.85rem;
 }
 
+/* The badge is status metadata, so it sits with the title block rather
+   than in the run of text: pulled up flush against the head and the
+   tagline follows as the card's one line of body copy. */
+.card .badge { margin-top: -2px; }
+
 .card p {
   margin: 0;
   color: var(--text-dim);
   font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 /* Badges sit on top of an already-glass card — flat tint plus a hairline
@@ -428,7 +442,10 @@ section h2,
   width: 88px;
   height: 88px;
   border-radius: 24px;
-  background: var(--bg-alt);
+  /* An emoji placeholder sits on a lit plate, so it reads as a tile in
+     waiting rather than a grey hole where the icon will go. */
+  background: linear-gradient(160deg, rgba(var(--accent-rgb), 0.28), rgba(var(--accent-rgb), 0.06) 70%), var(--bg-alt);
+  border: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -445,6 +462,15 @@ section h2,
 
 .app-detail-meta h1 { margin: 0 0 6px; }
 .app-detail-meta p.lede { margin: 0; }
+.app-detail-meta .badge { margin-bottom: 8px; }
+
+.app-detail-description {
+  margin: 0;
+  color: var(--text);
+  max-width: 52ch;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
 
 .app-detail-body {
   display: grid;
@@ -476,6 +502,33 @@ section h2,
   letter-spacing: 0.06em;
   color: var(--text-dim);
 }
+
+/* Actions in the rail run edge to edge so no label ever wraps, and the
+   disabled state reads as a quiet status line instead of a greyed button. */
+.app-detail-side .button {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 11px 16px;
+}
+
+.app-detail-side button.button:disabled {
+  opacity: 1;
+  color: var(--text-dim);
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--glass-border);
+}
+
+.app-detail-side .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.app-detail-side .back-link:hover { color: var(--text); text-decoration: none; }
 
 .app-detail .platforms {
   display: flex;

@@ -25,8 +25,8 @@
   --max-width: 1024px;
   color-scheme: dark;
 
-  --bloom-1: rgba(56, 189, 248, 0.26);
-  --bloom-2: rgba(249, 115, 22, 0.2);
+  --bloom-1: rgba(56, 189, 248, 0.3);
+  --bloom-2: rgba(249, 115, 22, 0.24);
   --chip-bg: rgba(255, 255, 255, 0.08);
   --flat-tint: rgba(255, 255, 255, 0.06);
   --flat-tint-hover: rgba(255, 255, 255, 0.1);

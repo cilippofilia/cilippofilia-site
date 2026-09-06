@@ -82,10 +82,10 @@ footer.site-footer {
 }
 
 .hero p.lede {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 400;
   color: var(--text-dim);
-  line-height: 1.4;
-  max-width: 60ch;
+  line-height: 1.5;
+  max-width: 52ch;
   margin: 0 0 32px;
 }

@@ -9,7 +9,7 @@ function renderChrome() {
   header.className = "site-header";
   header.innerHTML = `
     <div class="wrap">
-      <a class="brand" href="/home">cilippofilia<span class="dim">.co.uk</span></a>
+      <a class="brand" href="/home">cilippofilia<span class="dim">.dev</span></a>
       <div class="nav-group">
         <nav class="site-nav">
           <a href="/home" data-path="/home">Home</a>
@@ -42,7 +42,7 @@ function renderChrome() {
   footer.className = "site-footer";
   footer.innerHTML = `
     <div class="wrap">
-      cilippofilia.co.uk — local only, running on your machine.
+      © 2026 Filippo Cilia · Manchester, UK
     </div>
   `;
 
