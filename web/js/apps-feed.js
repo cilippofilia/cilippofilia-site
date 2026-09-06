@@ -11,7 +11,7 @@
 
 import { appCard, badgeClass } from "./app-card.js";
 
-// While only The Relay is ready to show publicly, filter the rest of
+// While only relay is ready to show publicly, filter the rest of
 // apps.json out here rather than deleting their entries.
 const DEV_SLUGS_TO_SHOW = ["the-relay"];
 

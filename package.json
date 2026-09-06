@@ -1,0 +1,16 @@
+{
+  "name": "cilippofilia-site",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.9.6"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "animejs": "^4.5.0",
+    "bun-plugin-svelte": "^0.0.6",
+    "svelte": "^5.57.0"
+  }
+}
