@@ -13,7 +13,7 @@ function renderChrome() {
       <div class="nav-group">
         <nav class="site-nav">
           <a href="/home" data-path="/home">Home</a>
-          <a href="/app-store" data-path="/app-store">App Store</a>
+          <a href="/home#apps" data-path="/app-store">App Store</a>
         </nav>
       </div>
     </div>
@@ -22,6 +22,21 @@ function renderChrome() {
   header.querySelectorAll("nav a").forEach((a) => {
     if (a.dataset.path === path) a.classList.add("active");
   });
+
+  // "App Store" points at the app cards further down the home page. When we
+  // are already on /home the browser would only jump, so scroll there
+  // smoothly instead; from any other page the plain /home#apps href does the
+  // navigating and the browser lands on the anchor by itself.
+  const appsLink = header.querySelector('a[href="/home#apps"]');
+  if (appsLink) {
+    appsLink.addEventListener("click", (e) => {
+      const target = document.getElementById("apps");
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      history.replaceState(null, "", "/home#apps");
+    });
+  }
 
   const footer = document.createElement("footer");
   footer.className = "site-footer";

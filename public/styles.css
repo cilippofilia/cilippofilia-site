@@ -334,7 +334,9 @@ button.button:disabled {
 }
 
 .featured {
-  margin-top: 56px;
+  /* Same rhythm as `section` below — this strip is one more block in the
+     page's vertical flow, not a special case. */
+  margin-top: 88px;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -405,10 +407,12 @@ button.button:disabled {
   align-items: start;
 }
 
+/* The one surface on the site that is deliberately not glass: the floating
+   app icons drift right behind it, and at 7% white they read straight
+   through the card and collide with the name, bio and social row. A solid
+   fill is what keeps this card readable. */
 .profile-card {
-  background: var(--glass-fill);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: var(--bg-raised);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
@@ -463,27 +467,32 @@ button.button:disabled {
   will-change: transform, opacity;
 }
 
-/* Real glass, matching .profile-card exactly — the clone crossfades into
-   that card at the landing, so any difference in fill or blur here shows up
-   as a pop at the handoff. It has to be an actual backdrop-filter and not a
-   heavier flat fill: --glass-fill is only 7% white, and everything on this
-   site is legible over it because the 22px blur behind smears whatever it
-   covers. Without the filter the card is effectively transparent and the
-   page content reads straight through its own text. */
+/* Matches .profile-card exactly — the clone crossfades into that card at
+   the landing, so any difference in fill here shows up as a pop at the
+   handoff. Solid, for the same reason the real card is. */
 .fc-chrome {
   position: absolute;
   inset: 0;
   z-index: -1;
   border-radius: var(--radius-lg);
-  background: var(--glass-fill);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: var(--bg-raised);
   border: 1px solid var(--glass-border);
   box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
   opacity: 0;
 }
 
+/* The header's "App Store" link scrolls here; the offset keeps the sticky
+   header from covering the first card once it lands. */
+#apps { scroll-margin-top: 96px; }
+
 section { margin-top: 88px; }
+
+/* Two card sections with no headings between them (the home page's published
+   and in-development grids) read as one continuous run of cards, so they are
+   spaced by the grid's own row gap rather than the full section rhythm —
+   otherwise the last row sits marooned 88px below the one above it. Sections
+   that do carry an h2, like the App Store page's, keep the full spacing. */
+section:not(:has(h2)) + section:not(:has(h2)) { margin-top: 20px; }
 
 section h2 {
   font-size: 2rem;
@@ -673,15 +682,18 @@ section h2 {
   padding: 40px 0;
 }
 
-/* Floating app icons — decorative, home page only. Sit in the same
-   background layer as the ambient blooms (behind .wrap content, but
-   visible drifting behind the translucent glass header/cards). */
+/* Floating app icons — decorative. They drift around the hero background
+   as a loose constellation: the layer spans the whole hero screen and each
+   icon is placed at a percentage of it, so the arrangement holds its shape
+   at any width instead of depending on a gutter that only exists on wide
+   windows. Sits in the same background layer as the ambient blooms (behind
+   .wrap content, visible through the translucent glass header/cards). */
 .floating-icons {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 640px;
+  height: 100svh;
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
@@ -691,67 +703,67 @@ section h2 {
   position: absolute;
   border-radius: 22%;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  opacity: 0.78;
+  /* Dim enough to read as background at any width — the icons cross behind
+     the content column rather than hiding in a gutter beside it. */
+  opacity: 0.42;
   will-change: transform;
-  /* Each icon is sized to the space actually available beside the content
-     column, never to a fixed number of pixels: 50% resolves against this
-     layer (the full page width), so `50% - max-width/2` is the gutter on
-     one side, and subtracting --fi-clear reserves room for the inset plus
-     the anime.js drift. --fi-max is each icon's natural size, which it
-     reaches once the window is wide enough. Because the width can never
-     exceed the gutter, an icon can never reach the text column. */
-  --fi-max: 88px;
-  --fi-clear: 64px;
-  width: clamp(0px, calc(50% - (var(--max-width) / 2) - var(--fi-clear)), var(--fi-max));
+  /* Scaled to the viewport, with a floor that keeps a small icon still
+     legible as an app icon and a ceiling per icon (--fi-max) so the biggest
+     never dominates the hero. */
+  --fi-max: 100px;
+  width: clamp(50px, 7.5vw, var(--fi-max));
   /* The width/height attributes on the <img> are presentational hints, so
      the height must be overridden explicitly or the icons come out squashed
      as the width shrinks. */
   height: auto;
   aspect-ratio: 1;
+  /* Positions below place each icon by its own centre, so a percentage
+     reads as "this point in the hero" regardless of the icon's size. */
+  translate: -50% -50%;
 }
 
-/* Rest positions — anime.js (loaded in home.html) animates small,
-   randomized drifts around each of these via inline transforms.
+/* Rest positions — anime.js (loaded in the page) animates small, randomized
+   drifts around each of these via inline transforms, which compose with the
+   `translate` centring above rather than replacing it.
 
-   Every icon is inset a fixed 32px from the viewport edge and lives
-   entirely in the gutter beside .wrap; the width rule above shrinks it to
-   fit whatever gutter exists. 32px of inset absorbs the ±22px drift (plus
-   the ~8px a ±10deg rotation adds to the bounding box) without any part of
-   an icon leaving the screen, and --fi-clear reserves the same margin on
-   the inner side so drift can't carry one over the text either.
+   The constellation is spread wide and deliberately keeps clear of the
+   middle band, where the cutout photo and the headline sit. */
+.fi-1 { top: 19%; left: 10%; --fi-max: 104px; }
+.fi-2 { top: 22%; left: 78%; --fi-max: 86px; }
+.fi-3 { top: 34%; left: 31%; --fi-max: 78px; }
+.fi-4 { top: 84%; left: 12%; --fi-max: 96px; }
+.fi-5 { top: 63%; left: 87%; --fi-max: 100px; }
 
-   Below the breakpoint at the end of this block there is no gutter worth
-   the name and the whole layer is hidden — on a narrow window the column
-   spans the full width, so "on screen" and "clear of the text" cannot both
-   be true. */
-.fi-1 { top: 20%; left: 32px; --fi-max: 96px; }
-.fi-2 { top: 14%; right: 32px; --fi-max: 76px; }
-.fi-3 { top: 68%; left: 32px; --fi-max: 88px; }
-.fi-4 { top: 56%; right: 32px; --fi-max: 80px; }
-/* fi-5 used to drift behind the headline inside the content column. It now
-   sits in the left gutter between fi-1 and fi-3 so no icon passes under
-   any text. */
-.fi-5 { top: 44%; left: 32px; --fi-max: 92px; }
-
-/* App Store page — shorter hero, so the floating-icon band is shorter too,
-   and the five icons are spaced more tightly down the two gutters. */
+/* App Store page — no full-height intro, so the band is only as tall as its
+   own short hero. The cards start straight after that hero, so this
+   constellation hugs the top corners and the right edge, leaving the
+   heading, the lede and the grid below them clear. */
 .floating-icons.short { height: 460px; }
 
-.fi-a1 { top: 8%; left: 32px; --fi-max: 88px; }
-.fi-a2 { top: 22%; right: 32px; --fi-max: 70px; }
-.fi-a3 { top: 72%; left: 32px; --fi-max: 80px; }
-.fi-a4 { top: 58%; right: 32px; --fi-max: 72px; }
-.fi-a5 { top: 40%; left: 32px; --fi-max: 84px; }
+.fi-a1 { top: 16%; left: 9%;  --fi-max: 96px; }
+.fi-a2 { top: 26%; left: 62%; --fi-max: 80px; }
+.fi-a3 { top: 30%; left: 78%; --fi-max: 86px; }
+.fi-a4 { top: 58%; left: 91%; --fi-max: 82px; }
+.fi-a5 { top: 62%; left: 10%; --fi-max: 74px; }
 
-/* Under ~1200px the gutter is too thin to hold an icon big enough to read
-   as one (the clamp would leave it below ~24px), and a zero-width <img>
-   would still paint its box-shadow as a smudge — so the layer comes out
-   entirely rather than shrinking into nothing. */
-@media (max-width: 1199px) {
-  .floating-icons { display: none; }
+/* Phones: the content column is full-bleed, so every icon crosses behind
+   text at some point — smaller and fainter, well under the copy. */
+@media (max-width: 600px) {
+  .floating-icon {
+    width: clamp(44px, 13.5vw, 68px);
+    opacity: 0.3;
+  }
 }
 
 /* ---- Intro hero ("Hello, World!") ---- */
+
+/* The pinned intro has to start flush against the header. main's 64px of top
+   padding would otherwise be 64px of scrolling where the pin has not engaged
+   yet and every phase still reads progress 0 — the animation appearing to
+   ignore the first flick of the wheel. With the padding gone the pin starts
+   at scrollY 0, so the first pixel of scroll is the first frame. */
+main:has(.intro-pin) { padding-top: 0; }
+
 .intro-pin {
   min-height: calc(100svh - 120px);
   display: flex;
