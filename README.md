@@ -6,7 +6,7 @@ internet) can reach it.
 
 Visually it follows the tokens in `/style-guide` (also in this repo at
 `public/style-guide.html`) — light, SF Pro, Apple-style pills and spacing,
-measured off apple.com/uk's own CSS. `public/styles.css` is the shared
+measured off apple.com/uk's own CSS. `public/css/styles.css` is the shared
 stylesheet every page but the style guide and `public/nine-tiles-puzzle/`
 (a real, separately-designed landing page) pulls from.
 
@@ -20,7 +20,7 @@ already-glass card (the "Preorder ›" CTA, the app-detail side panel's
 buttons) gets a flat tint instead of its own blur. There's a fallback to
 plain solid cards for `prefers-reduced-transparency` and browsers without
 `backdrop-filter` support. All of this lives in the `--glass-*` custom
-properties at the top of `public/styles.css`.
+properties at the top of `public/css/styles.css`.
 
 ## Run it
 
@@ -63,7 +63,7 @@ app can also link straight to its own custom local page instead of out
 to Apple — see "Custom app pages" below.
 
 The "In development" section only lists the slugs named in
-`DEV_SLUGS_TO_SHOW`, near the top of the inline script in `home.html` —
+`DEV_SLUGS_TO_SHOW`, near the top of the inline script in `public/index.html` —
 the rest of `data/apps.json` is filtered out rather than deleted. Add a
 slug there to show it.
 
@@ -133,9 +133,12 @@ differently, and no real domain is registered or touched.
 server.js          — local static server + live App Store fetch (no npm deps)
 data/apps.json      — in-development apps: one entry per landing page
 public/
-  home.html         — landing page, plus the published (live) and
+  index.html        — landing page, plus the published (live) and
                       in-development (apps.json) app grids
   app.html          — generic per-app template for in-development apps
-  styles.css        — shared styling
-  nav.js            — shared header/footer, injected on every page
+  style-guide.html  — design tokens and components reference
+  css/styles.css    — shared styling
+  js/nav.js         — shared header/footer, injected on every page
+  assets/           — images, app icons, favicons
+  nine-tiles-puzzle/ — a custom multi-file app site (see above)
 ```

@@ -1,7 +1,7 @@
 // Local-only static server for cilippofilia.co.uk.
 //
 // - Binds to 127.0.0.1 only — nothing outside this machine can reach it.
-// - /home maps to its own HTML file in public/. The old /app-store page is
+// - /home maps to public/index.html. The old /app-store page is
 //   gone — its content now lives in a section of /home, and the path
 //   redirects there so existing links still land somewhere sensible.
 // - A path like /nine-tiles-puzzle that matches a folder in public/ with its
@@ -87,6 +87,10 @@ async function getPublishedApps() {
   }
 }
 
+// Directories under public/ served verbatim. Anything not listed here is
+// routed explicitly below, so a new top-level folder has to be opted in.
+const STATIC_DIRS = ["/css/", "/js/", "/assets/"];
+
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -133,14 +137,22 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Static assets served as-is: /styles.css, /nav.js, /apps.json, /assets/*
+  // Static: /apps.json, plus everything under public/css, /js and /assets
   if (pathname === "/apps.json") {
     serveFile(res, path.join(DATA_DIR, "apps.json"));
     return;
   }
 
-  if (pathname === "/styles.css" || pathname === "/nav.js") {
-    serveFile(res, path.join(PUBLIC_DIR, pathname));
+  if (STATIC_DIRS.some((dir) => pathname.startsWith(dir))) {
+    // Resolve first, then confirm the result is still inside public/. That
+    // is what actually contains a traversal attempt — normalizing the URL
+    // and stripping leading "../" only catches the obvious shapes.
+    const filePath = path.resolve(PUBLIC_DIR, "." + pathname);
+    if (!filePath.startsWith(PUBLIC_DIR + path.sep)) {
+      send(res, 403, "Forbidden");
+      return;
+    }
+    serveFile(res, filePath);
     return;
   }
 
@@ -149,15 +161,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (pathname.startsWith("/assets/")) {
-    const safePath = path.normalize(pathname).replace(/^(\.\.[/\\])+/, "");
-    serveFile(res, path.join(PUBLIC_DIR, safePath));
-    return;
-  }
-
   // Named pages
   if (pathname === "/home") {
-    serveFile(res, path.join(PUBLIC_DIR, "home.html"));
+    serveFile(res, path.join(PUBLIC_DIR, "index.html"));
     return;
   }
 
