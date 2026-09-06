@@ -130,7 +130,10 @@ differently, and no real domain is registered or touched.
 ## Project layout
 
 ```
-server.js          — local static server + live App Store fetch (no npm deps)
+server.js          — the routing table (no npm deps)
+src/server/
+  appstore.js       — live App Store lookup for the developer id, cached
+  static.js         — path resolution, MIME types, file serving
 data/apps.json      — in-development apps: one entry per landing page
 public/
   index.html        — landing page, plus the published (live) and
