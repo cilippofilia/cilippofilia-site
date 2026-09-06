@@ -424,8 +424,8 @@ button.button:disabled {
 }
 
 .profile-photo {
-  width: 96px;
-  height: 96px;
+  width: 116px;
+  height: 116px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid rgba(255, 255, 255, 0.8);
@@ -809,20 +809,69 @@ main:has(.intro-pin) { padding-top: 0; }
   opacity: 0;
 }
 
-.hero-flyer {
+/* The flip card is split in two so each transform has its own origin: the
+   outer box carries position and size (translate + scale, from the top-left
+   corner, the way the rest of the intro measures things), the inner one
+   carries the turn about the box's own vertical centre line. Perspective
+   lives on the outer element rather than inside a transform so it scales
+   along with the card and the turn keeps the same depth throughout. */
+.hero-flip {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  perspective: 1000px;
+  z-index: 15;
+  will-change: transform, opacity;
+}
+
+.hero-flip.is-fixed {
+  position: fixed;
+  inset: auto;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+.hero-flip-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Backface culling is what makes the swap free: each face disappears the
+   moment it turns past edge-on, so there is a single frame at 90deg with
+   nothing on screen at all and no crossfade to arrange. */
+.hero-flip-face {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.hero-flyer {
   object-fit: contain;
-  pointer-events: none;
-  will-change: transform, opacity;
-  z-index: 15;
   /* Fades the cutout's own bottom edge to transparent, only over its final
      stretch, so its hard silhouette line dissolves rather than stopping
      abruptly — the blurred layer behind picks up right where it fades. */
   -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 97%);
   mask-image: linear-gradient(to bottom, #000 82%, transparent 97%);
+}
+
+/* The back of the card: the same crop with its background intact, cropped to
+   a circle so the shape it lands in is already the shape it needs to be in
+   the profile card — from 90deg on, the only thing left to do is shrink. The
+   ring and shadow are static and simply scale with the card; they converge on
+   the real .profile-photo's 3px at the landing, where the two crossfade. */
+.hero-flyer-back {
+  transform: rotateY(180deg);
+  object-fit: cover;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 /* A softly blurred duplicate of the same cutout, sitting just behind the
@@ -844,18 +893,6 @@ main:has(.intro-pin) { padding-top: 0; }
   pointer-events: none;
   z-index: 14;
   will-change: opacity;
-}
-
-.hero-flyer.is-fixed {
-  position: fixed;
-  inset: auto;
-  top: 0;
-  left: 0;
-  transform-origin: top left;
-}
-
-.intro-copy {
-  will-change: clip-path, opacity;
 }
 
 .intro-copy .intro-heading {
@@ -895,4 +932,9 @@ main:has(.intro-pin) { padding-top: 0; }
   .intro { min-height: auto; padding: 32px 0 16px; }
   .intro-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 24px; }
   .intro-photo-wrap { width: min(264px, 60vw); }
+  /* One column, so the greeting goes above the photo rather than below it.
+     The profile card assembles downwards from the avatar and would otherwise
+     be built straight over the top of this copy — and the copy stays put for
+     the whole intro, so it cannot simply be cleared out of the way. */
+  .intro-copy { order: -1; }
 }

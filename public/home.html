@@ -27,7 +27,18 @@
             <div class="intro-photo-wrap">
               <div class="intro-photo-ghost" id="intro-photo-ghost" aria-hidden="true"></div>
               <div id="hero-flyer-blur" class="hero-flyer-blur" aria-hidden="true"></div>
-              <img id="hero-flyer" class="hero-flyer" src="/assets/profile-clear.png" alt="" aria-hidden="true" />
+              <!-- The intro's flip card. Both faces are the same 1102x1103
+                   crop at the same box size, so the head lands in exactly the
+                   same place on either side of the turn: the front is the
+                   background-removed cutout, the back the full photo masked
+                   to a circle. At 90deg both faces are edge-on and nothing is
+                   drawn, which is where the swap happens. -->
+              <div id="hero-flip" class="hero-flip" aria-hidden="true">
+                <div class="hero-flip-inner" id="hero-flip-inner">
+                  <img id="hero-flyer" class="hero-flyer hero-flip-face" src="/assets/profile-clear.png" alt="" />
+                  <img id="hero-flyer-back" class="hero-flyer-back hero-flip-face" src="/assets/profile.jpg" alt="" />
+                </div>
+              </div>
             </div>
             <div class="intro-copy">
               <h1 class="intro-heading">Hello, World! <span class="wave" aria-hidden="true">👋</span></h1>
@@ -47,7 +58,7 @@
             </p>
           </div>
           <aside class="profile-card">
-            <img class="profile-photo" src="/assets/profile.jpg" alt="Filippo Cilia" width="96" height="96" />
+            <img class="profile-photo" src="/assets/profile.jpg" alt="Filippo Cilia" width="116" height="116" />
             <h3 class="profile-name">Filippo Cilia</h3>
             <p class="profile-role">Software Engineer, iOS</p>
             <p class="profile-location">Manchester, UK</p>
@@ -234,9 +245,11 @@
   </script>
   <script>
     // Scroll-linked, three-phase "shared element" transition:
-    //  1. the big intro cutout shrinks in place into the small circular
-    //     avatar, crossfading into the real photo, while the "Hello, World!"
-    //     copy wipes away.
+    //  1. the big intro cutout turns a half-circle about its vertical axis.
+    //     Backface culling means it vanishes entirely as it passes edge-on at
+    //     90deg, and what comes round the other side is the same crop with
+    //     its background intact, cropped to a circle — which then shrinks
+    //     into the small avatar as the turn finishes.
     //  2. a cloned profile-card (parked at that same avatar spot) fades in
     //     its background/border/shadow plus the name, role, bio and social
     //     row underneath the settled avatar — built in place, nothing
@@ -257,7 +270,8 @@
     // scroll, so the interpolation still lands exactly on the real card at
     // p3 = 1 by construction.
     document.addEventListener("DOMContentLoaded", () => {
-      const flyer = document.getElementById("hero-flyer");
+      const flip = document.getElementById("hero-flip");
+      const flipInner = document.getElementById("hero-flip-inner");
       const flyerBlur = document.getElementById("hero-flyer-blur");
       const ghost = document.getElementById("intro-photo-ghost");
       const intro = document.getElementById("intro");
@@ -265,20 +279,19 @@
       const header = document.querySelector("header.site-header");
       const realCard = document.querySelector(".profile-card");
       const realPhoto = document.querySelector(".profile-photo");
-      const copy = document.querySelector(".intro-copy");
       const floatingIcons = document.querySelector(".floating-icons");
-      if (!flyer || !ghost || !intro || !introPin || !realCard || !realPhoto) return;
+      if (!flip || !flipInner || !ghost || !intro || !introPin || !realCard || !realPhoto) return;
 
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduceMotion) {
-        flyer.remove();
+        flip.remove();
         if (flyerBlur) flyerBlur.remove();
         return;
       }
 
       intro.classList.add("pin-active");
       introPin.style.top = (header ? header.offsetHeight : 0) + "px";
-      flyer.classList.add("is-fixed");
+      flip.classList.add("is-fixed");
       // The icons are absolutely positioned at top:0 of the document (so
       // their natural, unpinned viewport top is always just -scrollY) — held
       // fixed at their scroll-Y=pinStart position for the length of the pin,
@@ -309,6 +322,19 @@
       let flyerBaseW = 1; // the cutout's resting size, set once per measure so
       let flyerBaseH = 1; // update() can scale it instead of re-laying it out
       let ticking = false;
+      let flipIdle = null; // whether the flip card's layers are currently parked
+
+      // The flip card is a nested 3D rendering context on its own composited
+      // layer, and it is completely finished — and invisible — from the
+      // handoff onwards, so it drops its will-change hints rather than
+      // holding those layers alive for the rest of the page. Edge-triggered:
+      // rewriting will-change every frame would defeat the point of it.
+      function setFlipIdle(idle) {
+        if (idle === flipIdle) return;
+        flipIdle = idle;
+        flip.style.willChange = idle ? "auto" : "transform, opacity";
+        flipInner.style.willChange = idle ? "auto" : "transform";
+      }
 
       function measure() {
         // #intro is a plain (non-sticky) block, so its rect is always its
@@ -321,14 +347,15 @@
         flyingCard.style.width = realCard.getBoundingClientRect().width + "px";
         // Short viewports would otherwise spend most of the screen mid-flight.
         phase3Dist = Math.min(450, window.innerHeight * 0.6);
-        // The flyer is sized once, here, and only ever scaled per frame —
+        // The flip card is sized once, here, and only ever scaled per frame —
         // width/height are layout properties and animating them every frame
-        // is what made the shrink stutter.
+        // is what made the shrink stutter. Both faces are inset:0 inside it,
+        // so sizing the box sizes them together and they cannot drift apart.
         const ghostRect = ghost.getBoundingClientRect();
         flyerBaseW = Math.max(ghostRect.width, 1);
         flyerBaseH = Math.max(ghostRect.height, 1);
-        flyer.style.width = flyerBaseW + "px";
-        flyer.style.height = flyerBaseH + "px";
+        flip.style.width = flyerBaseW + "px";
+        flip.style.height = flyerBaseH + "px";
         update();
       }
 
@@ -370,11 +397,23 @@
         const raw12 = clamp01((scrollY - pinStart) / pinBuffer);
         const raw3 = clamp01((scrollY - (pinStart + pinBuffer)) / phase3Dist);
 
-        // The two pinned phases overlap slightly (shrink runs to 0.55, the
-        // card starts building at 0.45) so neither one is ever momentarily
-        // stalled on its own — the handover reads as one continuous move.
-        const p1 = easeOutQuad(clamp01(raw12 / 0.55));
-        const p2 = phaseProgress(raw12, 0.45, 1);
+        // The turn answers the first pixel of scroll (easeOutQuad leaves at
+        // slope 2) and decelerates into face-on, arriving at 180deg at
+        // raw12 = 0.5. It passes 90deg — the frame where both faces are
+        // edge-on, nothing is drawn, and the cutout becomes the circle — at
+        // raw12 ~= 0.146.
+        const pFlip = easeOutQuad(clamp01(raw12 / 0.5));
+        // The shrink starts just past that swap, so the cutout turns at full
+        // size and it is the circle, already swapped in, that travels down
+        // into the card. Every stage overlaps the next (swap 0.15, turn ends
+        // 0.5, card starts building 0.5, shrink ends 0.6, handoff 0.6-0.7) so
+        // nothing is ever momentarily stalled on its own.
+        const pShrink = phaseProgress(raw12, 0.15, 0.6);
+        const p2 = phaseProgress(raw12, 0.5, 1);
+        // Crossfade to the clone's own avatar once the shrink has finished:
+        // by then the two are the same image at the same size in the same
+        // place, so the swap is invisible.
+        const pHand = phaseProgress(raw12, 0.6, 0.7);
         // The flight has to be *finished* before the crossfade starts, not
         // merely nearly finished: the clone and the real card are the same
         // artwork, so any gap between them at the moment both are part-opaque
@@ -411,17 +450,24 @@
         const photoOffsetY = realPhotoRect.top - realCardRect.top;
         const parkCard = { top: parkPhoto.top - photoOffsetY, left: parkPhoto.left - photoOffsetX };
 
-        // Phase 1 — the cutout shrinks from its resting size down to the
-        // small avatar circle, staying put (no travel yet). Both boxes are
-        // square (.intro-photo-wrap is aspect-ratio 1/1, the avatar 96×96),
-        // so a single uniform scale is exact — and it stays on the
-        // compositor instead of relaying out the image every frame.
-        const top = lerp(wrapRect.top, parkPhoto.top, p1);
-        const left = lerp(wrapRect.left, parkPhoto.left, p1);
-        const scale = lerp(1, parkPhoto.width / flyerBaseW, p1);
-        flyer.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
-        flyer.style.opacity = String(1 - p1);
-        if (flyerBlur) flyerBlur.style.opacity = String(1 - p1);
+        // Phase 1 — the card turns a half-circle about its vertical axis and,
+        // from the halfway point on, shrinks from its resting size down to the
+        // small avatar circle. Both boxes are square (.intro-photo-wrap is
+        // aspect-ratio 1/1, .profile-photo equal width and height), so a
+        // single uniform scale is exact — and it stays on the compositor instead of relaying out the
+        // image every frame. Position/size go on the outer box (top-left
+        // origin, matching how everything else here is measured) and the turn
+        // on the inner one, which spins about its own centre.
+        const top = lerp(wrapRect.top, parkPhoto.top, pShrink);
+        const left = lerp(wrapRect.left, parkPhoto.left, pShrink);
+        const scale = lerp(1, parkPhoto.width / flyerBaseW, pShrink);
+        flip.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+        flip.style.opacity = String(1 - pHand);
+        flipInner.style.transform = `rotateY(${pFlip * 180}deg)`;
+        setFlipIdle(pHand >= 1);
+        // The blurred ghost belongs to the cutout's resting pose — it stops
+        // lining up the moment the card starts turning, so it goes early.
+        if (flyerBlur) flyerBlur.style.opacity = String(1 - phaseProgress(raw12, 0, 0.12));
 
         // Phase 3 — the built card travels from its parked spot to the real
         // sidebar slot, tilting and lifting a little on the way rather than
@@ -443,10 +489,10 @@
           `translate(${cardLeft}px, ${cardTop}px) perspective(900px) ` +
           `rotateY(${tilt}deg) scale(${lift})`;
 
-        // The clone's own photo crossfades in during phase 1 (matching the
-        // cutout's fade-out), then phase 2 fades in the rest of the card
+        // The clone's own photo takes over from the turned card once the
+        // shrink has landed, then phase 2 fades in the rest of the card
         // (chrome background + name/role/bio/social) around it in place.
-        if (flyingPhoto) flyingPhoto.style.opacity = String(p1);
+        if (flyingPhoto) flyingPhoto.style.opacity = String(pHand);
         chrome.style.opacity = String(p2);
         flyingRest.forEach((el) => {
           el.style.opacity = String(p2);
@@ -459,18 +505,12 @@
         realCard.style.visibility = fade > 0 ? "visible" : "hidden";
         realCard.style.opacity = String(fade);
 
-        // Wipe the "Hello, World!" copy away (bottom-up) *while the card is
-        // assembling*, not during the flight afterwards. Below 720px
-        // .intro-grid collapses to a single centered column, so the copy sits
-        // directly beneath the avatar and the card builds straight down over
-        // the top of it — waiting for phase 3 left the two overlapping for
-        // the whole build. Clearing it across the back half of the pin means
-        // it is gone before the card is finished, at every width.
-        if (copy) {
-          const pCopy = phaseProgress(raw12, 0.3, 0.9);
-          copy.style.clipPath = `inset(0 0 ${pCopy * 100}% 0)`;
-          copy.style.opacity = String(1 - pCopy);
-        }
+        // The "Hello, World!" copy is deliberately left alone — it stays put
+        // and fully legible for the whole intro, and scrolls away with the
+        // page like any other content. Below 720px .intro-grid collapses to
+        // one centred column and the card would assemble straight down over
+        // the top of it, so the copy is ordered above the photo at that width
+        // instead (see .intro-copy { order: -1 } in styles.css).
       }
 
       function onScroll() {
