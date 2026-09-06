@@ -7,17 +7,17 @@
 //     90deg, and what comes round the other side is the same crop with
 //     its background intact, cropped to a circle — which then shrinks
 //     into the small avatar as the turn finishes.
-//  2. a cloned profile-card (parked at that same avatar spot) fades in
-//     its background/border/shadow plus the name, role, bio and social
-//     row underneath the settled avatar — built in place, nothing
-//     travels yet.
+//  2. a cloned profile-card (parked at that same avatar spot) assembles
+//     around the settled avatar: first its surface, then the name, role
+//     and location, the bio, and finally the social row, each rising a
+//     few pixels into place — built in place, nothing travels yet.
 //  3. the fully-built clone flies over to the real sidebar slot, tilting
 //     slightly away and lifting toward the viewer on the way across, then
 //     settling flat before it lands exactly on the real .profile-card,
 //     which then swaps in.
 //
 // Phases 1-2 happen while #intro-pin is pinned on screen via CSS
-// `position: sticky` (see .intro.pin-active in styles.css) — the page
+// `position: sticky` (see .intro.pin-active in intro.css) — the page
 // doesn't visually scroll until the card has finished forming, so it
 // can't scroll out of view mid-build. All positions are read live via
 // getBoundingClientRect() every frame with no scrollY math: while
@@ -26,9 +26,16 @@
 // the parked reference point and the real card move up in lockstep with
 // scroll, so the interpolation still lands exactly on the real card at
 // p3 = 1 by construction.
+//
+// Progress is driven by a smoothed copy of scrollY rather than the raw
+// value: a wheel click or a trackpad flick moves the page in steps of
+// tens of pixels, and driving the turn straight from those made it
+// stutter. The smoothed value chases the real one over a few frames, so
+// the animation glides between steps but still tracks the finger.
 document.addEventListener("DOMContentLoaded", () => {
   const flip = document.getElementById("hero-flip");
   const flipInner = document.getElementById("hero-flip-inner");
+  const flyerBack = document.getElementById("hero-flyer-back");
   const flyerBlur = document.getElementById("hero-flyer-blur");
   const ghost = document.getElementById("intro-photo-ghost");
   const intro = document.getElementById("intro");
@@ -39,12 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const floatingIcons = document.querySelector(".floating-icons");
   if (!flip || !flipInner || !ghost || !intro || !introPin || !realCard || !realPhoto) return;
 
+  // Reduced motion: no pin, no turn, no flight. The cutout simply sits in
+  // the intro as a picture (the flip card is absolutely positioned inside
+  // .intro-photo-wrap, so left alone it renders in place) and the real
+  // profile card is just there in the sidebar further down.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduceMotion) {
-    flip.remove();
-    if (flyerBlur) flyerBlur.remove();
-    return;
-  }
+  if (reduceMotion) return;
 
   intro.classList.add("pin-active");
   introPin.style.top = (header ? header.offsetHeight : 0) + "px";
@@ -69,15 +76,31 @@ document.addEventListener("DOMContentLoaded", () => {
   flyingCard.insertBefore(chrome, flyingCard.firstChild);
   document.body.appendChild(flyingCard);
   const flyingPhoto = flyingCard.querySelector(".profile-photo");
-  const flyingRest = Array.from(flyingCard.children).filter(
-    (el) => el !== chrome && el !== flyingPhoto
-  );
+
+  // Phase 2 builds the card in stages, each starting a little after the
+  // last and overlapping it. The windows are in phase-2 progress (0..1):
+  // the surface first so there is a card for the rest to sit on, then
+  // the identity lines, the bio, and the social row last.
+  const groups = [
+    { els: [chrome], start: 0, end: 0.45 },
+    {
+      els: [".profile-name", ".profile-role", ".profile-location"]
+        .map((sel) => flyingCard.querySelector(sel))
+        .filter(Boolean),
+      start: 0.15,
+      end: 0.6,
+    },
+    { els: [flyingCard.querySelector(".profile-bio")].filter(Boolean), start: 0.35, end: 0.8 },
+    { els: [flyingCard.querySelector(".profile-social")].filter(Boolean), start: 0.5, end: 1 },
+  ];
+  const rise = 10; // px each stage travels up as it fades in
 
   let phase3Dist = 450; // px of natural scroll, after the pin releases, to fly+spin the card home
   let pinStart = 0; // scrollY at which #intro-pin starts sticking
   let pinBuffer = 1; // extra scroll distance the pin consumes (phases 1-2)
   let flyerBaseW = 1; // the cutout's resting size, set once per measure so
   let flyerBaseH = 1; // update() can scale it instead of re-laying it out
+  let smoothY = window.scrollY; // eased scroll position the phases read
   let ticking = false;
   let flipIdle = null; // whether the flip card's layers are currently parked
 
@@ -113,6 +136,15 @@ document.addEventListener("DOMContentLoaded", () => {
     flyerBaseH = Math.max(ghostRect.height, 1);
     flip.style.width = flyerBaseW + "px";
     flip.style.height = flyerBaseH + "px";
+    // The circle's ring shrinks with the card, so it is drawn thick enough
+    // here that it measures the same as the real avatar's 3px ring once
+    // the shrink has landed — otherwise the ring visibly thickened at the
+    // crossfade.
+    if (flyerBack) {
+      const ringPx = parseFloat(getComputedStyle(realPhoto).borderTopWidth) || 3;
+      flyerBack.style.borderWidth = (ringPx * flyerBaseW) / Math.max(realPhoto.offsetWidth, 1) + "px";
+    }
+    smoothY = window.scrollY;
     update();
   }
 
@@ -151,8 +183,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function update() {
     ticking = false;
     const scrollY = window.scrollY;
-    const raw12 = clamp01((scrollY - pinStart) / pinBuffer);
-    const raw3 = clamp01((scrollY - (pinStart + pinBuffer)) / phase3Dist);
+    // Chase the real scroll position. ~0.22 per frame settles a wheel
+    // step in about a quarter of a second — enough to glide, not enough
+    // to feel like the page is dragging behind the finger.
+    smoothY += (scrollY - smoothY) * 0.22;
+    if (Math.abs(scrollY - smoothY) < 0.5) smoothY = scrollY;
+    else onScroll();
+
+    const raw12 = clamp01((smoothY - pinStart) / pinBuffer);
+    const raw3 = clamp01((smoothY - (pinStart + pinBuffer)) / phase3Dist);
 
     // The turn answers the first pixel of scroll (easeOutQuad leaves at
     // slope 2) and decelerates into face-on, arriving at 180deg at
@@ -166,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 0.5, card starts building 0.5, shrink ends 0.6, handoff 0.6-0.7) so
     // nothing is ever momentarily stalled on its own.
     const pShrink = phaseProgress(raw12, 0.15, 0.6);
-    const p2 = phaseProgress(raw12, 0.5, 1);
+    const p2 = clamp01((raw12 - 0.5) / 0.5);
     // Crossfade to the clone's own avatar once the shrink has finished:
     // by then the two are the same image at the same size in the same
     // place, so the swap is invisible.
@@ -183,6 +222,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const p3 = smoothstep(clamp01(raw3 / fadeStart));
 
     if (floatingIcons) {
+      // The icons follow the real page, not the smoothed value: they are
+      // part of the document and must stay glued to it.
       floatingIcons.style.top = -(pinStart + Math.max(0, scrollY - (pinStart + pinBuffer))) + "px";
     }
 
@@ -192,29 +233,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const photoW = realPhoto.offsetWidth;
     const photoH = realPhoto.offsetHeight;
-    const wrapCenterX = wrapRect.left + wrapRect.width / 2;
-    const wrapCenterY = wrapRect.top + wrapRect.height / 2;
-    const parkPhoto = {
-      top: wrapCenterY - photoH / 2,
-      left: wrapCenterX - photoW / 2,
-      width: photoW,
-      height: photoH,
-    };
-
     // Where the photo sits relative to the card's own top-left corner —
     // used to park/land the *card* so its photo ends up in the right spot.
     const photoOffsetX = realPhotoRect.left - realCardRect.left;
     const photoOffsetY = realPhotoRect.top - realCardRect.top;
+
+    // The avatar parks at the centre of the cutout's box, and the card
+    // builds downwards from it. On a phone the box sits low in the
+    // pinned screen (the greeting is above it), so a card built from
+    // there would run off the bottom — in which case the parking spot is
+    // lifted just enough for the whole card to fit. The circle is
+    // travelling anyway during the shrink, so a slightly higher landing
+    // is not a visible correction.
+    const wrapCenterX = wrapRect.left + wrapRect.width / 2;
+    const cardH = realCardRect.height;
+    const maxPhotoTop = window.innerHeight - 16 - cardH + photoOffsetY;
+    const parkPhoto = {
+      top: Math.min(wrapRect.top + wrapRect.height / 2 - photoH / 2, maxPhotoTop),
+      left: wrapCenterX - photoW / 2,
+      width: photoW,
+      height: photoH,
+    };
     const parkCard = { top: parkPhoto.top - photoOffsetY, left: parkPhoto.left - photoOffsetX };
 
     // Phase 1 — the card turns a half-circle about its vertical axis and,
     // from the halfway point on, shrinks from its resting size down to the
     // small avatar circle. Both boxes are square (.intro-photo-wrap is
     // aspect-ratio 1/1, .profile-photo equal width and height), so a
-    // single uniform scale is exact — and it stays on the compositor instead of relaying out the
-    // image every frame. Position/size go on the outer box (top-left
-    // origin, matching how everything else here is measured) and the turn
-    // on the inner one, which spins about its own centre.
+    // single uniform scale is exact — and it stays on the compositor
+    // instead of relaying out the image every frame. Position/size go on
+    // the outer box (top-left origin, matching how everything else here
+    // is measured) and the turn on the inner one, which spins about its
+    // own centre.
     const top = lerp(wrapRect.top, parkPhoto.top, pShrink);
     const left = lerp(wrapRect.left, parkPhoto.left, pShrink);
     const scale = lerp(1, parkPhoto.width / flyerBaseW, pShrink);
@@ -247,13 +297,17 @@ document.addEventListener("DOMContentLoaded", () => {
       `rotateY(${tilt}deg) scale(${lift})`;
 
     // The clone's own photo takes over from the turned card once the
-    // shrink has landed, then phase 2 fades in the rest of the card
-    // (chrome background + name/role/bio/social) around it in place.
+    // shrink has landed, then phase 2 assembles the rest of the card
+    // around it in place, stage by stage.
     if (flyingPhoto) flyingPhoto.style.opacity = String(pHand);
-    chrome.style.opacity = String(p2);
-    flyingRest.forEach((el) => {
-      el.style.opacity = String(p2);
-    });
+    for (const group of groups) {
+      const p = phaseProgress(p2, group.start, group.end);
+      const dy = rise * (1 - p);
+      for (const el of group.els) {
+        el.style.opacity = String(p);
+        el.style.transform = dy > 0.01 ? `translateY(${dy}px)` : "";
+      }
+    }
 
     // Final handoff: crossfade the clone out and the real card in over
     // the last stretch, once it has landed exactly on top of it.
@@ -262,12 +316,12 @@ document.addEventListener("DOMContentLoaded", () => {
     realCard.style.visibility = fade > 0 ? "visible" : "hidden";
     realCard.style.opacity = String(fade);
 
-    // The "Hello, World!" copy is deliberately left alone — it stays put
-    // and fully legible for the whole intro, and scrolls away with the
-    // page like any other content. Below 720px .intro-grid collapses to
-    // one centred column and the card would assemble straight down over
-    // the top of it, so the copy is ordered above the photo at that width
-    // instead (see .intro-copy { order: -1 } in styles.css).
+    // The greeting is deliberately left alone — it stays put and fully
+    // legible for the whole intro, and scrolls away with the page like
+    // any other content. Below 720px .intro-grid collapses to one
+    // centred column and the card would assemble straight down over the
+    // top of it, so the copy is ordered above the photo at that width
+    // instead (see .intro-copy { order: -1 } in intro.css).
   }
 
   function onScroll() {

@@ -256,7 +256,9 @@ button.button:disabled {
    element transition (see home.html) — same layout/padding as the real
    card, but its own background/border/shadow are stripped out in favor of
    .fc-chrome (a separate layer) so the photo, chrome, and text content can
-   each fade in independently as the animation progresses. */
+   each fade in independently as the animation progresses. Its children
+   get a per-frame transform (a small rise into place) as well as an
+   opacity, so they must not carry transitions of their own. */
 .profile-card.flying-card {
   position: fixed;
   top: 0;
@@ -275,6 +277,11 @@ button.button:disabled {
 /* Matches .profile-card exactly — the clone crossfades into that card at
    the landing, so any difference in fill here shows up as a pop at the
    handoff. Solid, for the same reason the real card is. */
+.profile-card.flying-card > * {
+  transition: none;
+  will-change: opacity, transform;
+}
+
 .fc-chrome {
   position: absolute;
   inset: 0;

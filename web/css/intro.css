@@ -47,10 +47,11 @@
    `translate` centring above rather than replacing it.
 
    The constellation is spread wide and deliberately keeps clear of the
-   middle band, where the cutout photo and the headline sit. */
+   middle band, where the cutout photo and the headline sit — and of the
+   column under the photo, where the profile card assembles. */
 .fi-1 { top: 19%; left: 10%; --fi-max: 104px; }
 .fi-2 { top: 22%; left: 78%; --fi-max: 86px; }
-.fi-3 { top: 34%; left: 31%; --fi-max: 78px; }
+.fi-3 { top: 15%; left: 47%; --fi-max: 78px; }
 .fi-4 { top: 84%; left: 12%; --fi-max: 96px; }
 .fi-5 { top: 63%; left: 87%; --fi-max: 100px; }
 
@@ -96,14 +97,17 @@ main:has(.intro-pin) { padding-top: 0; }
   padding: 12px 0 48px;
 }
 
-/* While the shared-element card-build animation is running (see home.html),
-   #intro is given a class + extra height by JS so .intro-pin (position:
-   sticky, top set to the header's height) stays parked on screen for that
-   extra scroll distance — the page doesn't visually scroll until the card
-   has finished forming. Only added outside prefers-reduced-motion, so
-   reduced-motion visitors just get the plain, non-pinned block above. */
+/* While the shared-element card-build animation is running (see
+   intro-flip.js), #intro is given a class + extra height by JS so
+   .intro-pin (position: sticky, top set to the header's height) stays
+   parked on screen for that extra scroll distance — the page doesn't
+   visually scroll until the card has finished forming. One screen's worth
+   is enough: the turn, the shrink and the build all overlap, and holding
+   longer only made the intro feel stuck. Only added outside
+   prefers-reduced-motion, so reduced-motion visitors just get the plain,
+   non-pinned block above. */
 .intro.pin-active {
-  min-height: calc(100svh - 120px + 120vh);
+  min-height: calc(100svh - 120px + 100vh);
 }
 
 .intro.pin-active .intro-pin {
@@ -111,7 +115,7 @@ main:has(.intro-pin) { padding-top: 0; }
 }
 
 @media (max-width: 720px) {
-  .intro.pin-active { min-height: calc(100svh - 120px + 70vh); }
+  .intro.pin-active { min-height: calc(100svh - 120px + 65vh); }
 }
 
 .intro-grid {
@@ -254,6 +258,9 @@ main:has(.intro-pin) { padding-top: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .intro-copy .wave { animation: none; }
+  /* No turn, so the circle side is never shown: keep it from peeking
+     through the cutout's transparent background. */
+  .hero-flyer-back { display: none; }
 }
 
 @media (max-width: 720px) {
