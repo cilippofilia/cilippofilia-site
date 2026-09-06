@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.join(__dirname, "..", "..");
-const PUBLIC_DIR = path.join(ROOT, "public");
+const PUBLIC_DIR = path.join(ROOT, "web");
 const DATA_DIR = path.join(ROOT, "data");
 
 const MIME = {
