@@ -1,4 +1,4 @@
-# cilippofilia.co.uk (local)
+# cilippofilia.dev (local)
 
 A local-only landing page hub. It never leaves your machine — the server
 only binds to `127.0.0.1`, so nothing on your network (let alone the
@@ -107,10 +107,10 @@ If a matching entry exists in `CUSTOM_APP_PAGES` in `server.js` (keyed by
 the app's App Store track id), its "Published" card links straight to
 this local page instead of out to Apple.
 
-## Making the address bar actually say "cilippofilia.co.uk"
+## Making the address bar actually say "cilippofilia.dev"
 
 Right now it's `localhost:4321`. If you want the browser to show
-`cilippofilia.co.uk/home` instead, map the domain to your own machine by
+`cilippofilia.dev/home` instead, map the domain to your own machine by
 adding one line to `/etc/hosts` (macOS):
 
 ```
@@ -120,10 +120,10 @@ sudo nano /etc/hosts
 Add:
 
 ```
-127.0.0.1   cilippofilia.co.uk
+127.0.0.1   cilippofilia.dev
 ```
 
-Save, then visit **http://cilippofilia.co.uk:4321/home**. This only affects
+Save, then visit **http://cilippofilia.dev:4321/home**. This only affects
 your own machine — nobody else's computer resolves that name any
 differently, and no real domain is registered or touched.
 

@@ -1,4 +1,4 @@
-// Local-only static server for cilippofilia.co.uk.
+// Local-only static server for cilippofilia.dev.
 //
 // - Binds to 127.0.0.1 only — nothing outside this machine can reach it.
 // - /home maps to public/index.html. The old /app-store page is gone — its
@@ -120,6 +120,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`cilippofilia.co.uk running locally at http://${HOST}:${PORT}/home`);
+  console.log(`cilippofilia.dev running locally at http://${HOST}:${PORT}/home`);
   console.log("(bound to 127.0.0.1 — not reachable from any other device)");
 });

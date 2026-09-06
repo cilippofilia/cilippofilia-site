@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Rewrite cilippofilia.co.uk's pages from hand-rolled HTML + vanilla-JS DOM manipulation into Svelte 5 components, served through `Bun.serve()` with HTML imports and `bun-plugin-svelte`, replacing the current hand-rolled `node:http` static server.
+**Goal:** Rewrite cilippofilia.dev's pages from hand-rolled HTML + vanilla-JS DOM manipulation into Svelte 5 components, served through `Bun.serve()` with HTML imports and `bun-plugin-svelte`, replacing the current hand-rolled `node:http` static server.
 
 **Architecture:** Each page becomes a small `.html` entry (head meta/links + one `<script type="module">` that mounts a root Svelte component) plus a `.svelte` root component under `web/components/pages/`, composed from shared components under `web/components/`. `server.js` becomes a `Bun.serve()` app whose routes are these HTML imports plus a handful of small static/API routes carried over from today's server. Global CSS stays exactly as it is today, linked by absolute path from each page's `<head>`.
 
@@ -162,7 +162,7 @@ mount(StyleGuide, { target: document.body });
 - [ ] **Step 7: Write `server.js`**
 
 ```js
-// cilippofilia.co.uk — local-only Bun.serve() app.
+// cilippofilia.dev — local-only Bun.serve() app.
 //
 // - Binds to 127.0.0.1 only — nothing outside this machine can reach it.
 // - Pages are Bun HTML imports: Bun bundles their <script>/<link> tags,
@@ -193,7 +193,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`cilippofilia.co.uk running locally at http://${HOST}:${PORT}/style-guide`);
+console.log(`cilippofilia.dev running locally at http://${HOST}:${PORT}/style-guide`);
 console.log("(bound to 127.0.0.1 — not reachable from any other device)");
 ```
 
@@ -395,7 +395,7 @@ Ports `web/js/nav.js`'s header/footer injection into declarative markup. Compose
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="/home">cilippofilia<span class="dim">.co.uk</span></a>
+    <a class="brand" href="/home">cilippofilia<span class="dim">.dev</span></a>
     <div class="nav-group">
       <nav class="site-nav">
         <a href="/home" class:active={path === "/home"}>Home</a>
@@ -408,7 +408,7 @@ Ports `web/js/nav.js`'s header/footer injection into declarative markup. Compose
 {@render children?.()}
 
 <footer class="site-footer">
-  <div class="wrap">cilippofilia.co.uk — local only, running on your machine.</div>
+  <div class="wrap">cilippofilia.dev — local only, running on your machine.</div>
 </footer>
 ```
 
@@ -999,7 +999,7 @@ Composes the shared components in the same order as `web/index.html`'s body:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cilippofilia.co.uk</title>
+  <title>cilippofilia.dev</title>
   <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/layout.css" />
@@ -1106,11 +1106,11 @@ Ported from `web/app.html`'s inline `<script>` — same slug-from-URL, fetch-`/a
         const found = apps.find((a) => a.slug === slug);
         if (!found) {
           notFound = true;
-          document.title = "Not found — cilippofilia.co.uk";
+          document.title = "Not found — cilippofilia.dev";
           return;
         }
         app = found;
-        document.title = `${found.name} — cilippofilia.co.uk`;
+        document.title = `${found.name} — cilippofilia.dev`;
       })
       .catch(() => {
         loadFailed = true;
@@ -1188,7 +1188,7 @@ Head moved unchanged from `web/app.html` lines 1–16:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cilippofilia.co.uk</title>
+  <title>cilippofilia.dev</title>
   <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/layout.css" />
