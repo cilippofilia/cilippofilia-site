@@ -6,8 +6,8 @@ internet) can reach it.
 
 Visually it follows the tokens in `/style-guide` (also in this repo at
 `public/style-guide.html`) — light, SF Pro, Apple-style pills and spacing,
-measured off apple.com/uk's own CSS. `public/css/styles.css` is the shared
-stylesheet every page but the style guide and `public/nine-tiles-puzzle/`
+measured off apple.com/uk's own CSS. `public/css/` holds the shared
+stylesheets every page but the style guide and `public/nine-tiles-puzzle/`
 (a real, separately-designed landing page) pulls from.
 
 The surface material follows Apple's Liquid Glass language (iOS/macOS 26):
@@ -20,7 +20,7 @@ already-glass card (the "Preorder ›" CTA, the app-detail side panel's
 buttons) gets a flat tint instead of its own blur. There's a fallback to
 plain solid cards for `prefers-reduced-transparency` and browsers without
 `backdrop-filter` support. All of this lives in the `--glass-*` custom
-properties at the top of `public/css/styles.css`.
+properties at the top of `public/css/tokens.css`.
 
 ## Run it
 
@@ -140,7 +140,12 @@ public/
                       in-development (apps.json) app grids
   app.html          — generic per-app template for in-development apps
   style-guide.html  — design tokens and components reference
-  css/styles.css    — shared styling
+  css/               — shared styling, linked in this order
+    tokens.css       — colours, radii, glass material (start here)
+    base.css         — document ground, ambient background, focus rings
+    layout.css       — header, nav, main, footer, hero copy
+    components.css   — buttons, cards, grids, badges, app detail
+    intro.css        — the home page's opening screen (home page only)
   js/
     nav.js          — shared header/footer, injected on every page
     app-card.js     — the card shape both app grids render into

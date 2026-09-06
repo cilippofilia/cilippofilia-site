@@ -1,0 +1,500 @@
+/* The reusable pieces: buttons, app cards and their grids, badges, the
+   featured strip, the profile card, and the per-app detail page. */
+
+/* Primary / secondary buttons standing directly on the page get the full
+   glass material. A button nested inside an already-glass card (the
+   featured strip, the app-detail side panel) is overridden further down
+   to a flat tint instead — glass never stacks on glass. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 980px;
+  font-size: 1rem;
+  background: linear-gradient(rgba(var(--accent-rgb), 0.82), rgba(var(--accent-rgb), 0.72));
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 6px 18px rgba(var(--accent-rgb), 0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.button:hover {
+  text-decoration: none;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 24px rgba(var(--accent-rgb), 0.34);
+}
+
+.button.secondary {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.button.secondary:hover {
+  background: var(--glass-fill);
+  border-color: var(--glass-border);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* .button is sometimes a real <button> (e.g. a disabled state) — reset the
+   parts a browser's default button chrome would otherwise add. */
+button.button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Buttons nested inside a glass card: flat tint, no second blur layer */
+.featured-cta .button,
+.app-detail-side .button {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.22);
+  box-shadow: none;
+}
+
+.featured-cta .button:hover,
+.app-detail-side .button:hover {
+  background: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
+  transform: none;
+  box-shadow: none;
+}
+
+.featured-cta .button.secondary,
+.app-detail-side .button.secondary {
+  background: var(--flat-tint);
+  color: var(--text-dim);
+  border: 1px solid var(--glass-border);
+}
+
+.featured-cta .button.secondary:hover,
+.app-detail-side .button.secondary:hover {
+  background: var(--flat-tint-hover);
+  border-color: var(--glass-border);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  header.site-header,
+  .button.secondary,
+  .profile-card,
+  .featured,
+  .card,
+  .app-detail-side {
+    background: var(--glass-fill-strong) !important;
+    backdrop-filter: none !important;
+  }
+
+  .button {
+    background: var(--accent) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  header.site-header,
+  .button.secondary,
+  .profile-card,
+  .featured,
+  .card,
+  .app-detail-side {
+    background: var(--glass-fill-strong) !important;
+    backdrop-filter: none !important;
+  }
+
+  .button {
+    background: var(--accent) !important;
+    backdrop-filter: none !important;
+  }
+}
+
+.button-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+.kicker {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 0 0 14px;
+}
+
+.featured {
+  /* Same rhythm as `section` below — this strip is one more block in the
+     page's vertical flow, not a special case. */
+  margin-top: 88px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: 28px 32px;
+  flex-wrap: wrap;
+}
+
+.featured-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  flex-shrink: 0;
+  object-fit: cover;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.featured-body { flex: 1; min-width: 200px; }
+
+.featured-eyebrow {
+  display: inline-flex;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 11px;
+  border-radius: 980px;
+  background: var(--orange-bg);
+  color: var(--orange);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px;
+}
+
+.featured h3 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 600; }
+.featured p { margin: 0; color: var(--text-dim); font-size: 0.95rem; }
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+}
+
+.feature { display: flex; flex-direction: column; gap: 14px; }
+
+.feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg-alt);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature h4 { margin: 0; font-size: 1.02rem; font-weight: 600; }
+.feature p { margin: 0; color: var(--text-dim); font-size: 0.92rem; line-height: 1.5; }
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 48px;
+  align-items: start;
+}
+
+/* The one surface on the site that is deliberately not glass: the floating
+   app icons drift right behind it, and at 7% white they read straight
+   through the card and collide with the name, bio and social row. A solid
+   fill is what keeps this card readable. */
+.profile-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: 28px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-photo {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  margin-bottom: 16px;
+}
+
+.profile-name { margin: 0; font-size: 1.1rem; font-weight: 600; }
+.profile-role { margin: 4px 0 0; color: var(--accent); font-size: 0.88rem; font-weight: 500; }
+.profile-location { margin: 3px 0 14px; color: var(--text-dim); font-size: 0.82rem; }
+.profile-bio { margin: 0 0 20px; color: var(--text-dim); font-size: 0.88rem; line-height: 1.5; }
+
+.profile-social { display: flex; gap: 18px; }
+.profile-social a { color: var(--text-dim); display: inline-flex; }
+.profile-social a:hover { color: var(--accent); }
+
+@media (max-width: 720px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .profile-card { max-width: 320px; }
+}
+
+/* The scroll-driven clone of .profile-card used by the intro's shared
+   element transition (see home.html) — same layout/padding as the real
+   card, but its own background/border/shadow are stripped out in favor of
+   .fc-chrome (a separate layer) so the photo, chrome, and text content can
+   each fade in independently as the animation progresses. */
+.profile-card.flying-card {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 20;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Matches .profile-card exactly — the clone crossfades into that card at
+   the landing, so any difference in fill here shows up as a pop at the
+   handoff. Solid, for the same reason the real card is. */
+.fc-chrome {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-lg);
+  background: var(--bg-raised);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  opacity: 0;
+}
+
+/* The header's "App Store" link scrolls here; the offset keeps the sticky
+   header from covering the first card once it lands. */
+#apps { scroll-margin-top: 96px; }
+
+section { margin-top: 88px; }
+
+/* Two card sections with no headings between them (the home page's published
+   and in-development grids) read as one continuous run of cards, so they are
+   spaced by the grid's own row gap rather than the full section rhythm —
+   otherwise the last row sits marooned 88px below the one above it. Sections
+   that do carry an h2, like the App Store page's, keep the full spacing. */
+section:not(:has(h2)) + section:not(:has(h2)) { margin-top: 20px; }
+
+/* The preorder strip and the grid under it are the same run of app cards
+   under one heading, so they get the grid's own row gap between them rather
+   than the full 88px section break. */
+.featured + section { margin-top: 20px; }
+
+section h2,
+.apps-heading {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 20px;
+  letter-spacing: -0.015em;
+}
+
+/* The App Store heading sits outside any section, so it carries the section
+   rhythm itself — and whatever it heads (the preorder strip, or the grid
+   directly when there is no preorder) drops its own top margin so the two
+   read as one block rather than two. */
+.apps-heading { margin-top: 88px; }
+.apps-heading + .featured,
+.apps-heading + section { margin-top: 0; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--text);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.card:hover {
+  text-decoration: none;
+  transform: translateY(-3px);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow-hover);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card .icon { font-size: 1.8rem; }
+
+.card-head img.icon-img {
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.card-subtitle {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.card p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+/* Badges sit on top of an already-glass card — flat tint plus a hairline
+   inner sheen, never their own blur layer. */
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 11px;
+  border-radius: 980px;
+  border: none;
+  background: var(--bg-alt);
+  color: var(--text-dim);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.badge.dev { color: var(--purple); background: var(--purple-bg); }
+.badge.live { color: var(--green); background: var(--green-bg); }
+.badge.concept { color: var(--orange); background: var(--orange-bg); }
+.badge.example { color: var(--text-dim); background: var(--bg-alt); }
+
+.app-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.app-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.app-detail .icon-lg {
+  font-size: 3rem;
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  background: var(--bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* A real app icon fills the tile edge to edge, no plate showing through. */
+.app-detail img.icon-lg {
+  background: none;
+  object-fit: cover;
+  display: block;
+}
+
+.app-detail-meta h1 { margin: 0 0 6px; }
+.app-detail-meta p.lede { margin: 0; }
+
+.app-detail-body {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* The side rail is one floating glass panel holding all its blocks —
+   buttons inside it are overridden to a flat tint above. */
+.app-detail-side {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.app-detail-side h4 {
+  margin: 0 0 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.app-detail .platforms {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .app-detail-body { grid-template-columns: 1fr; }
+}
+
+.chip {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  background: var(--chip-bg);
+  border: 1px solid var(--glass-border);
+  padding: 3px 10px;
+  border-radius: 980px;
+}
+
+.empty-state {
+  color: var(--text-dim);
+  padding: 40px 0;
+}

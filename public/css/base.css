@@ -1,0 +1,66 @@
+/* Page ground: the document itself, the ambient background blooms behind
+   everything, focus rings, and the one width the whole site is measured in. */
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ambient light blooms — soft, low-opacity color the glass surfaces refract.
+   Purely decorative; content sits above them via .wrap/header/footer z-index. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  top: -180px;
+  left: -140px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, var(--bloom-1), rgba(56, 189, 248, 0) 70%);
+}
+
+body::after {
+  top: 260px;
+  right: -180px;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, var(--bloom-2), rgba(249, 115, 22, 0) 70%);
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.card:focus-visible {
+  outline-offset: 2px;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
