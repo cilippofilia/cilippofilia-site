@@ -4,3 +4,6 @@
 # Node (no deps today, but keep this out if any get added)
 node_modules/
 npm-debug.log*
+
+# Local worktrees used for isolated feature work
+.worktrees/
