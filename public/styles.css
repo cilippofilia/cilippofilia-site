@@ -494,12 +494,26 @@ section { margin-top: 88px; }
    that do carry an h2, like the App Store page's, keep the full spacing. */
 section:not(:has(h2)) + section:not(:has(h2)) { margin-top: 20px; }
 
-section h2 {
+/* The preorder strip and the grid under it are the same run of app cards
+   under one heading, so they get the grid's own row gap between them rather
+   than the full 88px section break. */
+.featured + section { margin-top: 20px; }
+
+section h2,
+.apps-heading {
   font-size: 2rem;
   font-weight: 600;
   margin: 0 0 20px;
   letter-spacing: -0.015em;
 }
+
+/* The App Store heading sits outside any section, so it carries the section
+   rhythm itself — and whatever it heads (the preorder strip, or the grid
+   directly when there is no preorder) drops its own top margin so the two
+   read as one block rather than two. */
+.apps-heading { margin-top: 88px; }
+.apps-heading + .featured,
+.apps-heading + section { margin-top: 0; }
 
 .grid {
   display: grid;

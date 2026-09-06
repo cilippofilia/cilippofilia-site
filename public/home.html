@@ -85,6 +85,12 @@
            the first app content on the page. -->
       <div id="apps" aria-hidden="true"></div>
 
+      <!-- Heads the whole App Store block — the featured preorder strip and
+           the published grid under it. Hidden until the feed comes back, for
+           the same reason those two are: a heading over nothing is worse
+           than no heading. -->
+      <h2 class="apps-heading" id="apps-heading" hidden>What's on the App Store</h2>
+
       <div class="featured" id="featured-strip" hidden></div>
 
       <section id="published-section" hidden>
@@ -98,8 +104,8 @@
   </main>
   <script src="/nav.js"></script>
   <script>
-    // "In development" — the same local apps.json feed the App Store page
-    // used to render, now shown here under the preorder card.
+    // "In development" — the local apps.json feed, shown under the preorder
+    // card and the published grid.
     // While only The Relay is ready to show publicly, filter the rest of
     // apps.json out here rather than deleting their entries.
     const DEV_SLUGS_TO_SHOW = ["the-relay"];
@@ -184,12 +190,14 @@
   </script>
   <script>
     // Highlight whichever published app is still a preorder, if any —
-    // computed live from the same feed the App Store page uses, never hardcoded.
+    // computed live from Apple's own feed, never hardcoded.
     // The same response fills the "Published" grid below it, so the grid can
     // skip whichever app is already featured as the preorder up top.
     fetch("/api/appstore-apps")
       .then((r) => r.json())
       .then((apps) => {
+        if (apps.length) document.getElementById("apps-heading").hidden = false;
+
         const upcoming = apps.find((a) => a.releaseDate && new Date(a.releaseDate) > new Date());
         const fmtDate = (iso) =>
           new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });

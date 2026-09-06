@@ -1,7 +1,9 @@
 // Local-only static server for cilippofilia.co.uk.
 //
 // - Binds to 127.0.0.1 only — nothing outside this machine can reach it.
-// - /home and /app-store map to their own HTML files in public/.
+// - /home maps to its own HTML file in public/. The old /app-store page is
+//   gone — its content now lives in a section of /home, and the path
+//   redirects there so existing links still land somewhere sensible.
 // - A path like /nine-tiles-puzzle that matches a folder in public/ with its
 //   own index.html (a full custom landing page, own CSS/JS/assets) is served
 //   straight from that folder.
@@ -24,7 +26,7 @@ const PUBLIC_DIR = path.join(ROOT, "public");
 const DATA_DIR = path.join(ROOT, "data");
 
 // Filippo Carlo Cilia's App Store developer id — pulled live so shipped apps
-// show up on /app-store automatically as new ones go out.
+// show up on /home automatically as new ones go out.
 // https://apps.apple.com/us/developer/filippo-carlo-cilia/id1690376038
 const APPLE_DEVELOPER_ID = "1690376038";
 const APPSTORE_CACHE_MS = 10 * 60 * 1000; // 10 minutes
@@ -159,8 +161,13 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // The App Store listing is a section of /home now. This has to stay an
+  // explicit route rather than just being deleted: /app-store still matches
+  // the single-segment rule below, so without it the request would fall
+  // through to the generic per-app template and look for an app by that slug.
   if (pathname === "/app-store") {
-    serveFile(res, path.join(PUBLIC_DIR, "app-store.html"));
+    res.writeHead(301, { Location: "/home#apps" });
+    res.end();
     return;
   }
 

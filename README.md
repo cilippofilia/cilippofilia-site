@@ -34,10 +34,11 @@ Then open **http://localhost:4321/home**.
 
 ## Pages that exist right now
 
-- `/home` — the landing page
-- `/app-store` — two sections: **Published**, pulled live from your real
-  App Store developer page, and **In development**, from `data/apps.json`
-  (currently hidden — see below)
+- `/home` — the landing page. Everything is on it: the intro, and under
+  "What's on the App Store", **Published**, pulled live from your real
+  App Store developer page, plus **In development**, from `data/apps.json`
+- `/app-store` — the old standalone page, now a permanent redirect to
+  `/home#apps`, so existing links still work
 - one page per in-development app, e.g. `/the-relay`, `/running-plan`
 - `/nine-tiles-puzzle` — the real marketing site for 9 Tiles Puzzle, a
   custom multi-file page (its own CSS/JS/assets), not the generic template
@@ -45,7 +46,7 @@ Then open **http://localhost:4321/home**.
 ## The "Published" section
 
 `server.js` calls Apple's iTunes lookup API for developer id `1690376038`
-(Filippo Carlo Cilia) every time `/app-store` is loaded, caches the result
+(Filippo Carlo Cilia) every time `/home` is loaded, caches the result
 for 10 minutes, and lists whatever comes back — icon, name, and a link to
 the real App Store page. New apps you ship show up here automatically,
 with no editing required. If Apple can't be reached (offline, etc.) it
@@ -61,9 +62,10 @@ future (this is automatic — nothing to configure per app). A published
 app can also link straight to its own custom local page instead of out
 to Apple — see "Custom app pages" below.
 
-The "In development" section is currently hidden: `SHOW_IN_DEVELOPMENT`
-near the top of the inline script in `app-store.html` is set to `false`.
-Flip it to `true` to bring it back.
+The "In development" section only lists the slugs named in
+`DEV_SLUGS_TO_SHOW`, near the top of the inline script in `home.html` —
+the rest of `data/apps.json` is filtered out rather than deleted. Add a
+slug there to show it.
 
 ## Adding an in-development app page
 
@@ -83,7 +85,7 @@ You don't need to write any HTML. Open `data/apps.json` and add an entry:
 ```
 
 Save, refresh the browser — `/my-new-app` now works, and it shows up in
-the "In development" section of `/app-store` automatically. `status`
+the "In development" section of `/home` automatically. `status`
 just changes the badge color; it currently recognizes anything containing
 "dev" or "concept", and falls back to a neutral badge otherwise. Once the
 app actually ships, delete its entry here — it'll show up in "Published"
@@ -131,8 +133,8 @@ differently, and no real domain is registered or touched.
 server.js          — local static server + live App Store fetch (no npm deps)
 data/apps.json      — in-development apps: one entry per landing page
 public/
-  home.html         — landing page
-  app-store.html    — published (live) + in-development (apps.json) grids
+  home.html         — landing page, plus the published (live) and
+                      in-development (apps.json) app grids
   app.html          — generic per-app template for in-development apps
   styles.css        — shared styling
   nav.js            — shared header/footer, injected on every page

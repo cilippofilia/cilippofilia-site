@@ -13,7 +13,7 @@ function renderChrome() {
       <div class="nav-group">
         <nav class="site-nav">
           <a href="/home" data-path="/home">Home</a>
-          <a href="/home#apps" data-path="/app-store">App Store</a>
+          <a href="/home#apps">App Store</a>
         </nav>
       </div>
     </div>
