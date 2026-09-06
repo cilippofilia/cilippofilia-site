@@ -3,7 +3,7 @@
     "slug": "the-relay",
     "name": "relay",
     "tagline": "An analog signal-sorting mystery for iPhone, iPad, and Mac.",
-    "description": "A decommissioned coastal signal relay station. Old analog transmissions come in, and it's your job to sort them into the right archive channels — until the story hidden inside the static starts to piece itself together. Free to start, with a single premium unlock for the full Archive.",
+    "description": "A decommissioned coastal relay station. Old analog transmissions come in and you work shifts sorting them into the right archive channels, while the story hidden in the static pieces itself together one fragment at a time. Free to start, with a single unlock for the full Archive.",
     "platforms": ["iPhone", "iPad", "Mac"],
     "status": "In development",
     "icon": "/assets/app-icons/thumb/relay-icon.png",
