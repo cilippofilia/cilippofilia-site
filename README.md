@@ -63,7 +63,7 @@ app can also link straight to its own custom local page instead of out
 to Apple — see "Custom app pages" below.
 
 The "In development" section only lists the slugs named in
-`DEV_SLUGS_TO_SHOW`, near the top of the inline script in `public/index.html` —
+`DEV_SLUGS_TO_SHOW`, near the top of `public/js/apps-feed.js` —
 the rest of `data/apps.json` is filtered out rather than deleted. Add a
 slug there to show it.
 
@@ -141,7 +141,12 @@ public/
   app.html          — generic per-app template for in-development apps
   style-guide.html  — design tokens and components reference
   css/styles.css    — shared styling
-  js/nav.js         — shared header/footer, injected on every page
+  js/
+    nav.js          — shared header/footer, injected on every page
+    app-card.js     — the card shape both app grids render into
+    apps-feed.js    — fills those grids from Apple's feed and apps.json
+    intro-flip.js   — the scroll-linked intro animation
+    floating-icons.js — idle drift for the icons behind the hero
   assets/           — images, app icons, favicons
   nine-tiles-puzzle/ — a custom multi-file app site (see above)
 ```
