@@ -23,9 +23,20 @@ const MIME = {
   ".ico": "image/x-icon",
 };
 
-function send(res, status, body, contentType) {
-  res.writeHead(status, { "Content-Type": contentType || "text/plain; charset=utf-8" });
-  res.end(body);
+function send(res, status, body, contentType, extraHeaders = {}) {
+  const payload = Buffer.isBuffer(body) ? body : Buffer.from(String(body));
+  res.writeHead(status, {
+    "Content-Type": contentType || "text/plain; charset=utf-8",
+    "Content-Length": payload.length,
+    ...extraHeaders,
+  });
+  // node's ServerResponse carries its request as res.req; a HEAD answer is
+  // the GET headers with the body withheld.
+  if (res.req && res.req.method === "HEAD") {
+    res.end();
+    return;
+  }
+  res.end(payload);
 }
 
 function redirect(res, location, status = 302) {
@@ -33,14 +44,14 @@ function redirect(res, location, status = 302) {
   res.end();
 }
 
-function serveFile(res, filePath) {
+function serveFile(res, filePath, status = 200) {
   const ext = path.extname(filePath).toLowerCase();
   fs.readFile(filePath, (err, data) => {
     if (err) {
       send(res, 404, "404 Not Found");
       return;
     }
-    send(res, 200, data, MIME[ext] || "application/octet-stream");
+    send(res, status, data, MIME[ext] || "application/octet-stream");
   });
 }
 

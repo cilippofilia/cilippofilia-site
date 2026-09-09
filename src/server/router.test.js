@@ -67,3 +67,23 @@ test("a path that escapes the public folder is refused", async () => {
   expect([403, 404]).toContain(res.status);
   expect(res.body).not.toContain("createServer");
 });
+
+test("a slug listed in data/apps.json gets the app template", async () => {
+  const res = await request("GET", "/the-relay");
+  expect(res.status).toBe(200);
+  expect(res.body).toContain('id="content"');
+});
+
+test("a slug that exists nowhere answers 404 with the not-found page", async () => {
+  const res = await request("GET", "/definitely-not-an-app");
+  expect(res.status).toBe(404);
+  expect(res.headers["content-type"]).toBe("text/html; charset=utf-8");
+  expect(res.body).toContain("Nothing here");
+});
+
+test("HEAD carries the headers of a GET but no body", async () => {
+  const res = await request("HEAD", "/home");
+  expect(res.status).toBe(200);
+  expect(Number(res.headers["content-length"])).toBeGreaterThan(1000);
+  expect(res.body).toBe("");
+});

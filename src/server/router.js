@@ -16,6 +16,7 @@ const path = require("path");
 
 const { getPublishedApps } = require("./appstore");
 const { PUBLIC_DIR, DATA_DIR, send, redirect, serveFile, serveWithin } = require("./static");
+const { hasDevApp } = require("./dev-apps");
 
 // Directories under web/ served verbatim. Anything not listed here is
 // routed explicitly below, so a new top-level folder has to be opted in
@@ -88,15 +89,14 @@ async function route(pathname, req, res) {
     return;
   }
 
-  // Anything else that looks like a single clean slug (e.g. /the-relay)
-  // falls back to the generic app template, which resolves itself against
-  // data/apps.json in the browser.
-  if (/^\/[a-zA-Z0-9-]+$/.test(pathname)) {
+  // A single clean slug that has an entry in data/apps.json gets the
+  // generic app template, which renders that entry in the browser.
+  if (/^\/[a-zA-Z0-9-]+$/.test(pathname) && hasDevApp(pathname.slice(1))) {
     serveFile(res, path.join(PUBLIC_DIR, "app.html"));
     return;
   }
 
-  send(res, 404, "404 Not Found");
+  serveFile(res, path.join(PUBLIC_DIR, "404.html"), 404);
 }
 
 // The one entry point. A bad percent-escape used to throw out of
