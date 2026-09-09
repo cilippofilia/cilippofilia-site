@@ -10,6 +10,7 @@
 // A failed fetch leaves the page as it was rather than showing an error.
 
 import { appCard, badgeClass } from "./app-card.js";
+import { escapeHtml as esc } from "./html.js";
 
 // While only relay is ready to show publicly, filter the rest of
 // apps.json out here rather than deleting their entries.
@@ -52,15 +53,15 @@ function renderPublished(apps) {
   strip.innerHTML = `
     ${
       upcoming.icon
-        ? `<img class="featured-icon" src="${upcoming.icon}" alt="" width="64" height="64" />`
+        ? `<img class="featured-icon" src="${esc(upcoming.icon)}" alt="" width="64" height="64" />`
         : ""
     }
     <div class="featured-body">
       <span class="featured-eyebrow">Preorder</span>
-      <h3>${upcoming.name}</h3>
-      <p>${upcoming.tagline || ""} Releases ${fmtDate(upcoming.releaseDate)}.</p>
+      <h3>${esc(upcoming.name)}</h3>
+      <p>${esc(upcoming.tagline)} Releases ${esc(fmtDate(upcoming.releaseDate))}.</p>
     </div>
-    <a class="button secondary" href="${upcoming.localUrl || upcoming.url}">Preorder ›</a>
+    <a class="button secondary" href="${esc(upcoming.localUrl || upcoming.url)}">Preorder ›</a>
   `;
   strip.hidden = false;
 }

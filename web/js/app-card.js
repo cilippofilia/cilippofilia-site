@@ -3,6 +3,8 @@
 // read out of data/apps.json. The two feeds carry different fields, so
 // they each normalize into these arguments rather than into each other.
 
+import { escapeHtml as esc } from "./html.js";
+
 // "Drinko: Cocktail Recipes" -> title "Drinko", subtitle "Cocktail Recipes".
 export function splitName(name) {
   const idx = (name || "").indexOf(":");
@@ -31,26 +33,27 @@ export function badgeClass(status) {
 // can't nest inside links — so the buttons are the only way off the card.
 export function appCard({ websiteUrl, appStoreUrl, icon, name, badge, badgeStyle, tagline }) {
   const { title, subtitle } = splitName(name);
+  const safeIcon = esc(icon);
   return `
     <article class="card">
       <div class="card-head">
         ${
           isImageIcon(icon)
-            ? `<img class="icon-img" src="${icon}" alt="" width="48" height="48" />`
-            : `<span class="icon">${icon || "📱"}</span>`
+            ? `<img class="icon-img" src="${safeIcon}" alt="" width="48" height="48" />`
+            : `<span class="icon">${safeIcon || "📱"}</span>`
         }
         <div class="card-title">
-          <h3>${title}</h3>
-          ${subtitle ? `<p class="card-subtitle">${subtitle}</p>` : ""}
+          <h3>${esc(title)}</h3>
+          ${subtitle ? `<p class="card-subtitle">${esc(subtitle)}</p>` : ""}
         </div>
       </div>
-      <span class="badge ${badgeStyle}">${badge}</span>
-      <p>${tagline || ""}</p>
+      <span class="badge ${esc(badgeStyle)}">${esc(badge)}</span>
+      <p>${esc(tagline)}</p>
       <div class="card-actions">
-        ${websiteUrl ? `<a class="button secondary" href="${websiteUrl}">Website</a>` : ""}
+        ${websiteUrl ? `<a class="button secondary" href="${esc(websiteUrl)}">Website</a>` : ""}
         ${
           appStoreUrl
-            ? `<a class="button" href="${appStoreUrl}" target="_blank" rel="noopener">App Store</a>`
+            ? `<a class="button" href="${esc(appStoreUrl)}" target="_blank" rel="noopener">App Store</a>`
             : `<button type="button" class="button" disabled>App Store</button>`
         }
       </div>

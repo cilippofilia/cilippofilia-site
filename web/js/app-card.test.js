@@ -51,3 +51,21 @@ test("a card with no landing page omits the Website button", () => {
   expect(html).not.toContain(">Website<");
   expect(html).toContain(">App Store<");
 });
+
+test("a card escapes markup that arrives in its fields", () => {
+  const html = appCard({
+    websiteUrl: '/x" onmouseover="alert(1)',
+    appStoreUrl: "https://apps.apple.com/x",
+    icon: "🍸",
+    name: '<img src=x onerror=alert(1)>: "Sub"',
+    badge: "<b>Live</b>",
+    badgeStyle: "live",
+    tagline: "Tom & Jerry <3",
+  });
+  expect(html).not.toContain("<img src=x");
+  expect(html).not.toContain('onmouseover="alert');
+  expect(html).not.toContain("<b>Live</b>");
+  expect(html).toContain("&lt;img src=x onerror=alert(1)&gt;");
+  expect(html).toContain("Tom &amp; Jerry &lt;3");
+  expect(html).toContain('href="/x&quot; onmouseover=&quot;alert(1)"');
+});
