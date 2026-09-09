@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/layout.css" />
   <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/notfound-game.css" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
   <meta name="theme-color" content="#000000" />
@@ -17,6 +18,7 @@
   <main>
     <div class="wrap">
       <section class="hero" style="margin-top:0">
+        <span class="badge concept">404</span>
         <h1>Nothing here.</h1>
         <p class="lede">That address doesn't match a page or an app on this site.</p>
         <div class="button-row">
@@ -24,8 +26,23 @@
           <a class="button secondary" href="/home#apps">See the apps</a>
         </div>
       </section>
+
+      <div class="notfound-game">
+        <p class="notfound-game-score" hidden></p>
+        <div class="notfound-game-field">
+          <p class="notfound-game-hint">Tap the broken link to play.</p>
+          <p class="notfound-game-best" hidden></p>
+        </div>
+        <div class="notfound-game-result" hidden>
+          <p class="notfound-game-result-score"></p>
+          <p class="notfound-game-result-text"></p>
+          <p class="notfound-game-result-best" hidden></p>
+          <button type="button" class="button secondary notfound-game-replay">Play again</button>
+        </div>
+      </div>
     </div>
   </main>
   <script src="/js/nav.js"></script>
+  <script type="module" src="/js/notfound-game.js"></script>
 </body>
 </html>

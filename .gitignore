@@ -10,3 +10,6 @@ npm-debug.log*
 
 # Built by `bun run build`
 web/js/floating-icons.bundle.js
+
+# Runtime state, not source content
+data/notfound-scores.db

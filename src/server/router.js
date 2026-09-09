@@ -17,6 +17,16 @@ const path = require("path");
 const { getPublishedApps } = require("./appstore");
 const { PUBLIC_DIR, DATA_DIR, send, redirect, serveFile, serveWithin } = require("./static");
 const { hasDevApp } = require("./dev-apps");
+const { getBest, submitScore } = require("./notfound-scores");
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.on("data", (chunk) => (body += chunk));
+    req.on("end", () => resolve(body));
+    req.on("error", reject);
+  });
+}
 
 // Directories under web/ served verbatim. Anything not listed here is
 // routed explicitly below, so a new top-level folder has to be opted in
@@ -47,6 +57,21 @@ async function route(pathname, req, res) {
   if (pathname === "/api/appstore-apps") {
     const apps = await getPublishedApps();
     send(res, 200, JSON.stringify(apps), "application/json; charset=utf-8");
+    return;
+  }
+
+  if (pathname === "/api/notfound-score") {
+    if (req.method === "POST") {
+      let score = 0;
+      try {
+        score = JSON.parse(await readBody(req)).score;
+      } catch {
+        // malformed body — treat as no score, still return the real best
+      }
+      send(res, 200, JSON.stringify({ best: submitScore(score) }), "application/json; charset=utf-8");
+    } else {
+      send(res, 200, JSON.stringify({ best: getBest() }), "application/json; charset=utf-8");
+    }
     return;
   }
 
