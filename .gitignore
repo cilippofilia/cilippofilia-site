@@ -7,3 +7,6 @@ npm-debug.log*
 
 # Local worktrees used for isolated feature work
 .worktrees/
+
+# Built by `bun run build`
+web/js/floating-icons.bundle.js

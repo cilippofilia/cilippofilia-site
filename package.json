@@ -1,6 +1,12 @@
 {
   "name": "cilippofilia-site",
   "private": true,
+  "scripts": {
+    "build": "bun build src/client/floating-icons.js --outfile web/js/floating-icons.bundle.js --minify --target browser",
+    "start": "bun run build && bun server.js",
+    "dev": "bun run build && bun --watch server.js",
+    "test": "bun test"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "prettier": "^3.9.6"
