@@ -1461,10 +1461,11 @@ Expected: FAIL — landing.css is 404.
 
 - [ ] **Step 4: Create `web/css/landing.css` from the Iterly stylesheet**
 
-Iterly's `style.css` has its two token blocks in lines 1–38 and `* { box-sizing... }` at line 39. Copy from line 39 to the end, then neutralise the app-specific names:
+Iterly's `style.css` has its two token blocks first, then `* { box-sizing... }`. Find that line and copy from it to the end, then neutralise the app-specific names:
 
 ```bash
-sed -n '39,$p' web/iterly/style.css > web/css/landing.css
+cut_line=$(grep -n '^\* {' web/iterly/style.css | head -1 | cut -d: -f1)
+sed -n "${cut_line},\$p" web/iterly/style.css > web/css/landing.css
 sed -i '' \
   -e 's/\.mark\b/.float/g' \
   -e 's/--mark-/--float-/g' \
@@ -1500,15 +1501,14 @@ Expected: no output.
 
 - [ ] **Step 5: Write each `theme.css`**
 
-For each app, `theme.css` = that app's original lines 1–38 (the `:root` block and the dark-scheme block) plus the new tokens. Start with:
+For each app, `theme.css` = that app's `:root` block and dark-scheme block — everything before its own `* { box-sizing... }` line — plus the new tokens. The box-sizing line is at line 38 for drinko/iterly/itswritten and line 39 for nine-tiles-puzzle, so find it per file rather than hardcoding:
 
 ```bash
 for app in drinko iterly itswritten nine-tiles-puzzle; do
-  sed -n '1,38p' "web/$app/style.css" > "web/$app/theme.css"
+  cut_line=$(grep -n '^\* {' "web/$app/style.css" | head -1 | cut -d: -f1)
+  sed -n "1,$((cut_line - 1))p" "web/$app/style.css" > "web/$app/theme.css"
 done
 ```
-
-(All four files have `* {` at line 39, so the same cut works for each; confirm with `sed -n '39p' web/*/style.css`.)
 
 Then add, inside the `:root { ... }` block of each theme (before its closing brace), the five bridging tokens. Values come straight from what the original stylesheet used:
 
@@ -1526,12 +1526,14 @@ Also carry over the per-app float variable names. In each theme file run the sam
 - [ ] **Step 6: Move the page-specific blocks**
 
 - `web/iterly/page.css` already holds `.note` from Step 4.
-- Create `web/nine-tiles-puzzle/page.css` with the countdown block: original `style.css` lines 248–321, which begin with `.countdown {` and end with the closing brace of the `background-clip: text` rule, just before the blank line and `.badge-row[hidden]` at line 323. Confirm with `sed -n '246,324p' web/nine-tiles-puzzle/style.css` before cutting, and include any `/* ---- Countdown ---- */` section comment that sits directly above `.countdown {`. Rename `--piece-` → `--float-` inside it if present.
+- Create `web/nine-tiles-puzzle/page.css` with the countdown block: original `style.css` lines 248–321 (from `.countdown {` — there is no section comment above it, just a blank line — through the last rule before `.badge-row[hidden]` at line 324). Confirm the exact span with `sed -n '246,325p' web/nine-tiles-puzzle/style.css` before cutting. Rename `--piece-` → `--float-` inside it if present.
 - Diff the remainder of each original against `landing.css` and resolve every leftover hunk into `theme.css` (a token) or `page.css` (a rule):
 
 ```bash
 for app in drinko itswritten nine-tiles-puzzle; do
-  echo "== $app"; diff <(sed -n '39,$p' "web/$app/style.css" | sed -e 's/\.glass\b/.float/g;s/\.piece\b/.float/g;s/--glass-/--float-/g;s/--piece-/--float-/g;s/glassFloat/floatDrift/g;s/pieceFloat/floatDrift/g') web/css/landing.css
+  cut_line=$(grep -n '^\* {' "web/$app/style.css" | head -1 | cut -d: -f1)
+  echo "== $app"
+  diff <(sed -n "${cut_line},\$p" "web/$app/style.css" | sed -e 's/\.glass\b/.float/g;s/\.piece\b/.float/g;s/--glass-/--float-/g;s/--piece-/--float-/g;s/glassFloat/floatDrift/g;s/pieceFloat/floatDrift/g') web/css/landing.css
 done
 ```
 Expected after resolving: each diff shows only the hunks already accounted for (bloom vars, shadow rgba, `--link`, mask default, and 9 Tiles' countdown / Iterly's note). Anything else is a real rule difference: move it into that app's `page.css`.
