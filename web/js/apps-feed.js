@@ -11,6 +11,7 @@
 
 import { appCard, badgeClass } from "./app-card.js";
 import { escapeHtml as esc } from "./html.js";
+import { observeReveal } from "./reveal.js";
 
 // While only relay is ready to show publicly, filter the rest of
 // apps.json out here rather than deleting their entries.
@@ -48,7 +49,10 @@ function renderPublished(apps) {
     show("published-section");
   }
 
-  if (!upcoming) return;
+  if (!upcoming) {
+    observeReveal();
+    return;
+  }
   const strip = document.getElementById("featured-strip");
   strip.innerHTML = `
     ${
@@ -64,6 +68,7 @@ function renderPublished(apps) {
     <a class="button secondary" href="${esc(upcoming.localUrl || upcoming.url)}">Preorder ›</a>
   `;
   strip.hidden = false;
+  observeReveal();
 }
 
 function renderInDevelopment(allApps) {
@@ -83,6 +88,7 @@ function renderInDevelopment(allApps) {
     )
     .join("");
   show("dev-section");
+  observeReveal();
 }
 
 fetch("/api/appstore-apps")

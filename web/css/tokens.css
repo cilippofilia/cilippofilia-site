@@ -25,6 +25,11 @@
   --max-width: 1024px;
   color-scheme: dark;
 
+  /* Spring-ish ease for anything that moves on hover, press, or scroll into
+     view — a fast start that settles rather than the linear/ease-in-out
+     defaults, without the overshoot of an actual bounce. */
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
   --bloom-1: rgba(56, 189, 248, 0.3);
   --bloom-2: rgba(249, 115, 22, 0.24);
   --chip-bg: rgba(255, 255, 255, 0.08);

@@ -35,7 +35,7 @@ export function appCard({ websiteUrl, appStoreUrl, icon, name, badge, badgeStyle
   const { title, subtitle } = splitName(name);
   const safeIcon = esc(icon);
   return `
-    <article class="card">
+    <article class="card reveal">
       <div class="card-head">
         ${
           isImageIcon(icon)
