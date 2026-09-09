@@ -10,6 +10,17 @@ header.site-header {
   border-bottom: 1px solid var(--glass-border);
   box-shadow: inset 0 1px 0 var(--glass-highlight);
   padding: 14px 0;
+  transition: box-shadow 0.3s var(--ease-spring), border-color 0.3s var(--ease-spring);
+}
+
+/* Set once the page has scrolled past the header's own height (see
+   nav.js's IntersectionObserver) — a deeper shadow and a slightly
+   brighter hairline, so the bar reads as lifted chrome rather than
+   sitting flush with the page underneath it. No size/padding change:
+   those are layout properties, not worth animating for this. */
+header.site-header.is-condensed {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 header.site-header .wrap {
@@ -44,13 +55,39 @@ nav.site-nav {
 }
 
 nav.site-nav a {
+  position: relative;
   color: var(--text-dim);
+  padding-bottom: 2px;
 }
 
 nav.site-nav a.active,
 nav.site-nav a:hover {
   color: var(--text);
   text-decoration: none;
+}
+
+/* A thin underline that grows in from the left rather than the color
+   change doing all the work alone. Scale, not width, so it never affects
+   layout. Active stays fully drawn; hover draws and retracts on its own. */
+nav.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-spring);
+}
+
+nav.site-nav a.active::after {
+  transform: scaleX(1);
+}
+
+nav.site-nav a:hover::after {
+  transform: scaleX(1);
 }
 
 main {

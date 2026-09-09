@@ -65,7 +65,7 @@ function renderPublished(apps) {
       <h3>${esc(upcoming.name)}</h3>
       <p>${esc(upcoming.tagline)} Releases ${esc(fmtDate(upcoming.releaseDate))}.</p>
     </div>
-    <a class="button secondary" href="${esc(upcoming.localUrl || upcoming.url)}">Preorder ›</a>
+    <a class="button secondary" href="${esc(upcoming.localUrl || upcoming.url)}">Preorder <span class="chevron">›</span></a>
   `;
   strip.hidden = false;
   observeReveal();

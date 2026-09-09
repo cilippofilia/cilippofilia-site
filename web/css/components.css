@@ -138,6 +138,17 @@ button.button:disabled {
 
 .button-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 
+/* Chevron in a button or back-link nudges further in the direction it's
+   already pointing on hover, so the arrow reads as inviting the click
+   rather than sitting there as decoration. */
+.chevron {
+  display: inline-block;
+  transition: transform 0.22s var(--ease-spring);
+}
+
+.button:hover .chevron { transform: translateX(3px); }
+.back-link:hover .chevron { transform: translateX(-3px); }
+
 .kicker {
   font-size: 0.78rem;
   font-weight: 600;
@@ -255,8 +266,12 @@ button.button:disabled {
 .profile-bio { margin: 0 0 20px; color: var(--text-dim); font-size: 0.88rem; line-height: 1.5; }
 
 .profile-social { display: flex; gap: 18px; }
-.profile-social a { color: var(--text-dim); display: inline-flex; }
-.profile-social a:hover { color: var(--accent); }
+.profile-social a {
+  color: var(--text-dim);
+  display: inline-flex;
+  transition: color 0.18s var(--ease-spring), transform 0.18s var(--ease-spring);
+}
+.profile-social a:hover { color: var(--accent); transform: translateY(-2px); }
 
 @media (max-width: 720px) {
   .hero-grid { grid-template-columns: 1fr; }
@@ -372,7 +387,11 @@ section h2,
   gap: 14px;
 }
 
-.card .icon { font-size: 2rem; }
+.card .icon {
+  font-size: 2rem;
+  display: inline-block;
+  transition: transform 0.22s var(--ease-spring);
+}
 
 /* A real icon at 56px is big enough to read as an app icon in its own right;
    the width/height attributes on the <img> are 48 for layout stability and
@@ -383,6 +402,15 @@ section h2,
   border-radius: 14px;
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.22s var(--ease-spring);
+}
+
+/* A little more lift on the icon than the card gets as a whole, so the
+   card reads as one surface tilting toward the cursor rather than a flat
+   plane with a sticker on it. */
+.card:hover .icon,
+.card:hover .icon-img {
+  transform: scale(1.05);
 }
 
 .card-title {
@@ -585,6 +613,42 @@ section h2,
 
 @media (max-width: 640px) {
   .app-detail-body { grid-template-columns: 1fr; }
+}
+
+/* Loading state for web/app.html — sits inside the same app-detail-head /
+   app-detail-body / app-detail-side wrappers as the real content (see
+   app-detail.js), so it inherits that layout instead of duplicating it,
+   with content swapped for shimmering placeholder blocks. Decorative: the
+   actual "loading" announcement is the .visually-hidden status text next
+   to it in app.html. */
+.skeleton-block {
+  background: linear-gradient(100deg, var(--glass-fill) 40%, rgba(255, 255, 255, 0.14) 50%, var(--glass-fill) 60%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.skeleton-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  flex-shrink: 0;
+}
+
+.skeleton-line { height: 0.95rem; margin: 10px 0; max-width: 100%; }
+.skeleton-line-badge { width: 90px; height: 0.85rem; border-radius: 980px; margin: 0 0 10px; }
+.skeleton-line-title { width: 55%; height: 1.6rem; }
+.skeleton-line-lede { width: 75%; }
+.skeleton-line-short { width: 60%; }
+.skeleton-cta { height: 40px; border-radius: 980px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block { animation: none; }
 }
 
 .chip {

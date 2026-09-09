@@ -9,7 +9,7 @@ export function renderNotFound(slug) {
       <h1>Nothing here yet</h1>
       <p class="lede">There's no app at <code>/${esc(slug)}</code>. Add an entry with this
       slug to <code>data/apps.json</code> to give it a page.</p>
-      <a class="button secondary" href="/home#apps">← Back to App Store</a>
+      <a class="button secondary" href="/home#apps"><span class="chevron">←</span> Back to App Store</a>
     </section>
   `;
 }
@@ -46,7 +46,7 @@ export function renderAppDetail(app) {
             }
           </div>
           <div>
-            <a class="back-link" href="/home#apps">‹ Go back</a>
+            <a class="back-link" href="/home#apps"><span class="chevron">‹</span> Go back</a>
           </div>
         </div>
       </div>

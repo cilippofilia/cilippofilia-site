@@ -64,3 +64,17 @@ a:hover { color: var(--accent-hover); text-decoration: underline; }
   position: relative;
   z-index: 1;
 }
+
+/* Off-screen but still announced — for status text next to a decorative
+   equivalent (e.g. a loading skeleton) that's marked aria-hidden. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

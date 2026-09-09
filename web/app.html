@@ -16,7 +16,28 @@
 <body>
   <main>
     <div class="wrap" id="content">
-      <p class="empty-state">Loading…</p>
+      <section class="hero app-detail" style="margin-top:0" aria-hidden="true">
+        <div class="app-detail-head">
+          <div class="skeleton-block skeleton-icon"></div>
+          <div class="app-detail-meta">
+            <div class="skeleton-block skeleton-line skeleton-line-badge"></div>
+            <div class="skeleton-block skeleton-line skeleton-line-title"></div>
+            <div class="skeleton-block skeleton-line skeleton-line-lede"></div>
+          </div>
+        </div>
+        <div class="app-detail-body">
+          <div>
+            <div class="skeleton-block skeleton-line"></div>
+            <div class="skeleton-block skeleton-line"></div>
+            <div class="skeleton-block skeleton-line skeleton-line-short"></div>
+          </div>
+          <div class="app-detail-side">
+            <div class="skeleton-block skeleton-line skeleton-line-short"></div>
+            <div class="skeleton-block skeleton-cta"></div>
+          </div>
+        </div>
+      </section>
+      <p class="visually-hidden" role="status">Loading app details…</p>
     </div>
   </main>
   <script src="/js/nav.js"></script>
