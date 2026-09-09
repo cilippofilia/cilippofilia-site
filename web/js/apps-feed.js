@@ -34,8 +34,8 @@ function renderPublished(apps) {
     document.getElementById("published-grid").innerHTML = live
       .map((app) =>
         appCard({
-          href: app.localUrl || app.url,
-          external: !app.localUrl,
+          websiteUrl: app.localUrl,
+          appStoreUrl: app.url,
           icon: app.icon,
           name: app.name,
           badge: "Live",
@@ -71,7 +71,8 @@ function renderInDevelopment(allApps) {
   document.getElementById("dev-grid").innerHTML = apps
     .map((app) =>
       appCard({
-        href: `/${app.slug}`,
+        websiteUrl: `/${app.slug}`,
+        appStoreUrl: app.appStoreUrl,
         icon: app.icon,
         name: app.name,
         badge: app.status || "",

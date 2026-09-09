@@ -11,6 +11,9 @@ const CACHE_MS = 10 * 60 * 1000;
 // Published apps that also have their own custom landing page under
 // public/<slug>/ instead of just linking straight out to Apple.
 const CUSTOM_APP_PAGES = {
+  6449893371: "drinko", // Drinko: Cocktail Recipes
+  6757445119: "itswritten", // itsWritten: AI Journal
+  6760037639: "iterly", // Iterly: Ship Your Apps
   6776386637: "nine-tiles-puzzle", // 9 Tiles Puzzle
 };
 

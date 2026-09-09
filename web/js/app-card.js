@@ -24,10 +24,15 @@ export function badgeClass(status) {
   return "example";
 }
 
-export function appCard({ href, external = false, icon, name, badge, badgeStyle, tagline }) {
+// Every card carries the same two actions. "Website" is the app's own
+// landing page on this site and "App Store" is Apple's listing; an app that
+// isn't published yet keeps the App Store button but disabled, so the row
+// reads the same across the grid. The card itself is not a link — links
+// can't nest inside links — so the buttons are the only way off the card.
+export function appCard({ websiteUrl, appStoreUrl, icon, name, badge, badgeStyle, tagline }) {
   const { title, subtitle } = splitName(name);
   return `
-    <a class="card" href="${href}" ${external ? 'target="_blank" rel="noopener"' : ""}>
+    <article class="card">
       <div class="card-head">
         ${
           isImageIcon(icon)
@@ -41,6 +46,14 @@ export function appCard({ href, external = false, icon, name, badge, badgeStyle,
       </div>
       <span class="badge ${badgeStyle}">${badge}</span>
       <p>${tagline || ""}</p>
-    </a>
+      <div class="card-actions">
+        ${websiteUrl ? `<a class="button secondary" href="${websiteUrl}">Website</a>` : ""}
+        ${
+          appStoreUrl
+            ? `<a class="button" href="${appStoreUrl}" target="_blank" rel="noopener">App Store</a>`
+            : `<button type="button" class="button" disabled>App Store</button>`
+        }
+      </div>
+    </article>
   `;
 }
