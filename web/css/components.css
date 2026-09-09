@@ -412,20 +412,23 @@ section h2,
 
 /* The action row is pinned to the card's bottom edge so every card in a
    grid row lines its buttons up regardless of tagline length. The two
-   buttons share the width equally; a card is too narrow for the full
-   button padding, so they run compact. */
+   buttons share the width equally when there's room for both at their
+   natural size; auto-fit collapses to one column — each button full
+   width, stacked — the moment that no longer fits, instead of letting
+   "App Store" wrap into two lines inside a squeezed pill. */
 .card-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 10px;
   margin-top: auto;
   padding-top: 4px;
 }
 
 .card-actions .button {
-  flex: 1;
   justify-content: center;
   padding: 9px 14px;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .card-actions button.button:disabled {
