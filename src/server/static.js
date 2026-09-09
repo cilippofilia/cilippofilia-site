@@ -23,6 +23,15 @@ const MIME = {
   ".ico": "image/x-icon",
 };
 
+// HTML and the two JSON feeds change whenever their files do, so the
+// browser must always revalidate; everything else (CSS, JS, images) is
+// safe to hold for an hour on a local machine.
+const CACHE_CONTROL = {
+  ".html": "no-cache",
+  ".json": "no-cache",
+};
+const DEFAULT_CACHE_CONTROL = "public, max-age=3600";
+
 function send(res, status, body, contentType, extraHeaders = {}) {
   const payload = Buffer.isBuffer(body) ? body : Buffer.from(String(body));
   res.writeHead(status, {
@@ -51,7 +60,9 @@ function serveFile(res, filePath, status = 200) {
       send(res, 404, "404 Not Found");
       return;
     }
-    send(res, status, data, MIME[ext] || "application/octet-stream");
+    send(res, status, data, MIME[ext] || "application/octet-stream", {
+      "Cache-Control": CACHE_CONTROL[ext] || DEFAULT_CACHE_CONTROL,
+    });
   });
 }
 

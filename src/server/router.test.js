@@ -87,3 +87,17 @@ test("HEAD carries the headers of a GET but no body", async () => {
   expect(Number(res.headers["content-length"])).toBeGreaterThan(1000);
   expect(res.body).toBe("");
 });
+
+test("assets are cacheable for an hour, pages and feeds are revalidated", async () => {
+  const css = await request("GET", "/css/base.css");
+  expect(css.headers["cache-control"]).toBe("public, max-age=3600");
+
+  const icon = await request("GET", "/assets/app-icons/thumb/relay-icon.png");
+  expect(icon.headers["cache-control"]).toBe("public, max-age=3600");
+
+  const home = await request("GET", "/home");
+  expect(home.headers["cache-control"]).toBe("no-cache");
+
+  const feed = await request("GET", "/apps.json");
+  expect(feed.headers["cache-control"]).toBe("no-cache");
+});
