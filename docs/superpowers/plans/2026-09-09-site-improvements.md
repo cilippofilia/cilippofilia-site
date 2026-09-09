@@ -76,17 +76,17 @@ The working tree already holds the "Website / App Store" card buttons and their 
 - Modify (already modified, just commit): `src/server/appstore.js`, `web/css/components.css`, `web/js/app-card.js`, `web/js/apps-feed.js`, `web/app.html` (back-link copy changed to "‹ Go back")
 - Add: `web/js/app-card.test.js`
 
-- [ ] **Step 1: Confirm the tests pass as they stand**
+- [x] **Step 1: Confirm the tests pass as they stand**
 
 Run: `bun test`
 Expected: `4 pass, 0 fail`
 
-- [ ] **Step 2: Confirm the diff is only the card-actions work**
+- [x] **Step 2: Confirm the diff is only the card-actions work**
 
 Run: `git status --short && git diff --stat`
 Expected: exactly `src/server/appstore.js`, `web/app.html`, `web/css/components.css`, `web/js/app-card.js`, `web/js/apps-feed.js` modified and `web/js/app-card.test.js` untracked. If anything else shows up, stop and report it.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/server/appstore.js web/app.html web/css/components.css web/js/app-card.js web/js/apps-feed.js web/js/app-card.test.js
@@ -106,7 +106,7 @@ git commit -m "Give every app card Website and App Store buttons and link the th
 - Produces: `handleRequest(req, res)` — `async`, exported from `src/server/router.js`, usable directly as the argument to `http.createServer`. Never throws; a malformed path answers 400, any other error answers 500.
 - Produces: the test helper `request(method, path)` inside `router.test.js` returning `{ status, headers, body }`. Later tasks add tests to this file using it.
 
-- [ ] **Step 1: Write the failing test file**
+- [x] **Step 1: Write the failing test file**
 
 Create `src/server/router.test.js`:
 
@@ -182,12 +182,12 @@ test("a path that escapes the public folder is refused", async () => {
 });
 ```
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `bun test src/server/router.test.js`
 Expected: FAIL — `Cannot find module './router.js'`
 
-- [ ] **Step 3: Create `src/server/router.js`**
+- [x] **Step 3: Create `src/server/router.js`**
 
 Move the whole routing body out of `server.js`. The file becomes:
 
@@ -319,7 +319,7 @@ async function handleRequest(req, res) {
 module.exports = { handleRequest, STATIC_DIRS, PAGES, REDIRECTS };
 ```
 
-- [ ] **Step 4: Shrink `server.js` to the listener**
+- [x] **Step 4: Shrink `server.js` to the listener**
 
 Replace the whole of `server.js` with:
 
@@ -345,12 +345,12 @@ http.createServer(handleRequest).listen(PORT, HOST, () => {
 });
 ```
 
-- [ ] **Step 5: Run the tests to verify they pass**
+- [x] **Step 5: Run the tests to verify they pass**
 
 Run: `bun test`
 Expected: `8 pass, 0 fail` (4 existing + 4 new)
 
-- [ ] **Step 6: Verify against the real server**
+- [x] **Step 6: Verify against the real server**
 
 ```bash
 PORT=4321 bun server.js &
@@ -360,7 +360,7 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:4321/home     # expect
 kill %1
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add server.js src/server/router.js src/server/router.test.js
@@ -382,7 +382,7 @@ git commit -m "Move routing into src/server/router.js and answer malformed URLs 
 - Consumes: `request(method, path)` from Task 2's test file.
 - Produces: `hasDevApp(slug) -> boolean` and `loadDevApps() -> Array` in `src/server/dev-apps.js`; `serveFile(res, filePath, status = 200)` in `static.js`.
 
-- [ ] **Step 1: Add the failing tests**
+- [x] **Step 1: Add the failing tests**
 
 Append to `src/server/router.test.js`:
 
@@ -408,12 +408,12 @@ test("HEAD carries the headers of a GET but no body", async () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test src/server/router.test.js`
 Expected: the three new tests FAIL (200 instead of 404; missing content-length; body not empty).
 
-- [ ] **Step 3: Create `src/server/dev-apps.js`**
+- [x] **Step 3: Create `src/server/dev-apps.js`**
 
 ```js
 // The in-development apps: one entry per landing page in data/apps.json.
@@ -442,7 +442,7 @@ function hasDevApp(slug) {
 module.exports = { loadDevApps, hasDevApp };
 ```
 
-- [ ] **Step 4: Teach `static.js` about status codes, HEAD and Content-Length**
+- [x] **Step 4: Teach `static.js` about status codes, HEAD and Content-Length**
 
 In `src/server/static.js`, replace the `send` and `serveFile` functions with:
 
@@ -477,7 +477,7 @@ function serveFile(res, filePath, status = 200) {
 
 Leave `redirect` and `serveWithin` as they are.
 
-- [ ] **Step 5: Create `web/404.html`**
+- [x] **Step 5: Create `web/404.html`**
 
 ```html
 <!doctype html>
@@ -513,7 +513,7 @@ Leave `redirect` and `serveWithin` as they are.
 </html>
 ```
 
-- [ ] **Step 6: Route unknown slugs to it**
+- [x] **Step 6: Route unknown slugs to it**
 
 In `src/server/router.js`, add near the top with the other requires:
 
@@ -534,16 +534,16 @@ Replace the final two blocks of `route()` (the `/^\/[a-zA-Z0-9-]+$/` fallback an
   serveFile(res, path.join(PUBLIC_DIR, "404.html"), 404);
 ```
 
-- [ ] **Step 7: Run the tests**
+- [x] **Step 7: Run the tests**
 
 Run: `bun test`
 Expected: `11 pass, 0 fail`
 
-- [ ] **Step 8: Verify in the browser**
+- [x] **Step 8: Verify in the browser**
 
 Start `PORT=4321 bun server.js &`, open http://127.0.0.1:4321/whatever — the dark not-found page with header, footer and two buttons should render; http://127.0.0.1:4321/the-relay still renders the relay page. `kill %1`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/server/dev-apps.js src/server/static.js src/server/router.js src/server/router.test.js web/404.html
@@ -558,7 +558,7 @@ git commit -m "Answer unknown slugs with a real 404 page and serve HEAD requests
 - Modify: `src/server/static.js` (`serveFile`)
 - Test: `src/server/router.test.js`
 
-- [ ] **Step 1: Add the failing test**
+- [x] **Step 1: Add the failing test**
 
 Append to `src/server/router.test.js`:
 
@@ -578,12 +578,12 @@ test("assets are cacheable for an hour, pages and feeds are revalidated", async 
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test src/server/router.test.js`
 Expected: FAIL — `cache-control` is `undefined`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `src/server/static.js`, add below the `MIME` table:
 
@@ -606,12 +606,12 @@ and change the success branch of `serveFile` to:
     });
 ```
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `bun test`
 Expected: `12 pass, 0 fail`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/server/static.js src/server/router.test.js
@@ -632,7 +632,7 @@ git commit -m "Send Cache-Control on static responses"
 **Interfaces:**
 - Produces: `escapeHtml(value) -> string` in `web/js/html.js`. Safe in both text and double-quoted attribute positions. `null`/`undefined` become `""`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `web/js/html.test.js`:
 
@@ -675,12 +675,12 @@ test("a card escapes markup that arrives in its fields", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test web/js`
 Expected: `html.test.js` fails with "Cannot find module './html.js'"; the new app-card test fails on `not.toContain("<img src=x")`.
 
-- [ ] **Step 3: Create `web/js/html.js`**
+- [x] **Step 3: Create `web/js/html.js`**
 
 ```js
 // The one escaping function every client-side template goes through.
@@ -700,7 +700,7 @@ export function escapeHtml(value) {
 }
 ```
 
-- [ ] **Step 4: Escape inside `appCard`**
+- [x] **Step 4: Escape inside `appCard`**
 
 In `web/js/app-card.js`, add at the top:
 
@@ -740,7 +740,7 @@ Replace the body of `appCard` (from `const { title, subtitle }` to the closing b
   `;
 ```
 
-- [ ] **Step 5: Escape the featured strip in `apps-feed.js`**
+- [x] **Step 5: Escape the featured strip in `apps-feed.js`**
 
 Change the import line to:
 
@@ -767,16 +767,16 @@ Replace the `strip.innerHTML = ...` template with:
   `;
 ```
 
-- [ ] **Step 6: Run the tests**
+- [x] **Step 6: Run the tests**
 
 Run: `bun test`
 Expected: `15 pass, 0 fail`
 
-- [ ] **Step 7: Check the home page still renders both grids**
+- [x] **Step 7: Check the home page still renders both grids**
 
 `PORT=4321 bun server.js &`, open http://127.0.0.1:4321/home, scroll to "What's on the App Store": three Live cards and one In development card with icons, subtitles and buttons, exactly as before. `kill %1`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add web/js/html.js web/js/html.test.js web/js/app-card.js web/js/app-card.test.js web/js/apps-feed.js
@@ -797,7 +797,7 @@ git commit -m "Escape feed and apps.json text before writing it into the page"
 - Consumes: `escapeHtml` from `web/js/html.js`; `badgeClass`, `isImageIcon` from `web/js/app-card.js`.
 - Produces: `renderAppDetail(app) -> string` and `renderNotFound(slug) -> string` in `web/js/app-detail.js`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `web/js/app-detail.test.js`:
 
@@ -846,12 +846,12 @@ test("renderNotFound names the slug and escapes it", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test web/js/app-detail.test.js`
 Expected: FAIL — cannot find module.
 
-- [ ] **Step 3: Create `web/js/app-detail.js`**
+- [x] **Step 3: Create `web/js/app-detail.js`**
 
 ```js
 // Pure renderers for the generic in-development app page (web/app.html).
@@ -911,7 +911,7 @@ export function renderAppDetail(app) {
 }
 ```
 
-- [ ] **Step 4: Create `web/js/app-page.js`**
+- [x] **Step 4: Create `web/js/app-page.js`**
 
 ```js
 // Mounts the generic app page: reads the slug from the URL, fetches
@@ -938,7 +938,7 @@ fetch("/apps.json")
   });
 ```
 
-- [ ] **Step 5: Replace the inline script in `web/app.html`**
+- [x] **Step 5: Replace the inline script in `web/app.html`**
 
 Delete everything from `<script>` (the line after `<script src="/js/nav.js"></script>`) through its closing `</script>`, and put in its place:
 
@@ -960,16 +960,16 @@ The body should now be exactly:
 </body>
 ```
 
-- [ ] **Step 6: Run the tests**
+- [x] **Step 6: Run the tests**
 
 Run: `bun test`
 Expected: `19 pass, 0 fail`
 
-- [ ] **Step 7: Verify in the browser**
+- [x] **Step 7: Verify in the browser**
 
 `PORT=4321 bun server.js &`, open http://127.0.0.1:4321/the-relay: icon, purple "In development" badge, headline, description, three platform chips, dashed "Not yet published" button, back link. Title reads "relay — cilippofilia.dev". `kill %1`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add web/js/app-detail.js web/js/app-detail.test.js web/js/app-page.js web/app.html
@@ -990,7 +990,7 @@ git commit -m "Render the app template from a tested module instead of an inline
 **Interfaces:**
 - Produces: `bun run build` writes `web/js/floating-icons.bundle.js`; `bun run start` builds then serves; `bun run test` runs `bun test`.
 
-- [ ] **Step 1: Add scripts to `package.json`**
+- [x] **Step 1: Add scripts to `package.json`**
 
 Add a `scripts` block so the file reads:
 
@@ -1019,7 +1019,7 @@ Add a `scripts` block so the file reads:
 }
 ```
 
-- [ ] **Step 2: Ignore the build output**
+- [x] **Step 2: Ignore the build output**
 
 Append to `.gitignore`:
 
@@ -1028,7 +1028,7 @@ Append to `.gitignore`:
 web/js/floating-icons.bundle.js
 ```
 
-- [ ] **Step 3: Write the v4 source at `src/client/floating-icons.js`**
+- [x] **Step 3: Write the v4 source at `src/client/floating-icons.js`**
 
 ```js
 // Continuous idle drift for the floating app icons on the home page.
@@ -1066,12 +1066,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 ```
 
-- [ ] **Step 4: Build it**
+- [x] **Step 4: Build it**
 
 Run: `bun run build`
 Expected: prints a bundle line for `web/js/floating-icons.bundle.js`; `ls -la web/js/floating-icons.bundle.js` shows a file roughly 20–40 KB.
 
-- [ ] **Step 5: Point `web/index.html` at the bundle and remove the CDN tag**
+- [x] **Step 5: Point `web/index.html` at the bundle and remove the CDN tag**
 
 Delete this line from `<head>`:
 
@@ -1091,7 +1091,7 @@ to
   <script type="module" src="/js/floating-icons.bundle.js"></script>
 ```
 
-- [ ] **Step 6: Delete the old file and check no reference survives**
+- [x] **Step 6: Delete the old file and check no reference survives**
 
 ```bash
 git rm web/js/floating-icons.js
