@@ -1,0 +1,171 @@
+/* Escape the Labyrinth — the home page's maze minigame. A fresh maze is
+   generated with Wilson's algorithm (see maze-wilson.js) on every
+   "Play"/"Play again" tap. The card itself stays consistent with the rest of
+   the site's Liquid Glass language; the canvas "screen" inside it gets an
+   arcade-CRT treatment — phosphor glow, scanlines, monospace type — since
+   that's the part meant to feel like a machine you're playing, not a panel
+   you're reading. */
+
+.maze-section {
+  margin-top: 88px;
+}
+
+.maze-lede {
+  color: var(--text-dim);
+  max-width: 56ch;
+}
+
+.maze-game {
+  --maze-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --maze-phosphor: #39ff14;
+  --maze-phosphor-dim: rgba(57, 255, 20, 0.45);
+
+  position: relative;
+  margin-top: 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.maze-game-stats {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-family: var(--maze-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.maze-game-timer {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.maze-game-moves {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* The "screen": a dark CRT-like viewport housing the canvas plus the
+   start/result overlays, so both read as messages appearing on the same
+   glowing display rather than dialogs floating over the whole card. */
+.maze-game-screen {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  /* Padding keeps the maze's own straight-edged border away from the
+     screen's rounded corners — without it, the wall grid runs flush to the
+     edge and looks clipped where overflow:hidden meets the curve. */
+  padding: 10px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #050805;
+  border: 1px solid var(--maze-phosphor-dim);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.16), inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Scanlines, purely decorative — sits above the canvas, ignores input. */
+.maze-game-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.22) 0px,
+    rgba(0, 0, 0, 0.22) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.maze-game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.maze-game-start,
+.maze-game-result {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 20px;
+  font-family: var(--maze-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(5, 8, 5, 0.88);
+}
+
+.maze-game-start[hidden],
+.maze-game-result[hidden] {
+  display: none;
+}
+
+.maze-game-start-title,
+.maze-game-result-time {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--maze-phosphor);
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.65);
+}
+
+.maze-game-result-time {
+  font-size: 2.25rem;
+}
+
+.maze-game-result-moves {
+  margin: -4px 0 4px;
+  color: var(--maze-phosphor-dim);
+  font-size: 0.8rem;
+}
+
+.maze-game-start-hint {
+  margin: 0 0 6px;
+  color: var(--maze-phosphor-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.maze-game-leaderboard {
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--maze-phosphor-dim);
+  min-width: 220px;
+}
+
+.maze-game-leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 6px;
+}
+
+.maze-game-leaderboard li.maze-game-leaderboard-mine {
+  color: var(--maze-phosphor);
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+}

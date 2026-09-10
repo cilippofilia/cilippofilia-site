@@ -17,15 +17,16 @@ afterAll(() => {
 
 // Raw node:http so the path goes out exactly as written (fetch would
 // re-encode "%") and redirects are not followed.
-export function request(method, path) {
+export function request(method, path, body) {
   return new Promise((resolve, reject) => {
     const req = http.request({ host: "127.0.0.1", port, path, method }, (res) => {
-      let body = "";
+      let responseBody = "";
       res.setEncoding("utf8");
-      res.on("data", (chunk) => (body += chunk));
-      res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body }));
+      res.on("data", (chunk) => (responseBody += chunk));
+      res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body: responseBody }));
     });
     req.on("error", reject);
+    if (body !== undefined) req.write(body);
     req.end();
   });
 }
@@ -88,12 +89,27 @@ test("HEAD carries the headers of a GET but no body", async () => {
   expect(res.body).toBe("");
 });
 
-test("assets are cacheable for an hour, pages and feeds are revalidated", async () => {
+test("posting a maze solve records it in the leaderboard, fastest first", async () => {
+  const fast = await request("POST", "/api/maze-score", JSON.stringify({ timeMs: 1, moves: 3 }));
+  expect(JSON.parse(fast.body).top[0]).toEqual({ timeMs: 1, moves: 3 });
+
+  const slower = await request(
+    "POST",
+    "/api/maze-score",
+    JSON.stringify({ timeMs: 999999999, moves: 3 })
+  );
+  expect(JSON.parse(slower.body).top[0]).toEqual({ timeMs: 1, moves: 3 });
+
+  const get = await request("GET", "/api/maze-score");
+  expect(JSON.parse(get.body).top[0]).toEqual({ timeMs: 1, moves: 3 });
+});
+
+test("assets are cacheable briefly, pages and feeds are revalidated", async () => {
   const css = await request("GET", "/css/base.css");
-  expect(css.headers["cache-control"]).toBe("public, max-age=3600");
+  expect(css.headers["cache-control"]).toBe("public, max-age=5");
 
   const icon = await request("GET", "/assets/app-icons/thumb/relay-icon.png");
-  expect(icon.headers["cache-control"]).toBe("public, max-age=3600");
+  expect(icon.headers["cache-control"]).toBe("public, max-age=5");
 
   const home = await request("GET", "/home");
   expect(home.headers["cache-control"]).toBe("no-cache");

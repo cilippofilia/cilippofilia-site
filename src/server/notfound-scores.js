@@ -6,9 +6,9 @@
 
 const path = require("path");
 const { Database } = require("bun:sqlite");
-const { DATA_DIR } = require("./static");
+const { SCORES_DIR } = require("./static");
 
-const db = new Database(path.join(DATA_DIR, "notfound-scores.db"));
+const db = new Database(path.join(SCORES_DIR, "notfound-scores.db"));
 db.exec(`
   CREATE TABLE IF NOT EXISTS notfound_score (
     id INTEGER PRIMARY KEY CHECK (id = 1),

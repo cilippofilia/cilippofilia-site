@@ -11,6 +11,16 @@ const ROOT = path.join(__dirname, "..", "..");
 const PUBLIC_DIR = path.join(ROOT, "web");
 const DATA_DIR = path.join(ROOT, "data");
 
+// Where the score databases (maze-scores.js, notfound-scores.js) live —
+// separate from DATA_DIR so bun test's auto-loaded .env.test can point
+// just this at a scratch folder, keeping test runs from writing into the
+// real score files a running server reads from, without disturbing static
+// data reads (e.g. apps.json) that still come from DATA_DIR.
+const SCORES_DIR = process.env.SCORES_DIR_OVERRIDE
+  ? path.resolve(ROOT, process.env.SCORES_DIR_OVERRIDE)
+  : DATA_DIR;
+fs.mkdirSync(SCORES_DIR, { recursive: true });
+
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -25,12 +35,14 @@ const MIME = {
 
 // HTML and the two JSON feeds change whenever their files do, so the
 // browser must always revalidate; everything else (CSS, JS, images) is
-// safe to hold for an hour on a local machine.
+// cached only briefly — this is a local dev server under active change, so
+// a long cache just means stale JS/CSS surviving past the edit that fixed
+// them.
 const CACHE_CONTROL = {
   ".html": "no-cache",
   ".json": "no-cache",
 };
-const DEFAULT_CACHE_CONTROL = "public, max-age=3600";
+const DEFAULT_CACHE_CONTROL = "public, max-age=5";
 
 function send(res, status, body, contentType, extraHeaders = {}) {
   const payload = Buffer.isBuffer(body) ? body : Buffer.from(String(body));
@@ -79,4 +91,4 @@ function serveWithin(res, baseDir, relativePath) {
   serveFile(res, filePath);
 }
 
-module.exports = { ROOT, PUBLIC_DIR, DATA_DIR, send, redirect, serveFile, serveWithin };
+module.exports = { ROOT, PUBLIC_DIR, DATA_DIR, SCORES_DIR, send, redirect, serveFile, serveWithin };

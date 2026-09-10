@@ -18,6 +18,7 @@ const { getPublishedApps } = require("./appstore");
 const { PUBLIC_DIR, DATA_DIR, send, redirect, serveFile, serveWithin } = require("./static");
 const { hasDevApp } = require("./dev-apps");
 const { getBest, submitScore } = require("./notfound-scores");
+const { getTop: getMazeTop, submitEntry: submitMazeEntry } = require("./maze-scores");
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -71,6 +72,24 @@ async function route(pathname, req, res) {
       send(res, 200, JSON.stringify({ best: submitScore(score) }), "application/json; charset=utf-8");
     } else {
       send(res, 200, JSON.stringify({ best: getBest() }), "application/json; charset=utf-8");
+    }
+    return;
+  }
+
+  if (pathname === "/api/maze-score") {
+    if (req.method === "POST") {
+      let timeMs = 0;
+      let moves = 0;
+      try {
+        const parsed = JSON.parse(await readBody(req));
+        timeMs = parsed.timeMs;
+        moves = parsed.moves;
+      } catch {
+        // malformed body — treat as no entry, still return the real leaderboard
+      }
+      send(res, 200, JSON.stringify({ top: submitMazeEntry(timeMs, moves) }), "application/json; charset=utf-8");
+    } else {
+      send(res, 200, JSON.stringify({ top: getMazeTop() }), "application/json; charset=utf-8");
     }
     return;
   }

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/css/layout.css" />
   <link rel="stylesheet" href="/css/components.css" />
   <link rel="stylesheet" href="/css/intro.css" />
+  <link rel="stylesheet" href="/css/maze-game.css" />
   <meta name="description" content="Filippo Cilia's native Apple apps: Drinko, itsWritten, Iterly, 9 Tiles Puzzle and what's next, all written in Swift and SwiftUI." />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
@@ -102,6 +103,31 @@
       <section id="dev-section" hidden>
         <div class="grid" id="dev-grid"></div>
       </section>
+
+      <section class="maze-section reveal">
+        <h2>Escape the Labyrinth</h2>
+        <p class="maze-lede">A fresh maze, generated with Wilson's algorithm every time. Arrow keys, WASD, or swipe to move.</p>
+        <div class="maze-game">
+          <div class="maze-game-stats">
+            <p class="maze-game-timer">0.0s</p>
+            <p class="maze-game-moves">0 moves</p>
+          </div>
+          <div class="maze-game-screen">
+            <canvas class="maze-game-canvas" aria-label="Maze"></canvas>
+            <div class="maze-game-start">
+              <p class="maze-game-start-title">Ready to escape?</p>
+              <p class="maze-game-start-hint">Arrow keys, WASD, or swipe once you're in</p>
+              <button type="button" class="button maze-game-play">Play</button>
+            </div>
+            <div class="maze-game-result" hidden>
+              <p class="maze-game-result-time"></p>
+              <p class="maze-game-result-moves"></p>
+              <ol class="maze-game-leaderboard"></ol>
+              <button type="button" class="button secondary maze-game-replay">Play again</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
   <!-- nav.js stays a classic script, and stays first: it injects the header
@@ -111,5 +137,6 @@
   <script type="module" src="/js/apps-feed.js"></script>
   <script type="module" src="/js/floating-icons.bundle.js"></script>
   <script type="module" src="/js/intro-flip.js"></script>
+  <script type="module" src="/js/maze-game.js"></script>
 </body>
 </html>
