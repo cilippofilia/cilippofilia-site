@@ -69,3 +69,49 @@ test("handles a single cell maze without crashing", () => {
   const maze = generateMaze(1, 1, seededRng(3));
   expect(maze.cells[0][0].walls).toEqual({ top: true, right: true, bottom: true, left: true });
 });
+
+test("onStep reports a trace that reconstructs the same maze", () => {
+  const width = 4;
+  const height = 4;
+  const steps = [];
+  const maze = generateMaze(width, height, seededRng(11), (step) => steps.push(step));
+
+  expect(steps[0].type).toBe("start");
+  expect(steps.at(-1).type).toBe("done");
+  expect(steps.some((s) => s.type === "walk-start")).toBe(true);
+  expect(steps.some((s) => s.type === "walk-step")).toBe(true);
+  expect(steps.some((s) => s.type === "carve")).toBe(true);
+
+  // Replaying every carved path against a blank grid should reproduce
+  // exactly the walls the non-traced run carved.
+  const replayed = Array.from({ length: height }, () =>
+    Array.from({ length: width }, () => ({
+      walls: { top: true, right: true, bottom: true, left: true },
+    }))
+  );
+  const dirByDelta = (dx, dy) =>
+    [
+      { name: "top", dx: 0, dy: -1, opposite: "bottom" },
+      { name: "right", dx: 1, dy: 0, opposite: "left" },
+      { name: "bottom", dx: 0, dy: 1, opposite: "top" },
+      { name: "left", dx: -1, dy: 0, opposite: "right" },
+    ].find((d) => d.dx === dx && d.dy === dy);
+  for (const step of steps) {
+    if (step.type !== "carve") continue;
+    for (let i = 0; i < step.path.length - 1; i++) {
+      const a = step.path[i];
+      const b = step.path[i + 1];
+      const dir = dirByDelta(b.x - a.x, b.y - a.y);
+      replayed[a.y][a.x].walls[dir.name] = false;
+      replayed[b.y][b.x].walls[dir.opposite] = false;
+    }
+  }
+  expect(replayed).toEqual(maze.cells);
+});
+
+test("omitting onStep does not change the generated maze", () => {
+  const a = generateMaze(5, 5, seededRng(23));
+  const steps = [];
+  const b = generateMaze(5, 5, seededRng(23), (step) => steps.push(step));
+  expect(a.cells).toEqual(b.cells);
+});

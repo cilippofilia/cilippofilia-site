@@ -4,6 +4,10 @@
 // backtracking. See https://medium.com/@batu.senturk/the-ultimate-unbiased-maze-generation-technique-you-need-to-see-46123d5fec76
 //
 // `rng` is injectable so tests can seed it; defaults to Math.random.
+// `onStep` is an optional callback invoked at each semantic checkpoint of
+// the algorithm (see the `type` values below) — used by maze-explainer.js to
+// build a step-through walkthrough. It costs nothing when omitted, so the
+// real game's generation is unaffected.
 
 const DIRECTIONS = [
   { name: "top", dx: 0, dy: -1, opposite: "bottom" },
@@ -24,7 +28,7 @@ function pickRandomDirection(x, y, width, height, rng) {
   return dir;
 }
 
-export function generateMaze(width, height, rng = Math.random) {
+export function generateMaze(width, height, rng = Math.random, onStep) {
   const cells = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({
       walls: { top: true, right: true, bottom: true, left: true },
@@ -37,6 +41,7 @@ export function generateMaze(width, height, rng = Math.random) {
   const startX = Math.floor(rng() * width);
   const startY = Math.floor(rng() * height);
   inMaze.add(key(startX, startY));
+  onStep?.({ type: "start", cell: { x: startX, y: startY } });
 
   const totalCells = width * height;
   while (inMaze.size < totalCells) {
@@ -48,6 +53,7 @@ export function generateMaze(width, height, rng = Math.random) {
 
     const walkStartX = x;
     const walkStartY = y;
+    onStep?.({ type: "walk-start", cell: { x, y } });
 
     // Random walk with loop erasure: record the exit direction taken from
     // each visited cell, overwriting it if the walk crosses itself again.
@@ -55,13 +61,17 @@ export function generateMaze(width, height, rng = Math.random) {
     while (!inMaze.has(key(x, y))) {
       const dir = pickRandomDirection(x, y, width, height, rng);
       nextDir.set(key(x, y), dir);
+      const from = { x, y };
       x += dir.dx;
       y += dir.dy;
+      const looped = nextDir.has(key(x, y));
+      onStep?.({ type: "walk-step", from, to: { x, y }, looped });
     }
 
     // Carve the loop-erased path into the maze.
     x = walkStartX;
     y = walkStartY;
+    const path = [{ x, y }];
     while (!inMaze.has(key(x, y))) {
       const dir = nextDir.get(key(x, y));
       cells[y][x].walls[dir.name] = false;
@@ -71,8 +81,11 @@ export function generateMaze(width, height, rng = Math.random) {
       inMaze.add(key(x, y));
       x = nx;
       y = ny;
+      path.push({ x, y });
     }
+    onStep?.({ type: "carve", path });
   }
 
+  onStep?.({ type: "done" });
   return { width, height, cells };
 }
