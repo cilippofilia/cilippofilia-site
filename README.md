@@ -1,14 +1,16 @@
-# cilippofilia.dev (local)
+# cilippofilia.dev
 
-A local-only landing page hub. It never leaves your machine — the server
-only binds to `127.0.0.1`, so nothing on your network (let alone the
-internet) can reach it.
+A landing page hub for my apps. It runs two ways: a local-only Bun server
+for working on it (bound to `127.0.0.1`, so nothing on your network can
+reach it), and a static Netlify deploy of the same `web/` folder — see
+"Deploying to Netlify" below.
 
 Visually it follows the tokens in `/style-guide` (also in this repo at
-`public/style-guide.html`) — light, SF Pro, Apple-style pills and spacing,
-measured off apple.com/uk's own CSS. `public/css/` holds the shared
-stylesheets every page but the style guide and `public/nine-tiles-puzzle/`
-(a real, separately-designed landing page) pulls from.
+`web/style-guide.html`) — light, SF Pro, Apple-style pills and spacing,
+measured off apple.com/uk's own CSS. `web/css/` holds the shared
+stylesheets every page but the style guide and the custom app sites
+(`web/nine-tiles-puzzle/`, `web/drinko/`, ... — real, separately-designed
+landing pages) pulls from.
 
 The surface material follows Apple's Liquid Glass language (iOS/macOS 26):
 the header, buttons, and floating cards (app cards, the featured/preorder
@@ -20,41 +22,52 @@ already-glass card (the "Preorder ›" CTA, the app-detail side panel's
 buttons) gets a flat tint instead of its own blur. There's a fallback to
 plain solid cards for `prefers-reduced-transparency` and browsers without
 `backdrop-filter` support. All of this lives in the `--glass-*` custom
-properties at the top of `public/css/tokens.css`.
+properties at the top of `web/css/tokens.css`.
 
 ## Run it
 
 ```
-node server.js
+bun install
+bun run dev
 ```
 
 Then open **http://localhost:4321/home**.
 
-(Change the port with `PORT=3000 node server.js` if 4321 is taken.)
+`bun run dev` builds the floating-icons bundle and restarts the server on
+file changes. `bun run start` does the same without watching, and
+`bun server.js` skips the build (fine unless you've edited
+`src/client/floating-icons.js`). Change the port with
+`PORT=3000 bun server.js` if 4321 is taken.
+
+Run the tests with `bun test`.
 
 ## Pages that exist right now
 
-- `/home` — the landing page. Everything is on it: the intro, and under
-  "What's on the App Store", **Published**, pulled live from your real
-  App Store developer page, plus **In development**, from `data/apps.json`
+- `/home` — the landing page. Everything is on it: the intro, the maze
+  minigame, and under "What's on the App Store", **Published**, pulled
+  live from your real App Store developer page, plus **In development**,
+  from `data/apps.json`
 - `/app-store` — the old standalone page, now a permanent redirect to
   `/home#apps`, so existing links still work
-- one page per in-development app, e.g. `/the-relay`, `/running-plan`
-- `/nine-tiles-puzzle` — the real marketing site for 9 Tiles Puzzle, a
-  custom multi-file page (its own CSS/JS/assets), not the generic template
+- one page per in-development app in `data/apps.json`, e.g. `/the-relay`
+- `/nine-tiles-puzzle`, `/drinko`, `/iterly`, `/itswritten` — real
+  marketing sites, custom multi-file pages (their own CSS/JS/assets), not
+  the generic template
+- `/style-guide` — design tokens and components reference
+- anything else gets `web/404.html`, with its whack-a-broken-link minigame
 
 ## The "Published" section
 
-`server.js` calls Apple's iTunes lookup API for developer id `1690376038`
-(Filippo Carlo Cilia) every time `/home` is loaded, caches the result
-for 10 minutes, and lists whatever comes back — icon, name, and a link to
-the real App Store page. New apps you ship show up here automatically,
-with no editing required. If Apple can't be reached (offline, etc.) it
-falls back to the last successful result, or shows a plain "couldn't
-reach the App Store" message if it's never succeeded yet.
+`/api/appstore-apps` (`src/server/appstore.js`) calls Apple's iTunes
+lookup API for developer id `1690376038` (Filippo Carlo Cilia), caches the
+result for 10 minutes, and lists whatever comes back — icon, name, and a
+link to the real App Store page. New apps you ship show up here
+automatically, with no editing required. If Apple can't be reached
+(offline, etc.) it falls back to the last successful result, or shows a
+plain "couldn't reach the App Store" message if it's never succeeded yet.
 
 If you ever publish under a different developer account, update
-`APPLE_DEVELOPER_ID` near the top of `server.js`.
+`APPLE_DEVELOPER_ID` near the top of `src/server/appstore.js`.
 
 A published app's card shows a "Preorder" badge with its release date
 instead of "Live" when Apple's `releaseDate` for it is still in the
@@ -63,7 +76,7 @@ app can also link straight to its own custom local page instead of out
 to Apple — see "Custom app pages" below.
 
 The "In development" section only lists the slugs named in
-`DEV_SLUGS_TO_SHOW`, near the top of `public/js/apps-feed.js` —
+`DEV_SLUGS_TO_SHOW`, near the top of `web/js/apps-feed.js` —
 the rest of `data/apps.json` is filtered out rather than deleted. Add a
 slug there to show it.
 
@@ -84,8 +97,9 @@ You don't need to write any HTML. Open `data/apps.json` and add an entry:
 }
 ```
 
-Save, refresh the browser — `/my-new-app` now works, and it shows up in
-the "In development" section of `/home` automatically. `status`
+Save, refresh the browser — `/my-new-app` now works locally (on Netlify,
+after the next deploy). To also list it in the "In development" section
+of `/home`, add its slug to `DEV_SLUGS_TO_SHOW` (see above). `status`
 just changes the badge color; it currently recognizes anything containing
 "dev" or "concept", and falls back to a neutral badge otherwise. Once the
 app actually ships, delete its entry here — it'll show up in "Published"
@@ -95,23 +109,38 @@ on its own from then on.
 
 Some apps need more than the shared template — a real marketing site with
 its own CSS, JS, and screenshots (9 Tiles Puzzle is the example: its
-whole existing landing page lives at `public/nine-tiles-puzzle/`).
+whole existing landing page lives at `web/nine-tiles-puzzle/`).
 
-To add one: drop the site's files into a new folder under `public/`
-(anything with its own `index.html`), and the server serves it
-automatically — `/<folder-name>` redirects to `/<folder-name>/` so its
-relative asset links resolve correctly, and everything under that path
-is served straight from the folder. No route to add in `server.js`.
+To add one: drop the site's files into a new folder under `web/`
+(anything with its own `index.html`), and it's served automatically —
+`/<folder-name>` redirects to `/<folder-name>/` so its relative asset
+links resolve correctly, and everything under that path is served
+straight from the folder. No route to add in `src/server/router.js` or
+`netlify.toml`.
 
-If a matching entry exists in `CUSTOM_APP_PAGES` in `server.js` (keyed by
-the app's App Store track id), its "Published" card links straight to
-this local page instead of out to Apple.
+If a matching entry exists in `CUSTOM_APP_PAGES` in
+`src/server/appstore.js` (keyed by the app's App Store track id), its
+"Published" card links straight to this local page instead of out to
+Apple.
 
-## Making the address bar actually say "cilippofilia.dev"
+## Deploying to Netlify
 
-Right now it's `localhost:4321`. If you want the browser to show
-`cilippofilia.dev/home` instead, map the domain to your own machine by
-adding one line to `/etc/hosts` (macOS):
+`netlify.toml` publishes `web/` and recreates the local router's routes
+there; `server.js` itself doesn't run on Netlify. The build bundles
+floating-icons and runs `src/build/netlify.js`, which copies
+`data/apps.json` into `web/` and writes `web/_redirects` with a rewrite to
+the app template for each in-development slug. `/api/appstore-apps` runs
+as a Netlify Function (`netlify/functions/appstore-apps.mjs`).
+
+The two minigame score APIs (`/api/notfound-score`, `/api/maze-score`)
+are local-only — they're backed by SQLite files under `data/`. On Netlify
+the games still play, they just don't save a best score or leaderboard.
+
+## Pointing "cilippofilia.dev" at your local server
+
+Locally the address bar says `localhost:4321`. To have the browser show
+`cilippofilia.dev/home` for your local server instead, map the domain to
+your own machine by adding one line to `/etc/hosts` (macOS):
 
 ```
 sudo nano /etc/hosts
@@ -124,34 +153,54 @@ Add:
 ```
 
 Save, then visit **http://cilippofilia.dev:4321/home**. This only affects
-your own machine — nobody else's computer resolves that name any
-differently, and no real domain is registered or touched.
+your own machine — but while that line is there, it also hides the real
+cilippofilia.dev from you if the domain points at the Netlify deploy.
+Remove it to see the live site.
 
 ## Project layout
 
 ```
-server.js          — the routing table (no npm deps)
+server.js            — binds the local server to 127.0.0.1:4321
+netlify.toml         — Netlify build, function, and redirect config
 src/server/
-  appstore.js       — live App Store lookup for the developer id, cached
-  static.js         — path resolution, MIME types, file serving
-data/apps.json      — in-development apps: one entry per landing page
-public/
-  index.html        — landing page, plus the published (live) and
-                      in-development (apps.json) app grids
-  app.html          — generic per-app template for in-development apps
-  style-guide.html  — design tokens and components reference
+  router.js          — the routing table
+  static.js          — path resolution, MIME types, file serving
+  appstore.js        — live App Store lookup for the developer id, cached
+  dev-apps.js        — reads data/apps.json for the app template route
+  notfound-scores.js — the 404 minigame's best score (SQLite)
+  maze-scores.js     — the maze minigame's leaderboard (SQLite)
+src/client/
+  floating-icons.js  — idle drift for the icons behind the hero, bundled
+                       into web/js/floating-icons.bundle.js by bun run build
+src/build/
+  netlify.js         — the Netlify build step (apps.json, _redirects)
+netlify/functions/
+  appstore-apps.mjs  — /api/appstore-apps on Netlify
+data/apps.json       — in-development apps: one entry per landing page
+web/
+  index.html         — landing page, plus the published (live) and
+                       in-development (apps.json) app grids
+  app.html           — generic per-app template for in-development apps
+  404.html           — not-found page and its minigame
+  style-guide.html   — design tokens and components reference
   css/               — shared styling, linked in this order
     tokens.css       — colours, radii, glass material (start here)
     base.css         — document ground, ambient background, focus rings
     layout.css       — header, nav, main, footer, hero copy
     components.css   — buttons, cards, grids, badges, app detail
     intro.css        — the home page's opening screen (home page only)
+    maze-game.css, notfound-game.css — the two minigames
   js/
-    nav.js          — shared header/footer, injected on every page
-    app-card.js     — the card shape both app grids render into
-    apps-feed.js    — fills those grids from Apple's feed and apps.json
-    intro-flip.js   — the scroll-linked intro animation
-    floating-icons.js — idle drift for the icons behind the hero
-  assets/           — images, app icons, favicons
-  nine-tiles-puzzle/ — a custom multi-file app site (see above)
+    nav.js           — shared header/footer, injected on every page
+    app-card.js      — the card shape both app grids render into
+    apps-feed.js     — fills those grids from Apple's feed and apps.json
+    app-page.js, app-detail.js — the generic app page
+    intro-flip.js    — the scroll-linked intro animation
+    reveal.js        — scroll-reveal for cards
+    maze-*.js        — the maze minigame and its "how was this made?" walkthrough
+    notfound-game*.js — the 404 minigame
+    html.js          — HTML escaping every client template goes through
+  assets/            — images, app icons, favicons
+  nine-tiles-puzzle/, drinko/, iterly/, itswritten/
+                     — custom multi-file app sites (see above)
 ```
