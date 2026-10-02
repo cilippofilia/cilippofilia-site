@@ -1,0 +1,46 @@
+# Netlify deploy of the same site server.js serves locally. server.js itself
+# doesn't run here — these rules recreate src/server/router.js instead.
+#
+# Not carried over: /api/notfound-score and /api/maze-score. They're backed
+# by bun:sqlite files under data/, which a Netlify Function can't keep. Both
+# games catch the failed request, so they still play — just without saving
+# a best score or leaderboard.
+
+[build]
+  publish = "web"
+  # Bundle floating-icons.js (gitignored, so it has to be built here), then
+  # bake the data/apps.json-driven routes into web/ — see src/build/netlify.js.
+  command = "bun run build && bun src/build/netlify.js"
+
+[functions]
+  directory = "netlify/functions"
+
+# Generated per-app rewrites in web/_redirects are applied before these.
+# Unknown paths fall through to web/404.html, which Netlify serves itself.
+
+[[redirects]]
+  from = "/"
+  to = "/home"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/app-store"
+  to = "/home#apps"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/home"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/style-guide"
+  to = "/style-guide.html"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/assets/favicon.svg"
+  status = 200
