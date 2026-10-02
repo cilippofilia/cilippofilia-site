@@ -44,7 +44,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const realCard = document.querySelector(".profile-card");
   const realPhoto = document.querySelector(".profile-photo");
   const floatingIcons = document.querySelector(".floating-icons");
-  if (!flip || !flipInner || !ghost || !intro || !introPin || !realCard || !realPhoto) return;
+  const hero = realCard ? realCard.closest(".hero") : null;
+  const copy = document.querySelector(".intro-copy");
+  if (!flip || !flipInner || !ghost || !intro || !introPin || !realCard || !realPhoto || !hero) return;
+
+  // Below 720px .hero-grid is a single column (see components.css), so the
+  // real card sits straight below the spot where phase 2 builds the clone —
+  // there is nowhere sideways to fly to, and a phase 3 "flight" only made
+  // the clone hang back while the page scrolled past, tilt for no reason,
+  // then drop down into its slot. In that layout the hero is instead pulled
+  // up so the real card lies exactly under the parked clone at the moment
+  // the pin releases: phase 3 becomes an in-place handoff, and from then on
+  // the card simply scrolls with the page.
+  const singleColumn = window.matchMedia("(max-width: 720px)");
 
   // Reduced motion: no pin, no turn, no flight. The cutout simply sits in
   // the intro as a picture (the flip card is absolutely positioned inside
@@ -103,6 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let smoothY = window.scrollY; // eased scroll position the phases read
   let ticking = false;
   let flipIdle = null; // whether the flip card's layers are currently parked
+  let stacked = false; // single-column layout: no flight, see singleColumn
+  let viewH = window.innerHeight; // viewport height the parking spot fits the card into
+  let measuredW = window.innerWidth;
 
   // The flip card is a nested 3D rendering context on its own composited
   // layer, and it is completely finished — and invisible — from the
@@ -121,12 +136,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // true document position, even while the child pin is stuck.
     const introRect = intro.getBoundingClientRect();
     const headerHeight = header ? header.offsetHeight : 0;
-    pinStart = introRect.top + window.scrollY - headerHeight;
-    pinBuffer = Math.max(intro.offsetHeight - introPin.offsetHeight, 1);
+    // The pin sticks and releases against #intro's content box, so its
+    // padding (only set in the single-column layout) is left out — counting
+    // it put the release a few pixels early, which showed as the clone
+    // drifting off the real card at the handoff.
+    const introStyle = getComputedStyle(intro);
+    const padTop = parseFloat(introStyle.paddingTop) || 0;
+    const padBottom = parseFloat(introStyle.paddingBottom) || 0;
+    pinStart = introRect.top + window.scrollY + padTop - headerHeight;
+    pinBuffer = Math.max(intro.offsetHeight - padTop - padBottom - introPin.offsetHeight, 1);
     introPin.style.top = headerHeight + "px";
     flyingCard.style.width = realCard.getBoundingClientRect().width + "px";
+    stacked = singleColumn.matches;
+    viewH = window.innerHeight;
+    measuredW = window.innerWidth;
     // Short viewports would otherwise spend most of the screen mid-flight.
-    phase3Dist = Math.min(450, window.innerHeight * 0.6);
+    // Stacked, there is no flight — just a short crossfade onto the real
+    // card, which alignHero has put directly underneath.
+    phase3Dist = stacked ? 40 : Math.min(450, window.innerHeight * 0.6);
+    alignHero(headerHeight);
     // The flip card is sized once, here, and only ever scaled per frame —
     // width/height are layout properties and animating them every frame
     // is what made the shrink stutter. Both faces are inset:0 inside it,
@@ -180,6 +208,65 @@ document.addEventListener("DOMContentLoaded", () => {
     return smoothstep(clamp01((raw - start) / (end - start)));
   }
 
+  // Where phase 1 lands the avatar and phase 2 builds the card, in
+  // viewport coordinates, for a given cutout box and greeting bottom.
+  function parkingSpot(wrapRect, realCardRect, copyBottom) {
+    const realPhotoRect = realPhoto.getBoundingClientRect();
+    const photoW = realPhoto.offsetWidth;
+    const photoH = realPhoto.offsetHeight;
+    // Where the photo sits relative to the card's own top-left corner —
+    // used to park/land the *card* so its photo ends up in the right spot.
+    const photoOffsetX = realPhotoRect.left - realCardRect.left;
+    const photoOffsetY = realPhotoRect.top - realCardRect.top;
+
+    // The avatar parks at the centre of the cutout's box, and the card
+    // builds downwards from it. On a phone the box sits low in the
+    // pinned screen (the greeting is above it), so a card built from
+    // there would run off the bottom — in which case the parking spot is
+    // lifted just enough for the whole card to fit. The circle is
+    // travelling anyway during the shrink, so a slightly higher landing
+    // is not a visible correction.
+    const wrapCenterX = wrapRect.left + wrapRect.width / 2;
+    const maxPhotoTop = viewH - 16 - realCardRect.height + photoOffsetY;
+    let photoTop = Math.min(wrapRect.top + wrapRect.height / 2 - photoH / 2, maxPhotoTop);
+    // Stacked, the card never has to stay on screen for a flight — it
+    // scrolls on with the page once built — so on a short phone it is never
+    // lifted over the greeting; its bottom just builds below the fold.
+    if (stacked && copyBottom !== null) photoTop = Math.max(photoTop, copyBottom + 16 + photoOffsetY);
+    const parkPhoto = {
+      top: photoTop,
+      left: wrapCenterX - photoW / 2,
+      width: photoW,
+      height: photoH,
+    };
+    const parkCard = { top: parkPhoto.top - photoOffsetY, left: parkPhoto.left - photoOffsetX };
+    return { parkPhoto, parkCard };
+  }
+
+  // Single-column only: shift the hero so that, at the scroll position
+  // where the pin releases, the real card's top is exactly the parked
+  // clone's top. While pinned the cutout box sits at a fixed viewport spot
+  // (its offset inside the pin, below the stuck pin's top), so the parking
+  // spot at release can be worked out from any scroll position.
+  function alignHero(headerHeight) {
+    hero.style.marginTop = "";
+    if (!stacked) return;
+    const pinRect = introPin.getBoundingClientRect();
+    const wrapRect = ghost.getBoundingClientRect();
+    const pinnedWrap = {
+      top: headerHeight + (wrapRect.top - pinRect.top),
+      left: wrapRect.left,
+      width: wrapRect.width,
+      height: wrapRect.height,
+    };
+    const pinnedCopyBottom = copy ? headerHeight + (copy.getBoundingClientRect().bottom - pinRect.top) : null;
+    const realCardRect = realCard.getBoundingClientRect();
+    const { parkCard } = parkingSpot(pinnedWrap, realCardRect, pinnedCopyBottom);
+    const realTopAtRelease = realCardRect.top + window.scrollY - (pinStart + pinBuffer);
+    const baseMargin = parseFloat(getComputedStyle(hero).marginTop) || 0;
+    hero.style.marginTop = baseMargin - (realTopAtRelease - parkCard.top) + "px";
+  }
+
   function update() {
     ticking = false;
     const scrollY = window.scrollY;
@@ -224,37 +311,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (floatingIcons) {
       // The icons follow the real page, not the smoothed value: they are
       // part of the document and must stay glued to it.
-      floatingIcons.style.top = -(pinStart + Math.max(0, scrollY - (pinStart + pinBuffer))) + "px";
+      floatingIcons.style.top =
+        -(Math.min(scrollY, pinStart) + Math.max(0, scrollY - (pinStart + pinBuffer))) + "px";
     }
 
     const wrapRect = ghost.getBoundingClientRect();
     const realCardRect = realCard.getBoundingClientRect();
-    const realPhotoRect = realPhoto.getBoundingClientRect();
-
-    const photoW = realPhoto.offsetWidth;
-    const photoH = realPhoto.offsetHeight;
-    // Where the photo sits relative to the card's own top-left corner —
-    // used to park/land the *card* so its photo ends up in the right spot.
-    const photoOffsetX = realPhotoRect.left - realCardRect.left;
-    const photoOffsetY = realPhotoRect.top - realCardRect.top;
-
-    // The avatar parks at the centre of the cutout's box, and the card
-    // builds downwards from it. On a phone the box sits low in the
-    // pinned screen (the greeting is above it), so a card built from
-    // there would run off the bottom — in which case the parking spot is
-    // lifted just enough for the whole card to fit. The circle is
-    // travelling anyway during the shrink, so a slightly higher landing
-    // is not a visible correction.
-    const wrapCenterX = wrapRect.left + wrapRect.width / 2;
-    const cardH = realCardRect.height;
-    const maxPhotoTop = window.innerHeight - 16 - cardH + photoOffsetY;
-    const parkPhoto = {
-      top: Math.min(wrapRect.top + wrapRect.height / 2 - photoH / 2, maxPhotoTop),
-      left: wrapCenterX - photoW / 2,
-      width: photoW,
-      height: photoH,
-    };
-    const parkCard = { top: parkPhoto.top - photoOffsetY, left: parkPhoto.left - photoOffsetX };
+    const copyBottom = copy ? copy.getBoundingClientRect().bottom : null;
+    const { parkPhoto, parkCard } = parkingSpot(wrapRect, realCardRect, copyBottom);
 
     // Phase 1 — the card turns a half-circle about its vertical axis and,
     // from the halfway point on, shrinks from its resting size down to the
@@ -289,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // slope pi at t=0, which would kick the card as the flight starts.
     // Compressed to finish at 0.8, comfortably ahead of the landing at
     // fadeStart, so the card is flat and square-on before it settles.
-    const bump = Math.pow(Math.sin(Math.PI * clamp01(raw3 / 0.8)), 2);
+    const bump = stacked ? 0 : Math.pow(Math.sin(Math.PI * clamp01(raw3 / 0.8)), 2);
     const tilt = -9 * bump; // degrees — the leading edge turns to the viewer
     const lift = 1 + 0.03 * bump; // as if picked up and set back down
     flyingCard.style.transform =
@@ -334,7 +398,15 @@ document.addEventListener("DOMContentLoaded", () => {
   realCard.style.opacity = "0";
   realCard.style.visibility = "hidden";
   measure();
-  window.addEventListener("resize", measure);
+  // Phone browsers fire resize whenever the toolbar collapses or expands,
+  // which changes only the height. Stacked, re-measuring then would move
+  // the hero (alignHero) mid-scroll and jolt the page, so height-only
+  // resizes are ignored there; a rotation changes the width and still
+  // re-measures.
+  window.addEventListener("resize", () => {
+    if (stacked && singleColumn.matches && window.innerWidth === measuredW) return;
+    measure();
+  });
   window.addEventListener("load", measure);
   window.addEventListener("scroll", onScroll, { passive: true });
   setTimeout(measure, 300);

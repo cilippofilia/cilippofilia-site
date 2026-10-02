@@ -22,9 +22,42 @@
   --purple-bg: rgba(191, 90, 242, 0.18);
   --teal: #40c8e0;
   --teal-bg: rgba(64, 200, 224, 0.16);
+  /* Corner radii. --radius-lg is every floating glass surface; --radius is
+     a surface nested one level inside one (the maze screens); --radius-pill
+     is anything fully rounded regardless of height (buttons, badges, chips). */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
   --radius: 18px;
   --radius-lg: 26px;
+  --radius-pill: 980px;
+  /* App-icon squircle approximation: a share of the tile's own size, so a
+     44px feature tile and an 88px detail icon round off identically. */
+  --radius-icon: 22.5%;
   --max-width: 1024px;
+
+  /* Spacing scale, named by pixel value so a token reads as what it is.
+     Everything sits on a 4px grid except --space-14, the one off-grid step:
+     it's the inner gap between stacked items inside a card or cluster, and
+     it's used consistently enough to be a step of its own. */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-96: 96px;
+
+  /* Semantic spacing — the rhythm decisions, defined once. */
+  --gutter: var(--space-24);        /* .wrap's side padding */
+  --grid-gap: var(--space-20);      /* between cards, and between card runs */
+  --space-section: 88px;            /* between top-level page blocks */
+  --pad-surface: var(--space-24);   /* inside every glass card/panel */
+  --gap-columns: var(--space-48);   /* between a page's two layout columns */
   color-scheme: dark;
 
   /* Spring-ish ease for anything that moves on hover, press, or scroll into

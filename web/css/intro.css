@@ -21,7 +21,7 @@
 
 .floating-icon {
   position: absolute;
-  border-radius: 22%;
+  border-radius: var(--radius-icon);
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   /* Dim enough to read as background at any width — the icons cross behind
      the content column rather than hiding in a gutter beside it. */
@@ -94,7 +94,7 @@ main:has(.intro-pin) { padding-top: 0; }
   min-height: calc(100svh - 120px);
   display: flex;
   align-items: center;
-  padding: 12px 0 48px;
+  padding: var(--space-12) 0 var(--space-48);
 }
 
 /* While the shared-element card-build animation is running (see
@@ -121,7 +121,7 @@ main:has(.intro-pin) { padding-top: 0; }
 .intro-grid {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 56px;
+  gap: var(--gap-columns);
   align-items: center;
   width: 100%;
 }
@@ -229,7 +229,7 @@ main:has(.intro-pin) { padding-top: 0; }
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.08;
-  margin: 0 0 18px;
+  margin: 0 0 var(--space-16);
 }
 
 .intro-copy .wave {
@@ -264,8 +264,8 @@ main:has(.intro-pin) { padding-top: 0; }
 }
 
 @media (max-width: 720px) {
-  .intro { min-height: auto; padding: 32px 0 16px; }
-  .intro-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 24px; }
+  .intro { min-height: auto; padding: var(--space-32) 0 var(--space-16); }
+  .intro-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: var(--space-24); }
   .intro-photo-wrap { width: min(264px, 60vw); }
   /* One column, so the greeting goes above the photo rather than below it.
      The profile card assembles downwards from the avatar and would otherwise

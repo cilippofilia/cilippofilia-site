@@ -6,7 +6,7 @@
    there's no ambiguity this is an error page even at a glance. Decorative
    (aria-hidden); the h1 carries the same code for screen readers. */
 .notfound-code {
-  margin: 0 0 4px;
+  margin: 0 0 var(--space-4);
   font-size: clamp(6rem, 22vw, 11rem);
   font-weight: 700;
   line-height: 0.9;
@@ -21,7 +21,7 @@
 
 .notfound-game {
   position: relative;
-  margin-top: 40px;
+  margin-top: var(--space-40);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
@@ -37,7 +37,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: var(--space-14);
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
 }
@@ -73,13 +73,13 @@
   right: calc(var(--radius-lg) - var(--score-radius));
   height: calc(var(--score-radius) * 2);
   align-items: center;
-  gap: 6px;
+  gap: var(--space-8);
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   color: var(--green);
   background: var(--green-bg);
-  padding: 0 11px;
-  border-radius: 980px;
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-pill);
 }
 
 .notfound-game-score:not([hidden]) {
@@ -100,9 +100,9 @@
 .notfound-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   font-size: 0.95rem;
-  padding: 10px 18px;
+  padding: calc(var(--space-12) - 1px) calc(var(--space-16) - 1px);
   cursor: pointer;
   transform: scale(1);
   opacity: 1;
@@ -160,9 +160,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--space-8);
   text-align: center;
-  padding: 20px;
+  padding: var(--space-20);
   /* Opaque enough to fully cover the field behind it (the idle hint/best
      line and the settled glass pile) — without this, that content bleeds
      through and overlaps the result text. */
@@ -182,13 +182,13 @@
 }
 
 .notfound-game-result-text {
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-8);
   color: var(--text-dim);
   font-size: 0.9rem;
 }
 
 .notfound-game-result-best {
-  margin: -4px 0 8px;
+  margin: -4px 0 var(--space-8);
   color: var(--orange);
   font-size: 0.8rem;
 }

@@ -50,7 +50,7 @@ a:hover { color: var(--accent-hover); text-decoration: underline; }
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
 }
 
 .card:focus-visible {
@@ -60,7 +60,7 @@ a:hover { color: var(--accent-hover); text-decoration: underline; }
 .wrap {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--gutter);
   position: relative;
   z-index: 1;
 }

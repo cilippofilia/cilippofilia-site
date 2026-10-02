@@ -6,17 +6,13 @@
    that's the part meant to feel like a machine you're playing, not a panel
    you're reading. */
 
-.maze-section {
-  margin-top: 88px;
-}
-
 .maze-lede {
   color: var(--text-dim);
   max-width: 80ch;
 }
 
 .maze-explain-toggle {
-  margin-top: 12px;
+  margin-top: var(--space-12);
   background: none;
   border: none;
   padding: 0;
@@ -35,7 +31,7 @@
    .maze-flip-inner rotates 180deg on toggle. Backface culling means only one
    face is ever visible — no crossfade to arrange. */
 .maze-flip {
-  margin-top: 24px;
+  margin-top: var(--space-24);
   perspective: 1800px;
 }
 
@@ -71,24 +67,24 @@
   --maze-phosphor-dim: rgba(57, 255, 20, 0.45);
 
   position: relative;
-  margin-top: 24px;
+  margin-top: var(--space-24);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
-  padding: 24px;
+  padding: var(--pad-surface);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-16);
 }
 
 .maze-game-stats {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: var(--space-24);
   font-family: var(--maze-mono);
   font-variant-numeric: tabular-nums;
 }
@@ -116,7 +112,7 @@
   /* Padding keeps the maze's own straight-edged border away from the
      screen's rounded corners — without it, the wall grid runs flush to the
      edge and looks clipped where overflow:hidden meets the curve. */
-  padding: 10px;
+  padding: var(--space-12);
   border-radius: var(--radius);
   overflow: hidden;
   background: #050805;
@@ -154,9 +150,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-8);
   text-align: center;
-  padding: 20px;
+  padding: var(--space-20);
   font-family: var(--maze-mono);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -182,13 +178,13 @@
 }
 
 .maze-game-result-moves {
-  margin: -4px 0 4px;
+  margin: -4px 0 var(--space-4);
   color: var(--maze-phosphor-dim);
   font-size: 0.8rem;
 }
 
 .maze-game-start-hint {
-  margin: 0 0 6px;
+  margin: 0 0 var(--space-8);
   color: var(--maze-phosphor-dim);
   font-size: 0.75rem;
   letter-spacing: 0.03em;
@@ -196,7 +192,7 @@
 }
 
 .maze-game-leaderboard {
-  margin: 0 0 4px;
+  margin: 0 0 var(--space-4);
   padding: 0;
   list-style: none;
   display: flex;
@@ -211,8 +207,8 @@
 .maze-game-leaderboard li {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 2px 6px;
+  gap: var(--space-12);
+  padding: 2px var(--space-8);
 }
 
 .maze-game-leaderboard li.maze-game-leaderboard-mine {
@@ -230,11 +226,11 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
-  padding: 24px;
+  padding: var(--pad-surface);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-16);
 }
 
 .maze-explainer-caption {
@@ -253,7 +249,7 @@
   width: 100%;
   max-width: 360px;
   aspect-ratio: 1;
-  padding: 10px;
+  padding: var(--space-12);
   border-radius: var(--radius);
   overflow: hidden;
   background: #050805;
@@ -270,7 +266,7 @@
 .maze-explainer-controls {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-16);
   font-family: var(--maze-mono);
 }
 
@@ -286,5 +282,5 @@
 .maze-explainer-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-14);
 }
