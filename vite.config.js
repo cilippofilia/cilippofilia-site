@@ -21,14 +21,6 @@ export default defineConfig({
         mode: "hash",
         directives: { "script-src": ["self"] },
       },
-      // Temporary, while the migration lands page by page: the landing pages
-      // arrive after the site pages that link to them. Removed once they exist.
-      prerender: {
-        handleHttpError: ({ path, message }) => {
-          if (/^\/(drinko|iterly|itswritten|nine-tiles-puzzle)(\/|$)/.test(path)) return;
-          throw new Error(message);
-        },
-      },
     }),
   ],
   server: { host: "127.0.0.1", port: 4321, strictPort: true },

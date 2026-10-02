@@ -1,0 +1,157 @@
+<script>
+  import "#lib/styles/landing.css";
+  import "#lib/styles/apps/itswritten.css";
+  import Seo from "#lib/components/Seo.svelte";
+  import { landingReveal } from "#lib/actions/landing-reveal.js";
+</script>
+
+<Seo
+  title="itsWritten"
+  description="itsWritten is a private journal for iPhone: write first, then reflect with Apple Intelligence on your device. No account, no cloud chat, saved threads you can revisit."
+  url="https://cilippofilia.dev/itswritten/"
+  image="https://cilippofilia.dev/itswritten/assets/icon.png"
+/>
+
+<svelte:head>
+  <link rel="icon" href="/itswritten/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/itswritten/assets/apple-touch-icon.png" />
+</svelte:head>
+
+<div class="aurora" aria-hidden="true">
+  <div
+    class="float"
+    style="width:150px; height:150px; top:6%; left:4%; --float-rotate:-14deg; --float-opacity:0.05; --float-duration:19s; --float-delay:-2s;"
+  ></div>
+  <div
+    class="float"
+    style="width:90px; height:90px; top:16%; left:84%; --float-rotate:24deg; --float-opacity:0.07; --float-duration:15s; --float-delay:-6s; --float-mask:var(--cursor-svg);"
+  ></div>
+  <div
+    class="float"
+    style="width:170px; height:170px; top:40%; left:-5%; --float-rotate:10deg; --float-opacity:0.045; --float-duration:22s; --float-delay:-10s; --float-mask:var(--cursor-svg);"
+  ></div>
+  <div
+    class="float"
+    style="width:80px; height:80px; top:54%; left:72%; --float-rotate:-32deg; --float-opacity:0.08; --float-duration:13s; --float-delay:-1s;"
+  ></div>
+  <div
+    class="float"
+    style="width:120px; height:120px; top:72%; left:12%; --float-rotate:18deg; --float-opacity:0.05; --float-duration:18s; --float-delay:-8s;"
+  ></div>
+  <div
+    class="float"
+    style="width:110px; height:110px; top:84%; left:88%; --float-rotate:-8deg; --float-opacity:0.06; --float-duration:20s; --float-delay:-4s; --float-mask:var(--cursor-svg);"
+  ></div>
+  <div
+    class="float"
+    style="width:64px; height:64px; top:4%; left:46%; --float-rotate:40deg; --float-opacity:0.06; --float-duration:14s; --float-delay:-9s;"
+  ></div>
+</div>
+
+<nav class="site">
+  <div class="wrap">
+    <img src="/itswritten/assets/icon.png" alt="" />
+    <span>itsWritten</span>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="icon-orb">
+      <img src="/itswritten/assets/icon.png" alt="itsWritten app icon" />
+    </div>
+    <h1 class="title">itsWritten</h1>
+    <p class="tagline">
+      A private journal that writes first and reflects second, with Apple Intelligence on your device.
+    </p>
+    <div class="badge-row">
+      <a class="btn primary" href="https://apps.apple.com/app/id6757445119">Download on the App Store</a>
+    </div>
+    <p class="platforms">Free on iPhone. No account, no cloud chat, nothing leaves your device.</p>
+  </header>
+
+  <main use:landingReveal>
+    <section>
+      <span class="eyebrow">How it works</span>
+      <h2>Write it, reflect on it, come back to it</h2>
+      <ul class="features">
+        <li>
+          <span class="glyph">✍️</span><strong>Write</strong><span class="desc"
+            >A journal-first home screen with nothing in the way. Open the app and start typing. Thoughts, moods, the
+            day, whatever needs to get out.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">💬</span><strong>Reflect</strong><span class="desc"
+            >When you're done, ask for a reflection. Apple Intelligence answers with compassion and a follow-up prompt,
+            then the conversation continues in a chat view.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">🗂️</span><strong>Revisit</strong><span class="desc"
+            >Every entry becomes a saved thread. Reopen a past conversation from History and pick up where you left off.</span
+          >
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <span class="eyebrow">Also in the box</span>
+      <h2>The small things</h2>
+      <ul class="features">
+        <li>
+          <span class="glyph">🔒</span><strong>Stays on your device</strong><span class="desc"
+            >Reflections are generated on device with Apple's Foundation Models. Your writing never goes to a generic
+            cloud chat.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">⏱️</span><strong>Writing timer</strong><span class="desc"
+            >Set a few minutes, start, and keep going until it runs out. Pause and resume if life interrupts.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">⌨️</span><strong>Your pace</strong><span class="desc"
+            >Choose how responses arrive: all at once, streamed, or typed out at a human pace.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">🎛️</span><strong>Your tone</strong><span class="desc"
+            >Adjust the instructions, temperature and sampling behind each reflection in Settings.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">🔬</span><strong>Research when it helps</strong><span class="desc"
+            >For health questions, itsWritten can look up PubMed and cite the sources it used inside the chat.</span
+          >
+        </li>
+        <li>
+          <span class="glyph">🛡️</span><strong>Privacy shield</strong><span class="desc"
+            >Sensitive text is masked in screenshots and the app covers itself in the app switcher.</span
+          >
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <span class="eyebrow">A note</span>
+      <h2>Not a therapist</h2>
+      <p class="note">
+        itsWritten is a place to write and think. It is not a doctor, a therapist or an emergency service, and it does
+        not replace qualified medical or mental health care. If you or someone you know is in distress or needs urgent
+        help, contact local emergency services.
+      </p>
+    </section>
+  </main>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="/home">More apps</a>
+      <a href="mailto:cilia.filippo.dev@gmail.com">Contact</a>
+    </div>
+    <div>© 2026 Filippo Cilia</div>
+  </div>
+</footer>

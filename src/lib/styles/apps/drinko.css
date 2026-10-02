@@ -1,0 +1,45 @@
+/* Drinko theme. The layout and components live in /css/landing.css, which
+   every page in this folder loads before this file. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f5f5f7;
+  --bg2: #eceef2;
+  --surface: #ffffff;
+  --surface-hover: #f0f2f6;
+  --text: #1c1c1e;
+  --muted: #6e6e73;
+  --border: #e5e5ea;
+  --blue: #347ef7;
+  --blue-deep: #1f5fd6;
+  --yellow: #f2c94c;
+  --accent: var(--blue);
+  --brand-gradient: linear-gradient(135deg, var(--blue-deep), var(--blue) 55%, var(--yellow));
+  --radius-lg: 26px;
+  --radius-md: 16px;
+  --bloom-1: var(--blue);
+  --bloom-2: var(--yellow);
+  --btn-shadow: 0 8px 24px rgba(52, 126, 247, 0.35);
+  --btn-shadow-hover: 0 10px 30px rgba(52, 126, 247, 0.5);
+  --float-mask-default: var(--coupe-svg);
+  --coupe-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath fill='white' d='M8 10h84c0 30-14 48-36 52v34h20a5 5 0 0 1 0 10H24a5 5 0 0 1 0-10h20V62C22 58 8 40 8 10z'/%3E%3C/svg%3E");
+  --shaker-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 120'%3E%3Cpath fill='white' d='M30 4h20a6 6 0 0 1 6 6v10h4a8 8 0 0 1 8 8v4H12v-4a8 8 0 0 1 8-8h4V10a6 6 0 0 1 6-6zM10 38h60l-6 70a10 10 0 0 1-10 10H26a10 10 0 0 1-10-10z'/%3E%3C/svg%3E");
+}
+
+/* Dark theme variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #05070c;
+    --bg2: #0a0f1a;
+    --surface: rgba(255, 255, 255, 0.045);
+    --surface-hover: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f5f5f7;
+    --muted: #9a9da8;
+    --blue: #4a8df8;
+    --blue-deep: #2b6fe0;
+    --yellow: #ffd45c;
+  }
+}
+

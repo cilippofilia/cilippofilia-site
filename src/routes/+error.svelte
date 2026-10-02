@@ -1,11 +1,14 @@
 <script>
   // The root error page renders inside only the root layout, so it brings
-  // the site chrome and stylesheets itself.
-  import "#lib/styles/tokens.css";
-  import "#lib/styles/base.css";
-  import "#lib/styles/layout.css";
-  import "#lib/styles/components.css";
-  import "#lib/styles/notfound-game.css";
+  // the site chrome and stylesheets itself. The stylesheets are linked as
+  // URLs rather than imported: SvelteKit loads the root error component on
+  // every page as its fallback, and an imported stylesheet would be injected
+  // wherever that happens, landing pages included.
+  import tokensCss from "#lib/styles/tokens.css?url";
+  import baseCss from "#lib/styles/base.css?url";
+  import layoutCss from "#lib/styles/layout.css?url";
+  import componentsCss from "#lib/styles/components.css?url";
+  import notfoundGameCss from "#lib/styles/notfound-game.css?url";
   import { page } from "$app/state";
   import Seo from "#lib/components/Seo.svelte";
   import Header from "#lib/components/Header.svelte";
@@ -14,6 +17,9 @@
 </script>
 
 <svelte:head>
+  {#each [tokensCss, baseCss, layoutCss, componentsCss, notfoundGameCss] as href}
+    <link rel="stylesheet" {href} />
+  {/each}
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
 </svelte:head>

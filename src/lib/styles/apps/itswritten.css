@@ -1,0 +1,45 @@
+/* itsWritten theme. The layout and components live in /css/landing.css,
+   which every page in this folder loads before this file. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f6f5f2;
+  --bg2: #ecebe6;
+  --surface: #ffffff;
+  --surface-hover: #f1f0ec;
+  --text: #1c1c1e;
+  --muted: #6e6e73;
+  --border: #e6e4df;
+  --ink: #2c2c2e;
+  --graphite: #6e6e73;
+  --paper: #c9a56f;
+  --accent: #a8823f;
+  --brand-gradient: linear-gradient(135deg, var(--ink), var(--graphite) 55%, var(--paper));
+  --radius-lg: 26px;
+  --radius-md: 16px;
+  --bloom-1: var(--graphite);
+  --bloom-2: var(--paper);
+  --btn-shadow: 0 8px 24px rgba(44, 44, 46, 0.35);
+  --btn-shadow-hover: 0 10px 30px rgba(44, 44, 46, 0.45);
+  --float-mask-default: var(--w-svg);
+  --w-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath fill='none' stroke='white' stroke-width='14' stroke-linecap='round' stroke-linejoin='round' d='M10 14l22 72 28-56 28 56 22-72'/%3E%3C/svg%3E");
+  --cursor-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 120'%3E%3Cpath fill='none' stroke='white' stroke-width='9' stroke-linecap='round' d='M8 8h44M30 8v104M8 112h44'/%3E%3C/svg%3E");
+}
+
+/* Dark theme variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #09090b;
+    --bg2: #131316;
+    --surface: rgba(255, 255, 255, 0.045);
+    --surface-hover: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f5f5f7;
+    --muted: #9a9da8;
+    --ink: #e5e5ea;
+    --graphite: #9a9da8;
+    --paper: #d6b57c;
+    --accent: #d4b070;
+  }
+}
