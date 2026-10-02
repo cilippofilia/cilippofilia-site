@@ -127,3 +127,21 @@ test("assets are cacheable briefly, pages and feeds are revalidated", async () =
   const feed = await request("GET", "/apps.json");
   expect(feed.headers["cache-control"]).toBe("no-cache");
 });
+
+test("landing pages share /js/landing-reveal.js instead of their own copies", async () => {
+  const shared = await request("GET", "/js/landing-reveal.js");
+  expect(shared.status).toBe(200);
+  expect(shared.body).toContain("IntersectionObserver");
+  for (const p of ["/drinko/", "/iterly/", "/itswritten/", "/nine-tiles-puzzle/"]) {
+    const res = await request("GET", p);
+    expect(res.body).toContain('<script src="/js/landing-reveal.js"></script>');
+  }
+  for (const p of ["/drinko/app.js", "/iterly/app.js", "/itswritten/app.js"]) {
+    const res = await request("GET", p);
+    expect(res.status).toBe(404);
+  }
+  const nineTiles = await request("GET", "/nine-tiles-puzzle/app.js");
+  expect(nineTiles.status).toBe(200);
+  expect(nineTiles.body).toContain("countdown");
+  expect(nineTiles.body).not.toContain("IntersectionObserver");
+});
