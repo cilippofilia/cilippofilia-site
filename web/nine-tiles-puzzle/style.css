@@ -49,6 +49,14 @@
 
 /* ---------- Release countdown ---------- */
 
+/* The countdown and badge rows are flex boxes, and a display value beats the
+   `hidden` attribute — so after release the zeroed countdown stayed on screen
+   next to "Available now!". app.js toggles these with `hidden`. */
+.countdown[hidden],
+.badge-row[hidden] {
+  display: none;
+}
+
 .countdown {
   display: flex;
   justify-content: center;

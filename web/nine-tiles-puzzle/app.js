@@ -26,6 +26,10 @@ if (countdown) {
     }
   };
 
+  // Declared before the first tick: once the release date has passed, that
+  // first tick goes straight to goLive(), which clears this interval.
+  let timer;
+
   const goLive = () => {
     countdown.hidden = true;
     releaseLive.hidden = false;
@@ -49,5 +53,5 @@ if (countdown) {
   };
 
   tick();
-  const timer = setInterval(tick, 1000);
+  if (releaseDate > Date.now()) timer = setInterval(tick, 1000);
 }
