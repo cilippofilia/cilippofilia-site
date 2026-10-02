@@ -1,0 +1,128 @@
+<script>
+  import "#lib/styles/legal.css";
+  import Seo from "#lib/components/Seo.svelte";
+</script>
+
+<Seo
+  title="Privacy Policy · cilippofilia.dev"
+  description="How cilippofilia.dev handles your data: no cookies, no analytics, no tracking."
+  url="https://cilippofilia.dev/privacy"
+/>
+
+<main>
+  <div class="wrap">
+    <article class="legal">
+      <h1>Privacy Policy</h1>
+      <p class="legal-updated">Last updated: October 2, 2026</p>
+
+      <div class="legal-summary">
+        <p>
+          <strong>The short version:</strong> this website sets no cookies, stores nothing in your browser, runs no analytics,
+          shows no ads and has no accounts or forms. The only personal data involved is the technical information any website
+          receives when you visit it, such as your IP address.
+        </p>
+      </div>
+
+      <h2>Who is responsible</h2>
+      <p>
+        This website, cilippofilia.dev, is run by Filippo Cilia, an individual developer based in Manchester, United
+        Kingdom. For the purposes of UK data protection law (the UK GDPR and the Data Protection Act 2018), I am the
+        data controller. You can contact me at <a href="mailto:cilia.filippo.dev@gmail.com"
+          >cilia.filippo.dev@gmail.com</a
+        >.
+      </p>
+
+      <h2>What this policy covers</h2>
+      <p>
+        This policy covers the website only. Each of my apps has its own privacy policy, which explains what the app
+        does with your data:
+      </p>
+      <ul>
+        <li><a href="/drinko/privacy-policy.html">Drinko</a></li>
+        <li><a href="/itswritten/privacy-policy.html">itsWritten</a></li>
+        <li><a href="/iterly/privacy-policy.html">Iterly</a></li>
+        <li><a href="/nine-tiles-puzzle/privacy-policy.html">9 Tiles Puzzle</a></li>
+      </ul>
+
+      <h2>Cookies and browser storage</h2>
+      <p>
+        This website does not set cookies and does not use local storage, session storage or any similar technology.
+        Because of that, there is no cookie banner.
+      </p>
+
+      <h2>Analytics and tracking</h2>
+      <p>
+        There are no analytics, tracking pixels, advertising, social media widgets or fingerprinting scripts on this
+        site. I don't know who visits or what they look at.
+      </p>
+
+      <h2>Hosting</h2>
+      <p>
+        The site is hosted by Netlify, Inc. Like any web host, Netlify's servers automatically process technical
+        information about each request in order to deliver the page and keep the service secure. This includes your IP
+        address, browser and device type, the page requested, the referring page and the time of the request. Netlify is
+        based in the United States, so this information may be processed there. I don't use this information to identify
+        you, and I don't combine it with anything else. The legal basis is my legitimate interest in running a working,
+        secure website. See <a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener"
+          >Netlify's privacy policy</a
+        > for how long they keep it and how they protect it.
+      </p>
+
+      <h2>App Store content</h2>
+      <p>
+        The list of my published apps comes from Apple's public App Store data. My server asks Apple for that list and
+        sends no information about you. The app icons in that list, however, are loaded by your browser directly from
+        Apple's servers, so Apple receives the same technical request data described under Hosting. Links to the App
+        Store and TestFlight take you to Apple. Apple's handling of that data is covered by <a
+          href="https://www.apple.com/legal/privacy/"
+          target="_blank"
+          rel="noopener">Apple's privacy policy</a
+        >.
+      </p>
+
+      <h2>The games</h2>
+      <p>
+        The maze on the home page and the game on the "page not found" page run entirely in your browser. When you
+        finish a game, the page may send your result (time, number of moves or score) to this site so it can show a best
+        score or leaderboard. That result contains no name, IP address or other identifier, and on the public site it is
+        currently not stored at all.
+      </p>
+
+      <h2>Email</h2>
+      <p>
+        If you email me, I receive your email address and whatever you write. I use it only to reply to you and don't
+        share it with anyone. My email is provided by Google (Gmail). I delete conversations when they're no longer
+        needed.
+      </p>
+
+      <h2>Links to other sites</h2>
+      <p>
+        This site links to GitHub, LinkedIn, X, Instagram, the App Store and other sites. Once you follow a link, that
+        site's own privacy policy applies.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        Under UK data protection law you have the right to ask what personal data I hold about you, to have it corrected
+        or deleted, to restrict or object to how it's used, and to receive a copy of it. In practice I hold nothing
+        about website visitors beyond any emails you send me, but you can make any of these requests by emailing me. If
+        you're unhappy with how I've handled your data, you can complain to the Information Commissioner's Office at <a
+          href="https://ico.org.uk/make-a-complaint/"
+          target="_blank"
+          rel="noopener">ico.org.uk</a
+        >.
+      </p>
+
+      <h2>Children</h2>
+      <p>
+        This site is not aimed at children, and I don't knowingly collect personal data from anyone, children included.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        If the site starts handling data differently, for example by adding analytics, I'll update this page and the
+        date at the top before the change goes live.
+      </p>
+    </article>
+  </div>
+</main>
