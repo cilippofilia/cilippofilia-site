@@ -1,0 +1,41 @@
+# Netlify deploy of the same site server.js serves locally. server.js itself
+# doesn't run here — these rules recreate its routing table instead.
+
+[build]
+  publish = "public"
+  # The in-development apps list lives outside public/; copy it in so
+  # /apps.json resolves the way it does locally.
+  command = "cp data/apps.json public/apps.json"
+
+[functions]
+  directory = "netlify/functions"
+  included_files = ["src/server/**"]
+
+[[redirects]]
+  from = "/"
+  to = "/home"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/app-store"
+  to = "/home#apps"
+  status = 301
+
+[[redirects]]
+  from = "/home"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/assets/favicon.svg"
+  status = 200
+
+# Any other single clean slug (e.g. /running-plan) falls back to the generic
+# app template. Real files and folders (style-guide.html, nine-tiles-puzzle/)
+# take precedence, since this rule isn't forced.
+[[redirects]]
+  from = "/:slug"
+  to = "/app.html"
+  status = 200

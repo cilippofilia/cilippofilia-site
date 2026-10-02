@@ -4,3 +4,7 @@
 # Node (no deps today, but keep this out if any get added)
 node_modules/
 npm-debug.log*
+
+# Copied in from data/ by the Netlify build
+public/apps.json
+
