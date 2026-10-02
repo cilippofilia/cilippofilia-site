@@ -2,11 +2,21 @@
    .notfound-chip extends the site's existing .chip look (see
    components.css) so a chip reads as native UI, not custom game art. */
 
-/* The "404" badge above the headline — the one place on the page that
-   states the actual error code, so there's no ambiguity this is an error
-   page even at a glance. */
-.hero > .badge {
-  margin-bottom: 12px;
+/* The oversized "404" above the headline — the page's dominant element, so
+   there's no ambiguity this is an error page even at a glance. Decorative
+   (aria-hidden); the h1 carries the same code for screen readers. */
+.notfound-code {
+  margin: 0 0 4px;
+  font-size: clamp(6rem, 22vw, 11rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(135deg, var(--orange) 0%, #ff6a3d 55%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 40px rgba(255, 140, 40, 0.25));
 }
 
 .notfound-game {
