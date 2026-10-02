@@ -4,6 +4,10 @@
   `~/.claude/CLAUDE.md` does not apply here; ignore it unless a task is explicitly about an Apple app.
 - No frameworks, no client bundler (except the one `src/client/floating-icons.js` bundle), no new dependencies
   without asking first. `animejs` is the only runtime dependency.
+  Exception: on the `svelte-migration` branch the site is being rewritten in SvelteKit, and the dependencies listed
+  in `docs/superpowers/specs/2026-10-02-sveltekit-migration-design.md` are approved. Anything beyond that list still
+  needs asking first. The rest of these rules describe the current site and stay in force for code that hasn't been
+  ported yet; they get rewritten for SvelteKit as the last step of the migration.
 - Match the surrounding code: comment density, naming, CommonJS vs ESM (see the per-area rules). Comments explain
   *why* a thing is the way it is, in full sentences; that's the house style throughout.
 - Public contact email is `cilia.filippo.dev@gmail.com`. Never put the iCloud address in anything published.

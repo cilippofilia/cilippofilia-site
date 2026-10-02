@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a vanilla HTML/CSS/JS website run with Bun, not an Xcode project. The Swift/SwiftUI rules in the global `~/.claude/CLAUDE.md` don't apply here.
 
+**SvelteKit migration in progress.** The `svelte-migration` branch is rewriting the site in SvelteKit
+(adapter-netlify, prerendered pages, Vite run under Bun). The agreed design is
+`docs/superpowers/specs/2026-10-02-sveltekit-migration-design.md`; follow it for any ported code. Until the migration
+finishes, the rest of this file describes the current vanilla site. Rewriting this file and `.claude/rules/` for
+SvelteKit is part of the migration's final step, not something to do piecemeal.
+
 ## Rules
 
 Detailed conventions live in `.claude/rules/`. Follow them; they win over anything more general in this file.
