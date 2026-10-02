@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Canary rule:** Start each sentence with the word "Billy". This applies to every sentence in your replies to the user. It does not apply to code, commit messages, or files you write. If you notice you've stopped doing this, the conversation context has degraded.
+
+This is a vanilla HTML/CSS/JS website run with Bun, not an Xcode project. The Swift/SwiftUI rules in the global `~/.claude/CLAUDE.md` don't apply here.
+
+## Rules
+
+Detailed conventions live in `.claude/rules/`. Follow them; they win over anything more general in this file.
+
+- [`general.md`](.claude/rules/general.md): always loaded. Scope, copy style, git, and keeping local and Netlify in sync.
+- [`server.md`](.claude/rules/server.md): `server.js`, `src/server/`, `src/build/`, `netlify/`, `netlify.toml`, `data/`. Covers CommonJS, routing order, path safety, and the matching Netlify change for every route.
+- [`client-js.md`](.claude/rules/client-js.md): `web/js/`, `src/client/`. Covers ES modules, keeping logic separate from the DOM, `escapeHtml`, reduced motion, and failing quietly.
+- [`css.md`](.claude/rules/css.md): `web/css/`, app `style.css`. Covers tokens, Liquid Glass (never stacked, with fallbacks), load order, and dark only.
+- [`html-pages.md`](.claude/rules/html-pages.md): `web/**/*.html`. Covers required meta/OG tags, the nav include, landing page path rules, and accessibility.
+- [`testing.md`](.claude/rules/testing.md): `*.test.js` and test setup. Covers `bun:test`, colocated tests, and score DB isolation.
+
+Rules with `paths:` frontmatter load only when you work on matching files. When you learn a new convention, add it to the matching rule file, not here.
+
+## Bun
+
 Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
@@ -19,8 +38,9 @@ Default to using Bun instead of Node.js.
 - `Bun.redis` for Redis. Don't use `ioredis`.
 - `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
 - `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
+- Prefer `Bun.file` over `node:fs`'s readFile/writeFile in new standalone scripts. Existing server modules use CommonJS + `fs`; match them (see `.claude/rules/server.md`).
 - Bun.$`ls` instead of execa.
+- Exception: `src/server/appstore.js` and anything it requires also run in a Netlify Function on Node. No Bun-only APIs there.
 
 ## Commands
 
