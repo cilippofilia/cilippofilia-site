@@ -22,15 +22,10 @@ export default defineConfig({
         directives: { "script-src": ["self"] },
       },
       // Temporary, while the migration lands page by page: the landing pages
-      // and the home page's #apps anchor arrive after the pages that link to
-      // them. Removed once they exist.
+      // arrive after the site pages that link to them. Removed once they exist.
       prerender: {
         handleHttpError: ({ path, message }) => {
           if (/^\/(drinko|iterly|itswritten|nine-tiles-puzzle)(\/|$)/.test(path)) return;
-          throw new Error(message);
-        },
-        handleMissingId: ({ path, id, message }) => {
-          if (path === "/home" && id === "apps") return;
           throw new Error(message);
         },
       },
