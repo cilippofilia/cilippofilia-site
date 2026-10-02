@@ -30,7 +30,7 @@ Default to using Bun instead of Node.js.
 - `bun server.js` — run the server directly, no rebuild (fine if you haven't touched `src/client/`)
 - `bun test` — run all tests (uses `bun:test`, colocated as `*.test.js` next to the code they cover, e.g. `src/server/router.test.js`, `web/js/app-card.test.js`)
 - `bun test src/server/router.test.js` — run a single test file
-- Tests write their score databases to `data/.test/` instead of the real `data/*.db`: `bun test` auto-loads `.env.test`, which sets `SCORES_DIR_OVERRIDE` (read by `src/server/static.js` as `SCORES_DIR`). Keep new persisted state behind `SCORES_DIR` so tests can't touch the files a running server reads.
+- Tests write their score databases to `data/.test/` instead of the real `data/*.db`: `bun test` auto-loads `.env.test`, which sets `SCORES_DIR_OVERRIDE` (read by `src/server/static.js` as `SCORES_DIR`), and the `bunfig.toml` preload `src/test-setup.js` wipes that folder at the start of each run so tables never carry over between runs. Keep new persisted state behind `SCORES_DIR` so tests can't touch the files a running server reads.
 - The server binds to `127.0.0.1` only and listens on port 4321 by default (`PORT=xxxx bun server.js` to change it). Open `http://localhost:4321/home`.
 
 There is no lint/typecheck script configured; `tsconfig.json` exists for editor IntelliSense over the JS (`allowJs`, `checkJs` not set) rather than a build step.
