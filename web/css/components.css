@@ -175,6 +175,11 @@ button.button:disabled {
   flex-wrap: wrap;
 }
 
+/* `display: flex` above would otherwise beat the `hidden` attribute and
+   leave an empty glass strip on the page whenever nothing is in preorder
+   (apps-feed.js only un-hides it when there is one). */
+.featured[hidden] { display: none; }
+
 .featured-icon {
   width: 64px;
   height: 64px;
@@ -335,7 +340,7 @@ section:not(:has(h2)) + section:not(:has(h2)) { margin-top: 20px; }
 /* The preorder strip and the grid under it are the same run of app cards
    under one heading, so they get the grid's own row gap between them rather
    than the full 88px section break. */
-.featured + section { margin-top: 20px; }
+.featured:not([hidden]) + section { margin-top: 20px; }
 
 section h2,
 .apps-heading {
@@ -351,7 +356,8 @@ section h2,
    read as one block rather than two. */
 .apps-heading { margin-top: 88px; }
 .apps-heading + .featured,
-.apps-heading + section { margin-top: 0; }
+.apps-heading + section,
+.apps-heading + .featured[hidden] + section { margin-top: 0; }
 
 .grid {
   display: grid;
@@ -494,6 +500,9 @@ section h2,
 .badge.dev { color: var(--purple); background: var(--purple-bg); }
 .badge.live { color: var(--green); background: var(--green-bg); }
 .badge.concept { color: var(--orange); background: var(--orange-bg); }
+.badge.beta { color: var(--accent); background: rgba(var(--accent-rgb), 0.18); }
+.badge.planning { color: var(--orange); background: var(--orange-bg); }
+.badge.discovery { color: var(--teal); background: var(--teal-bg); }
 .badge.example { color: var(--text-dim); background: var(--bg-alt); }
 
 .app-detail {

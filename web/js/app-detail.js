@@ -1,6 +1,7 @@
 // Pure renderers for the generic in-development app page (web/app.html).
 // No DOM access here so they can be tested with bun test.
-import { badgeClass, isImageIcon } from "./app-card.js";
+import { isImageIcon } from "./app-card.js";
+import { badgeClass } from "./app-status.js";
 import { escapeHtml as esc } from "./html.js";
 
 export function renderNotFound(slug) {

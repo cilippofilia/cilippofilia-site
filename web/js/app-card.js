@@ -1,5 +1,5 @@
-// The one card shape both app grids on the home page render into: the
-// published apps that come back from Apple, and the in-development ones
+// The one card shape every app in the home page grid renders into: the
+// published apps that come back from Apple, and the unreleased ones
 // read out of data/apps.json. The two feeds carry different fields, so
 // they each normalize into these arguments rather than into each other.
 
@@ -15,15 +15,6 @@ export function splitName(name) {
 // Icons are either an emoji or a path to a real app icon.
 export function isImageIcon(icon) {
   return typeof icon === "string" && /^(\/|https?:)/.test(icon);
-}
-
-// Badge colour for an in-development app's free-text status. Anything
-// unrecognized falls back to a neutral badge rather than going unstyled.
-export function badgeClass(status) {
-  const s = (status || "").toLowerCase();
-  if (s.includes("dev")) return "dev";
-  if (s.includes("concept")) return "concept";
-  return "example";
 }
 
 // Every card carries the same two actions. "Website" is the app's own

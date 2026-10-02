@@ -44,9 +44,9 @@ Run the tests with `bun test`.
 ## Pages that exist right now
 
 - `/home` — the landing page. Everything is on it: the intro, the maze
-  minigame, and under "What's on the App Store", **Published**, pulled
-  live from your real App Store developer page, plus **In development**,
-  from `data/apps.json`
+  minigame, and under "What's on the App Store", one grid of every app:
+  the live ones pulled from your real App Store developer page, then the
+  unreleased ones from `data/apps.json`, ordered by status
 - `/app-store` — the old standalone page, now a permanent redirect to
   `/home#apps`, so existing links still work
 - one page per in-development app in `data/apps.json`, e.g. `/the-relay`
@@ -75,10 +75,12 @@ future (this is automatic — nothing to configure per app). A published
 app can also link straight to its own custom local page instead of out
 to Apple — see "Custom app pages" below.
 
-The "In development" section only lists the slugs named in
-`DEV_SLUGS_TO_SHOW`, near the top of `web/js/apps-feed.js` —
-the rest of `data/apps.json` is filtered out rather than deleted. Add a
-slug there to show it.
+The grid orders apps by status — Live, Beta, In development, Planning,
+Discovery (see `web/js/app-status.js`) — keeping each feed's own order
+within a status. Unreleased apps only appear if their slug is named in
+`DEV_SLUGS_TO_SHOW`, near the top of `web/js/apps-feed.js` — the rest of
+`data/apps.json` is filtered out rather than deleted. Add a slug there to
+show it.
 
 ## Adding an in-development app page
 
@@ -91,19 +93,20 @@ You don't need to write any HTML. Open `data/apps.json` and add an entry:
   "tagline": "One line that sells it.",
   "description": "A couple of sentences for the detail page.",
   "platforms": ["iPhone", "iPad"],
-  "status": "Concept",
+  "status": "Planning",
   "icon": "✨",
   "appStoreUrl": ""
 }
 ```
 
 Save, refresh the browser — `/my-new-app` now works locally (on Netlify,
-after the next deploy). To also list it in the "In development" section
-of `/home`, add its slug to `DEV_SLUGS_TO_SHOW` (see above). `status`
-just changes the badge color; it currently recognizes anything containing
-"dev" or "concept", and falls back to a neutral badge otherwise. Once the
-app actually ships, delete its entry here — it'll show up in "Published"
-on its own from then on.
+after the next deploy). To also list it in the grid on `/home`, add its
+slug to `DEV_SLUGS_TO_SHOW` (see above). `status` must be one of `Beta`,
+`In development`, `Planning`, or `Discovery` (case doesn't matter): it
+sets the badge colour and the app's place in the grid. Anything else gets
+a neutral badge and sorts last, with Discovery. Once the app actually
+ships, delete its entry here — it'll show up as Live on its own from then
+on.
 
 ## Custom app pages
 
@@ -192,8 +195,9 @@ web/
     maze-game.css, notfound-game.css — the two minigames
   js/
     nav.js           — shared header/footer, injected on every page
-    app-card.js      — the card shape both app grids render into
-    apps-feed.js     — fills those grids from Apple's feed and apps.json
+    app-card.js      — the card shape every app in the grid renders into
+    app-status.js    — the status order and badge colours
+    apps-feed.js     — fills the grid from Apple's feed and apps.json
     app-page.js, app-detail.js — the generic app page
     intro-flip.js    — the scroll-linked intro animation
     reveal.js        — scroll-reveal for cards
