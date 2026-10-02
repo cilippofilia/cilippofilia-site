@@ -53,7 +53,7 @@ Design tokens and the Liquid Glass visual language (translucent blurred cards, h
 
 Some apps (`web/nine-tiles-puzzle/`, `web/drinko/`, `web/iterly/`, `web/itswritten/`) are full custom multi-file landing pages with their own CSS/JS/assets, served verbatim by the router's custom-app-site branch — they don't go through `app.html` or the shared `web/css`/`web/js`.
 
-`svelte` and `bun-plugin-svelte` are already in `package.json` but unused on this branch — they're staged ahead of a Svelte migration (plan under `docs/superpowers/`). It was being prototyped in `.worktrees/svelte-migration`, but that worktree's link points at the repo's old location (`~/Desktop/cilippofilia-site`) and is no longer registered with git, so don't assume its work is reachable from this repo.
+`svelte` and `bun-plugin-svelte` are in `package.json` but unused — leftovers from an abandoned Svelte migration whose plan and prototype worktree have been deleted. Whether to drop them is an open item in `TODO.md`.
 
 Adding a new in-development app page or a custom app landing page doesn't require touching `server.js`/`router.js` — see `README.md` for the exact steps (`data/apps.json` entry, or a new folder under `web/`).
 
