@@ -1,6 +1,8 @@
 import { test, expect, beforeAll, afterAll } from "bun:test";
 import http from "node:http";
-import { handleRequest } from "./router.js";
+import { handleRequest, PAGES } from "./router.js";
+import { findCustomSiteSlugs } from "../build/netlify.js";
+import { PUBLIC_DIR } from "./static.js";
 
 let server;
 let port;
@@ -162,4 +164,28 @@ test("landing and privacy pages load /css/landing.css before their own theme", a
     const theme = await request("GET", `/${app}/style.css`);
     expect(theme.body).toContain("--float-mask-default");
   }
+});
+
+test("robots.txt and sitemap.xml are served with their own content types", async () => {
+  const robots = await request("GET", "/robots.txt");
+  expect(robots.status).toBe(200);
+  expect(robots.headers["content-type"]).toBe("text/plain; charset=utf-8");
+  expect(robots.body).toContain("Sitemap: https://cilippofilia.dev/sitemap.xml");
+
+  const sitemap = await request("GET", "/sitemap.xml");
+  expect(sitemap.status).toBe(200);
+  expect(sitemap.headers["content-type"]).toBe("application/xml; charset=utf-8");
+});
+
+// The sitemap is kept by hand, so check it both ways: every page and
+// landing site is listed, and everything listed actually resolves.
+test("sitemap.xml lists every public page, and every listed page resolves", async () => {
+  const sitemap = (await request("GET", "/sitemap.xml")).body;
+  const listed = [...sitemap.matchAll(/<loc>https:\/\/cilippofilia\.dev([^<]+)<\/loc>/g)].map((m) => m[1]);
+
+  const pages = Object.keys(PAGES).filter((p) => !p.includes(".") && p !== "/style-guide");
+  const landing = findCustomSiteSlugs(PUBLIC_DIR).flatMap((slug) => [`/${slug}/`, `/${slug}/privacy-policy.html`]);
+  for (const p of [...pages, ...landing]) expect(listed).toContain(p);
+
+  for (const p of listed) expect((await request("GET", p)).status).toBe(200);
 });

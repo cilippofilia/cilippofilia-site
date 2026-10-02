@@ -40,6 +40,8 @@ const PAGES = {
   "/style-guide": "style-guide.html",
   "/privacy": "privacy.html",
   "/terms": "terms.html",
+  "/robots.txt": "robots.txt",
+  "/sitemap.xml": "sitemap.xml",
 };
 
 // Paths that have moved. Kept so old links and bookmarks still land.

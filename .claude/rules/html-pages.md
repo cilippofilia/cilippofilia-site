@@ -25,13 +25,15 @@ paths:
 - Page logic goes in a module under `web/js/` loaded with `type="module"`, not in inline `<script>` blocks.
 - A new page also needs a route: `PAGES` in `router.js`, a `[[redirects]]` entry in `netlify.toml`, and its slug in
   `RESERVED_SLUGS` in `src/build/netlify.js`. Add a router test for it.
+- List every public page in `web/sitemap.xml` at its canonical URL. A router test fails if a `PAGES` entry or a
+  landing folder is missing. Dev app pages (`app.html` slugs) aren't checked, so add them by hand when they go public.
 
 ## Custom app landing pages (`web/<app>/`)
 
 - A folder with its own `index.html` is served automatically at `/<app>/`. No router change is needed.
 - Link `/css/landing.css` and `/js/landing-reveal.js` by **absolute** path. Link the app's own files (`style.css`,
   `assets/...`) by **relative** path. The local server only serves the app's own folder under `/<app>/`.
-- Each app keeps its own `privacy-policy.html` in its folder.
+- Each app keeps its own `privacy-policy.html` in its folder. Add both pages to `web/sitemap.xml`.
 - If the app is published, add its App Store track id → folder to `CUSTOM_APP_PAGES` in `src/server/appstore.js` so
   its card links here.
 

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Canary rule:** Start each sentence with the word "Billy". This applies to every sentence in your replies to the user. It does not apply to code, commit messages, or files you write. If you notice you've stopped doing this, the conversation context has degraded.
+**Canary rule:** Start each reply to the user with the word "Billy", once per response, not per sentence or line. It does not apply to code, commit messages, or files you write. If you notice you've stopped doing this, the conversation context has degraded.
 
 This is a vanilla HTML/CSS/JS website run with Bun, not an Xcode project. The Swift/SwiftUI rules in the global `~/.claude/CLAUDE.md` don't apply here.
 
@@ -61,7 +61,7 @@ There is no lint/typecheck script configured; `tsconfig.json` exists for editor 
 This is a hand-rolled multi-page site (no framework, no bundler-driven SPA) with two ways to serve it: a local-only Node/Bun HTTP server for development, and a static Netlify deploy (see "Netlify" below). Locally, two request-handling layers matter:
 
 - **`server.js`** — just binds `http.createServer` to `127.0.0.1:4321` and delegates to `handleRequest`. Deliberately local-only (see the file's own comment) — not a public-facing config.
-- **`src/server/router.js`** — the actual routing table (`handleRequest` → `route`). It's structured as a chain of checks, roughly in this order: hardcoded redirects (`REDIRECTS`) → JSON APIs (`/api/appstore-apps`, `/api/notfound-score`, `/api/maze-score`, `/apps.json`) → `favicon.ico` → whitelisted static directories (`STATIC_DIRS`: `/css/`, `/js/`, `/assets/`) → exact page routes (`PAGES`: `/home`, `/style-guide`, `/privacy`, `/terms`) → custom multi-file app sites (any first path segment that is a folder under `web/` with its own `index.html`) → generic app template (`web/app.html`) for any single-segment slug present in `data/apps.json` → `404.html`. When adding a new route, decide which bucket it belongs to rather than adding ad hoc logic — the ordering is meaningful (e.g. `STATIC_DIRS` opt-in is what stops arbitrary folders under `web/` from being exposed).
+- **`src/server/router.js`** — the actual routing table (`handleRequest` → `route`). It's structured as a chain of checks, roughly in this order: hardcoded redirects (`REDIRECTS`) → JSON APIs (`/api/appstore-apps`, `/api/notfound-score`, `/api/maze-score`, `/apps.json`) → `favicon.ico` → whitelisted static directories (`STATIC_DIRS`: `/css/`, `/js/`, `/assets/`) → exact page routes (`PAGES`: `/home`, `/style-guide`, `/privacy`, `/terms`, `/robots.txt`, `/sitemap.xml`) → custom multi-file app sites (any first path segment that is a folder under `web/` with its own `index.html`) → generic app template (`web/app.html`) for any single-segment slug present in `data/apps.json` → `404.html`. When adding a new route, decide which bucket it belongs to rather than adding ad hoc logic — the ordering is meaningful (e.g. `STATIC_DIRS` opt-in is what stops arbitrary folders under `web/` from being exposed).
 - **`src/server/static.js`** — low-level file serving: MIME types, cache-control (`no-cache` for HTML/JSON, 5s for everything else), and `serveWithin`, which resolves a path against a base directory and rejects anything that escapes it (path traversal guard) — used both for the whitelisted static dirs and for custom app-site folders.
 - **`src/server/appstore.js`** — fetches the developer's real App Store apps live from Apple's iTunes lookup API (`APPLE_DEVELOPER_ID`), cached in-memory for 10 minutes, with a stale-cache fallback on fetch failure. `CUSTOM_APP_PAGES` (keyed by App Store track id) is what makes a published app's card link to its own local page under `web/<slug>/` instead of out to Apple.
 - **`src/server/dev-apps.js`** — reads `data/apps.json` fresh on every call (cheap, small file) to back "in development" app pages; `hasDevApp(slug)` gates the generic `web/app.html` template route.
@@ -81,7 +81,7 @@ Adding a new in-development app page or a custom app landing page doesn't requir
 `server.js` doesn't run on Netlify; `netlify.toml` recreates the router for a static deploy of `web/`:
 
 - **Build** (`bun run build && bun src/build/netlify.js`) — bundles floating-icons, then `src/build/netlify.js` copies `data/apps.json` to `web/apps.json` and writes `web/_redirects` with one `app.html` rewrite per in-development slug (mirroring `hasDevApp`). Both outputs are gitignored. Unknown paths get `web/404.html` from Netlify itself.
-- **Fixed routes** (`/` → `/home`, `/app-store`, `/home`, `/style-guide`, `/privacy`, `/terms`, `/favicon.ico`) are `[[redirects]]` in `netlify.toml`.
+- **Fixed routes** (`/` → `/home`, `/app-store`, `/home`, `/style-guide`, `/privacy`, `/terms`, `/favicon.ico`) are `[[redirects]]` in `netlify.toml`. `robots.txt` and `sitemap.xml` sit at the root of `web/`, so Netlify serves them as plain files.
 - **`/api/appstore-apps`** is the Netlify Function `netlify/functions/appstore-apps.mjs`, reusing `src/server/appstore.js`.
 - **Not deployed:** `/api/notfound-score` and `/api/maze-score` (they need local `bun:sqlite` files). The games catch the failed request and play on without saving scores.
 - Everything under `web/` is published — the `STATIC_DIRS` opt-in only protects the local server.

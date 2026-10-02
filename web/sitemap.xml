@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Every public page, at its canonical URL. Kept by hand; router.test.js
+     fails if a page or custom app folder under web/ is missing from it.
+     Left out on purpose: /style-guide (internal reference) and 404.html. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://cilippofilia.dev/home</loc></url>
+  <url><loc>https://cilippofilia.dev/privacy</loc></url>
+  <url><loc>https://cilippofilia.dev/terms</loc></url>
+  <url><loc>https://cilippofilia.dev/drinko/</loc></url>
+  <url><loc>https://cilippofilia.dev/drinko/privacy-policy.html</loc></url>
+  <url><loc>https://cilippofilia.dev/iterly/</loc></url>
+  <url><loc>https://cilippofilia.dev/iterly/privacy-policy.html</loc></url>
+  <url><loc>https://cilippofilia.dev/itswritten/</loc></url>
+  <url><loc>https://cilippofilia.dev/itswritten/privacy-policy.html</loc></url>
+  <url><loc>https://cilippofilia.dev/nine-tiles-puzzle/</loc></url>
+  <url><loc>https://cilippofilia.dev/nine-tiles-puzzle/privacy-policy.html</loc></url>
+  <url><loc>https://cilippofilia.dev/the-relay</loc></url>
+</urlset>
