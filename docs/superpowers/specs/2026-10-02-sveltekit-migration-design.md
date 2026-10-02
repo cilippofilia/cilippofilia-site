@@ -116,8 +116,18 @@ vite.config.js
 
 ### Styles
 
-- **Global:** `tokens.css`, `base.css`, `layout.css`, `components.css` and `landing.css` (shared primitives).
-- **Scoped `<style>` in the component that owns them:** `intro.css`, `maze-game.css`, `notfound-game.css`, `legal.css`, `style-guide.css`, and the page-specific rules in each app's `style.css`.
+- **Shared, imported by the layouts:** `tokens.css`, `base.css`, `layout.css`, `components.css`, and `landing.css`.
+- **Page stylesheets stay as global CSS files,** imported by the page or component that owns them: `intro.css`, `maze-game.css`, `notfound-game.css`, `legal.css`, `style-guide.css`, and each app's `style.css`.
+  - They don't become scoped `<style>` blocks.
+  - The games and the intro animation create elements in JS (chips, shards, leaderboard rows, the flying profile card), and Svelte's scoping classes never reach those elements.
+  - Moving these rules into scoped blocks would also raise their specificity and change what wins in the cascade.
+- **Scoped `<style>` is for new rules** that belong to one component and only style markup that component renders itself.
+
+### Navigation
+
+- `<body data-sveltekit-reload>` in `src/app.html` makes every link a full page load. That matches today's multi-page site.
+- Each page's global stylesheet, `:root` theme tokens and window listeners therefore start fresh on every page, and can't carry over from the previous one.
+- Client-side navigation can be turned on later as its own change.
 - **The existing CSS rules all carry over:**
   - tokens first
   - glass never stacks
@@ -149,14 +159,31 @@ vite.config.js
 
 All interactive behaviour is wired in `onMount` or actions, so the prerendered HTML matches today's markup and is usable before hydration.
 
+**The four large imperative modules** are `intro-flip.js`, `maze-game.js`, `maze-explainer.js` and `notfound-game.js`.
+- They keep their internals.
+- Each one's top-level bootstrap (`document.querySelector(...)` or `DOMContentLoaded`) becomes an exported `init…(root, { signal })` function.
+- The owning component renders the same static markup and calls the function from `onMount`. It passes an `AbortSignal` that it aborts on destroy.
+- Every `addEventListener` gets `{ signal }`, and timer and `requestAnimationFrame` loops stop once `signal.aborted` is set. Without this, Vite's hot reload would stack duplicate listeners in dev.
+- The markup these modules mutate stays static in the component (no reactive bindings), so Svelte never fights them over the same nodes.
+
+**Landing privacy policies keep their `.html` URLs** (for example `/drinko/privacy-policy.html`), since App Store listings link to them.
+- Each lives at `routes/(landing)/<app>/privacy-policy/+page.svelte` with `trailingSlash = 'never'` and `csr = false`.
+- `trailingSlash = 'never'` makes the prerenderer write it as `<app>/privacy-policy.html`.
+- `csr = false` means the page loads no JS, since it has none today.
+- A `reroute` hook in `src/hooks.js` maps the `.html` path onto the route, so it resolves in `vite dev` too.
+
 ## Data flow
 
 ### App Store feed
 
 - `/home` is prerendered. `FeaturedStrip` and the apps grid fetch `/api/appstore-apps` in `onMount`.
 - On failure the "What's on the App Store" section stays hidden, as it does today.
-- `api/appstore-apps/+server.js` calls `src/lib/server/appstore.js` unchanged: the iTunes lookup, the 10-minute in-memory cache, the stale-cache fallback, and `CUSTOM_APP_PAGES`.
+- `api/appstore-apps/+server.js` calls `src/lib/server/appstore.js`. The behaviour is kept: the iTunes lookup, the 10-minute in-memory cache, the stale-cache fallback, `CUSTOM_APP_PAGES`, and the `Cache-Control` the Netlify Function sends today.
 - It must keep running on Node inside the Netlify Function, so it gets no Bun-only APIs.
+- The server modules move from CommonJS to ES modules, because Vite's SSR build expects ESM source.
+- `appstore.js` switches from `https.get` to `fetch` with `AbortSignal.timeout(8000)`. Bun and Node 18+ both have `fetch`.
+- `fetch` is injectable, so the cache and stale fallback can be tested without the network.
+- Paths resolve from `process.cwd()` (the repo root under `vite`, `bun test` and Netlify's build) instead of `__dirname`, which no longer points into `src/` once Vite has bundled the code.
 
 ### In-development apps
 
@@ -174,6 +201,13 @@ All interactive behaviour is wired in `onMount` or actions, so the prerendered H
 - The 1 KB body cap stays: a larger body counts as no input. So does malformed JSON.
 - `SCORES_DIR` / `SCORES_DIR_OVERRIDE` keeps its current behaviour, so tests write to `data/.test/`.
 - Both games already catch failed requests and play on, which covers the 503.
+- The request handling lives in `src/lib/server/score-api.js` as plain functions that take a `Request` and a store (or `null` off Bun). The tests cover them without a server.
+- The `+server.js` files only wire them to the store loader.
+
+### 404 on Netlify
+
+- adapter-netlify sends every path that has no prerendered file to its server function.
+- That function renders `+error.svelte` with status 404, so the old `web/404.html` file has no direct replacement.
 
 ## Security
 
@@ -187,16 +221,20 @@ All interactive behaviour is wired in `onMount` or actions, so the prerendered H
 ### Content-Security-Policy
 
 - SvelteKit adds an inline bootstrap script to each prerendered page, which `script-src 'self'` blocks.
-- `kit.csp` runs in `mode: 'hash'` with `script-src: ['self']`. SvelteKit then writes a `<meta http-equiv="Content-Security-Policy">` on each prerendered page that includes the bootstrap script's hash.
-- `script-src` is removed from the header CSP. The browser enforces both policies, and a fixed header can't list each page's hashes.
-- Every other directive stays in the header.
+- `kit.csp` runs in `mode: 'hash'` with only `script-src: ['self']` set. SvelteKit then writes a `<meta http-equiv="Content-Security-Policy">` on each prerendered page that includes the bootstrap script's hash.
+  - Only `script-src` goes in `kit.csp`. If `style-src` were there too, SvelteKit would add hashes to it, which switches off `'unsafe-inline'` and breaks every `style="…"` attribute.
+- The header CSP's `script-src` becomes `'self' 'unsafe-inline'`.
+  - It can't simply be removed. Without it, scripts fall back to `default-src 'self'`, which still blocks the bootstrap.
+  - The browser enforces both policies, so a script has to pass both. The header allows inline scripts in general, and the meta tag narrows that to the one hashed bootstrap. The net effect is the same as today's `'self'`-only rule plus that one script.
+  - The build test checks that every prerendered page carries the meta CSP, and that its `script-src` has no `'unsafe-inline'`. That makes sure no page relies on the header alone.
+- Every other directive stays in the header unchanged.
 - `frame-ancestors` can't be set from a `<meta>` CSP, but it stays in the header, and `X-Frame-Options: DENY` stays as well.
 - `style-src 'self' 'unsafe-inline'` is unchanged. Svelte's scoped styles are emitted to CSS files, and inline `style=` attributes already rely on `'unsafe-inline'`.
 
 ### Request guards
 
 - **Host.** Today's `isLocalHost` check guards against DNS rebinding. Vite's dev server does the same job by rejecting unknown `Host` headers (`server.allowedHosts`).
-- **Cross-origin writes.** Today's `isForeignWrite` check moves to `hooks.server.js`. A `POST` to `/api/*` whose `Origin` is not a local hostname (in dev) or not the site's own origin (in production) gets `403`. SvelteKit's built-in `csrf.checkOrigin` covers only form content types, not JSON.
+- **Cross-origin writes.** Today's `isForeignWrite` check moves to `hooks.server.js`. A non-`GET`/`HEAD` request to `/api/*` whose `Origin` header is present and differs from the request URL's own origin (or doesn't parse) gets `403`. One rule covers dev (`http://localhost:4321`) and production. SvelteKit's built-in `csrf.checkOrigin` covers only form content types, not JSON.
 - **Bind address.** The dev server binds to `127.0.0.1` only (`server.host`), as `server.js` does now.
 
 ## Testing
