@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { renderAppDetail, renderNotFound } from "./app-detail.js";
+import { appPageMeta, renderAppDetail, renderNotFound } from "./app-detail.js";
 
 const relay = {
   slug: "the-relay",
@@ -39,4 +39,17 @@ test("renderNotFound names the slug and escapes it", () => {
   const html = renderNotFound("<nope>");
   expect(html).toContain("Nothing here yet");
   expect(html).toContain("<code>/&lt;nope&gt;</code>");
+});
+
+test("appPageMeta gives each app its own title, description, canonical and image", () => {
+  expect(appPageMeta(relay)).toEqual({
+    title: "relay · cilippofilia.dev",
+    description: "An analog signal-sorting mystery.",
+    url: "https://cilippofilia.dev/the-relay",
+    image: "https://cilippofilia.dev/assets/app-icons/thumb/relay-icon.png",
+  });
+});
+
+test("appPageMeta falls back to the site image for an emoji icon", () => {
+  expect(appPageMeta({ ...relay, icon: "✨" }).image).toBe("https://cilippofilia.dev/assets/profile.jpg");
 });
