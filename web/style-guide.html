@@ -327,12 +327,6 @@
     </div>
   </main>
   <script src="/js/nav.js"></script>
-  <script>
-    // Fill each token label with its current value from tokens.css.
-    const rootStyle = getComputedStyle(document.documentElement);
-    document.querySelectorAll("[data-token]").forEach((el) => {
-      el.textContent = rootStyle.getPropertyValue(el.dataset.token).trim();
-    });
-  </script>
+  <script type="module" src="/js/style-guide.js"></script>
 </body>
 </html>

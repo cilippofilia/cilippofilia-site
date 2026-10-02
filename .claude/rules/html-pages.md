@@ -22,7 +22,8 @@ paths:
 - Stylesheets in order: `/css/tokens.css`, `/css/base.css`, `/css/layout.css`, `/css/components.css`, then any
   page-specific CSS. Always use absolute `/css/...` and `/js/...` paths.
 - Include `<script src="/js/nav.js"></script>` for the shared header and footer. Don't hand-write a header or footer.
-- Page logic goes in a module under `web/js/` loaded with `type="module"`, not in inline `<script>` blocks.
+- Page logic goes in a module under `web/js/` loaded with `type="module"`, not in inline `<script>` blocks or
+  `on...=` attributes. The CSP (`script-src 'self'`) blocks both, and a router test fails on them.
 - A new page also needs a route: `PAGES` in `router.js`, a `[[redirects]]` entry in `netlify.toml`, and its slug in
   `RESERVED_SLUGS` in `src/build/netlify.js`. Add a router test for it.
 - List every public page in `web/sitemap.xml` at its canonical URL. A router test fails if a `PAGES` entry or a

@@ -2,7 +2,8 @@ import { test, expect, beforeAll, afterAll } from "bun:test";
 import http from "node:http";
 import { handleRequest, PAGES } from "./router.js";
 import { findCustomSiteSlugs } from "../build/netlify.js";
-import { PUBLIC_DIR } from "./static.js";
+import { PUBLIC_DIR, SECURITY_HEADERS } from "./static.js";
+import netlifyConfig from "../../netlify.toml";
 
 let server;
 let port;
@@ -19,9 +20,9 @@ afterAll(() => {
 
 // Raw node:http so the path goes out exactly as written (fetch would
 // re-encode "%") and redirects are not followed.
-export function request(method, path, body) {
+export function request(method, path, body, headers = {}) {
   return new Promise((resolve, reject) => {
-    const req = http.request({ host: "127.0.0.1", port, path, method }, (res) => {
+    const req = http.request({ host: "127.0.0.1", port, path, method, headers }, (res) => {
       let responseBody = "";
       res.setEncoding("utf8");
       res.on("data", (chunk) => (responseBody += chunk));
@@ -79,6 +80,69 @@ test("a path that escapes the public folder is refused", async () => {
   const res = await request("GET", "/css/../server.js");
   expect([403, 404]).toContain(res.status);
   expect(res.body).not.toContain("createServer");
+});
+
+// The path is percent-decoded before routing, so an encoded "/" must not
+// turn "." or ".." into the custom app folder name.
+test("an encoded slash can't reach files outside the whitelisted folders", async () => {
+  const web = await request("GET", "/.%2Fjs%2Fhtml.js");
+  expect(web.status).toBe(404);
+  expect(web.body).not.toContain("escapeHtml");
+
+  const root = await request("GET", "/..%2Fpackage.json");
+  expect(root.status).toBe(404);
+  expect(root.body).not.toContain("cilippofilia-site");
+});
+
+test("every response carries the security headers, and they match netlify.toml", async () => {
+  const netlify = netlifyConfig.headers.find((h) => h.for === "/*");
+  expect(netlify.values).toEqual(SECURITY_HEADERS);
+
+  for (const p of ["/home", "/", "/css/base.css", "/definitely-not-an-app"]) {
+    const res = await request("GET", p);
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+      expect(res.headers[name.toLowerCase()]).toBe(value);
+    }
+  }
+});
+
+// Pages served from inline <script> blocks would be blocked by the CSP's
+// script-src 'self', so none are allowed.
+test("no page has an inline script", async () => {
+  const pages = [...Object.values(PAGES).filter((f) => f.endsWith(".html")), "404.html", "app.html"];
+  const landing = findCustomSiteSlugs(PUBLIC_DIR).flatMap((slug) => [`${slug}/index.html`, `${slug}/privacy-policy.html`]);
+  for (const file of [...pages, ...landing]) {
+    const html = await Bun.file(`${PUBLIC_DIR}/${file}`).text();
+    expect(html).not.toMatch(/<script(?![^>]*\bsrc=)[^>]*>/);
+    expect(html).not.toMatch(/\son[a-z]+="/);
+  }
+});
+
+test("requests addressed to a non-local hostname are refused", async () => {
+  const res = await request("GET", "/home", undefined, { Host: "attacker.example:4321" });
+  expect(res.status).toBe(403);
+});
+
+test("score writes from another site's page are refused, same-origin ones accepted", async () => {
+  const before = (await request("GET", "/api/notfound-score")).body;
+  const foreign = await request("POST", "/api/notfound-score", JSON.stringify({ score: 1e9 }), {
+    Origin: "https://attacker.example",
+  });
+  expect(foreign.status).toBe(403);
+  expect((await request("GET", "/api/notfound-score")).body).toBe(before);
+
+  const local = await request("POST", "/api/maze-score", JSON.stringify({ timeMs: 5000, moves: 40 }), {
+    Origin: `http://localhost:${port}`,
+  });
+  expect(local.status).toBe(200);
+});
+
+test("an oversized score body is treated as no input", async () => {
+  const before = JSON.parse((await request("GET", "/api/notfound-score")).body).best;
+  const padded = JSON.stringify({ score: before + 1000, padding: "x".repeat(4096) });
+  const res = await request("POST", "/api/notfound-score", padded);
+  expect(res.status).toBe(200);
+  expect(JSON.parse(res.body).best).toBe(before);
 });
 
 test("a slug listed in data/apps.json gets the app template", async () => {

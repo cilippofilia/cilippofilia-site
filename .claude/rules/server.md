@@ -34,6 +34,17 @@ paths:
   current state with 200. Validate numbers (`Number.isFinite`, `Number.isInteger`, `> 0`) before persisting.
 - `handleRequest` is the only entry point and must never let an exception escape. Keep the decode and route
   `try` blocks.
+- `handleRequest` refuses (403) any request whose `Host` isn't a local hostname, and any non-GET/HEAD whose `Origin`
+  is another site. That's what stops other web pages, or DNS rebinding, from writing to the score APIs. Don't remove
+  it, and keep `readBody` capped (`MAX_BODY_BYTES`).
+- The path is percent-decoded before routing, so the custom-app-folder branch only accepts a first segment matching
+  `FOLDER_SEGMENT`. Never derive a directory from a decoded segment without a pattern check like that.
+
+## Security headers
+
+- `SECURITY_HEADERS` in `static.js` (CSP, nosniff, frame denial, ...) goes on every local response, and must equal
+  the `[[headers]] for = "/*"` block in `netlify.toml`. A router test compares them, so change both together.
+- A new external image, script or API host must be added to the CSP in both places, or the browser will block it.
 
 ## Matching Netlify change (required)
 

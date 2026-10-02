@@ -54,3 +54,17 @@
   from = "/favicon.ico"
   to = "/assets/favicon.svg"
   status = 200
+
+# Security headers for every page and file. Kept identical to
+# SECURITY_HEADERS in src/server/static.js (the reasoning for each value
+# lives there); a router test fails if the two drift apart. HSTS isn't set
+# here because Netlify already sends it for the custom domain.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.mzstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Cross-Origin-Opener-Policy = "same-origin"

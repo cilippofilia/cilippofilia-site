@@ -20,13 +20,52 @@ const { hasDevApp } = require("./dev-apps");
 const { getBest, submitScore } = require("./notfound-scores");
 const { getTop: getMazeTop, submitEntry: submitMazeEntry } = require("./maze-scores");
 
+// The score APIs take a few dozen bytes of JSON. Anything past this is
+// not a real submission, so it's dropped rather than buffered — the
+// handler then sees an empty body and treats it as no input.
+const MAX_BODY_BYTES = 1024;
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let body = "";
-    req.on("data", (chunk) => (body += chunk));
-    req.on("end", () => resolve(body));
+    let tooLarge = false;
+    req.on("data", (chunk) => {
+      if (tooLarge) return;
+      body += chunk;
+      if (body.length > MAX_BODY_BYTES) {
+        tooLarge = true;
+        body = "";
+      }
+    });
+    req.on("end", () => resolve(tooLarge ? "" : body));
     req.on("error", reject);
   });
+}
+
+// The server binds to 127.0.0.1, but any web page open in the same browser
+// can still send it requests: directly (a cross-site POST to the score
+// APIs) or through DNS rebinding (an attacker's hostname re-pointed at
+// 127.0.0.1). Only answering requests addressed to a local hostname, and
+// refusing writes that come from another site's page, closes both.
+const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+function isLocalHost(host) {
+  try {
+    return LOCAL_HOSTNAMES.has(new URL(`http://${host}`).hostname);
+  } catch {
+    return false;
+  }
+}
+
+function isForeignWrite(req) {
+  if (req.method === "GET" || req.method === "HEAD") return false;
+  const origin = req.headers.origin;
+  if (!origin) return false;
+  try {
+    return !LOCAL_HOSTNAMES.has(new URL(origin).hostname);
+  } catch {
+    return true;
+  }
 }
 
 // Directories under web/ served verbatim. Anything not listed here is
@@ -43,6 +82,12 @@ const PAGES = {
   "/robots.txt": "robots.txt",
   "/sitemap.xml": "sitemap.xml",
 };
+
+// A first path segment that can name a custom app folder. Checked before
+// the folder lookup because the path has already been percent-decoded:
+// without it, "/.%2Ffile" gives a segment of "." and serves any file under
+// web/, sidestepping STATIC_DIRS, and ".." would point at the repo root.
+const FOLDER_SEGMENT = /^[a-zA-Z0-9-]+$/;
 
 // Paths that have moved. Kept so old links and bookmarks still land.
 const REDIRECTS = {
@@ -122,7 +167,7 @@ async function route(pathname, req, res) {
   // CSS/JS/assets, served as-is.
   const firstSlash = pathname.indexOf("/", 1);
   const firstSegment = firstSlash === -1 ? pathname.slice(1) : pathname.slice(1, firstSlash);
-  const customDir = firstSegment ? path.join(PUBLIC_DIR, firstSegment) : null;
+  const customDir = FOLDER_SEGMENT.test(firstSegment) ? path.join(PUBLIC_DIR, firstSegment) : null;
   const hasCustomPage = customDir && fs.existsSync(path.join(customDir, "index.html"));
 
   if (hasCustomPage) {
@@ -152,6 +197,11 @@ async function route(pathname, req, res) {
 // the whole process down with it — so both the decode and the routing are
 // fenced here and answered with a status code instead.
 async function handleRequest(req, res) {
+  if (!isLocalHost(req.headers.host || "localhost") || isForeignWrite(req)) {
+    send(res, 403, "Forbidden");
+    return;
+  }
+
   let pathname;
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);

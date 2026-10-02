@@ -46,9 +46,42 @@ const CACHE_CONTROL = {
 };
 const DEFAULT_CACHE_CONTROL = "public, max-age=5";
 
+// Sent on every response, and kept identical to the [[headers]] block in
+// netlify.toml so a CSP mistake shows up locally before it ships (a router
+// test fails if the two drift apart).
+//
+// - Scripts only ever come from this origin: no inline <script>, no eval.
+//   That also makes a javascript: URL that slipped into an href inert.
+// - Styles allow 'unsafe-inline' because many pages and templates carry
+//   style="..." attributes; inline CSS can't run code, so the cost is small.
+// - Images: this origin, data: URIs (the SVG masks in the landing pages'
+//   style.css) and Apple's artwork CDN, which serves App Store icons from
+//   numbered hosts (is1-ssl, is2-ssl, ...).
+// - frame-ancestors / X-Frame-Options stop the site being framed for
+//   clickjacking, and form-action 'none' because there are no forms at all.
+const SECURITY_HEADERS = {
+  "Content-Security-Policy": [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https://*.mzstatic.com",
+    "connect-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+  ].join("; "),
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+  "Cross-Origin-Opener-Policy": "same-origin",
+};
+
 function send(res, status, body, contentType, extraHeaders = {}) {
   const payload = Buffer.isBuffer(body) ? body : Buffer.from(String(body));
   res.writeHead(status, {
+    ...SECURITY_HEADERS,
     "Content-Type": contentType || "text/plain; charset=utf-8",
     "Content-Length": payload.length,
     ...extraHeaders,
@@ -63,7 +96,7 @@ function send(res, status, body, contentType, extraHeaders = {}) {
 }
 
 function redirect(res, location, status = 302) {
-  res.writeHead(status, { Location: location });
+  res.writeHead(status, { ...SECURITY_HEADERS, Location: location });
   res.end();
 }
 
@@ -93,4 +126,4 @@ function serveWithin(res, baseDir, relativePath) {
   serveFile(res, filePath);
 }
 
-module.exports = { ROOT, PUBLIC_DIR, DATA_DIR, SCORES_DIR, send, redirect, serveFile, serveWithin };
+module.exports = { ROOT, PUBLIC_DIR, DATA_DIR, SCORES_DIR, SECURITY_HEADERS, send, redirect, serveFile, serveWithin };
