@@ -1,0 +1,139 @@
+/* The furniture every page carries: header, nav, main, footer, hero copy. */
+
+header.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  padding: var(--space-14) 0;
+  transition: box-shadow 0.3s var(--ease-spring), border-color 0.3s var(--ease-spring);
+}
+
+/* Set once the page has scrolled past the header's own height (see
+   nav.js's IntersectionObserver) — a deeper shadow and a slightly
+   brighter hairline, so the bar reads as lifted chrome rather than
+   sitting flush with the page underneath it. No size/padding change:
+   those are layout properties, not worth animating for this. */
+header.site-header.is-condensed {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+header.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.brand:hover { text-decoration: none; opacity: 0.7; }
+
+.brand .dim { color: var(--text-dim); font-weight: 400; }
+
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+nav.site-nav {
+  display: flex;
+  gap: var(--space-24);
+  font-size: 0.85rem;
+}
+
+nav.site-nav a {
+  position: relative;
+  color: var(--text-dim);
+  padding-bottom: 2px;
+}
+
+nav.site-nav a.active,
+nav.site-nav a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* A thin underline that grows in from the left rather than the color
+   change doing all the work alone. Scale, not width, so it never affects
+   layout. Active stays fully drawn; hover draws and retracts on its own. */
+nav.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-spring);
+}
+
+nav.site-nav a.active::after {
+  transform: scaleX(1);
+}
+
+nav.site-nav a:hover::after {
+  transform: scaleX(1);
+}
+
+main {
+  padding: var(--space-64) 0 var(--space-96);
+  min-height: 60vh;
+  position: relative;
+  z-index: 1;
+}
+
+footer.site-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--space-32) 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  position: relative;
+  z-index: 1;
+}
+
+footer.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-12) var(--space-24);
+}
+
+.site-footer-links { display: flex; flex-wrap: wrap; gap: var(--space-16); }
+.site-footer-links a { color: var(--text-dim); }
+.site-footer-links a:hover { color: var(--text); }
+
+.hero {
+  padding: var(--space-40) 0 var(--space-8);
+}
+
+.hero h1 {
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  margin: 0 0 var(--space-16);
+  letter-spacing: -0.02em;
+}
+
+.hero p.lede {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 52ch;
+  margin: 0 0 var(--space-32);
+}
