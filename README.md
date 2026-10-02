@@ -123,6 +123,13 @@ links resolve correctly, and everything under that path is served
 straight from the folder. No route to add in `src/server/router.js` or
 `netlify.toml`.
 
+The four existing landing pages share their layout and scroll-in reveal:
+each page links `/css/landing.css` and then its own `style.css` (just the
+colour theme and any page-specific rules), and loads `/js/landing-reveal.js`.
+Those shared files must be referenced by absolute path — the local server
+only serves files inside the app's own folder under `/<folder-name>/`.
+Copy an existing `style.css` to theme a new one.
+
 If a matching entry exists in `CUSTOM_APP_PAGES` in
 `src/server/appstore.js` (keyed by the app's App Store track id), its
 "Published" card links straight to this local page instead of out to

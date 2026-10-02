@@ -145,3 +145,21 @@ test("landing pages share /js/landing-reveal.js instead of their own copies", as
   expect(nineTiles.body).toContain("countdown");
   expect(nineTiles.body).not.toContain("IntersectionObserver");
 });
+
+test("landing and privacy pages load /css/landing.css before their own theme", async () => {
+  const shared = await request("GET", "/css/landing.css");
+  expect(shared.status).toBe(200);
+  expect(shared.body).toContain(".float {");
+  for (const app of ["drinko", "iterly", "itswritten", "nine-tiles-puzzle"]) {
+    for (const page of ["", "privacy-policy.html"]) {
+      const res = await request("GET", `/${app}/${page}`);
+      expect(res.status).toBe(200);
+      expect(res.body).toContain(
+        '<link rel="stylesheet" href="/css/landing.css">\n  <link rel="stylesheet" href="style.css">'
+      );
+      expect(res.body).not.toMatch(/class="(glass|mark|piece)"/);
+    }
+    const theme = await request("GET", `/${app}/style.css`);
+    expect(theme.body).toContain("--float-mask-default");
+  }
+});

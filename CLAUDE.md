@@ -51,7 +51,7 @@ Client side (`web/`) is static HTML/CSS/vanilla JS, no build step for most of it
 
 Design tokens and the Liquid Glass visual language (translucent blurred cards, hairline borders, `--glass-*` custom properties) live in `web/css/tokens.css`; see `/style-guide` (`web/style-guide.html`) for a live reference. CSS load order matters: `tokens.css` → `base.css` → `layout.css` → `components.css` → (page-specific, e.g. `intro.css`).
 
-Some apps (`web/nine-tiles-puzzle/`, `web/drinko/`, `web/iterly/`, `web/itswritten/`) are full custom multi-file landing pages with their own CSS/JS/assets, served verbatim by the router's custom-app-site branch — they don't go through `app.html` or the shared `web/css`/`web/js`.
+Some apps (`web/nine-tiles-puzzle/`, `web/drinko/`, `web/iterly/`, `web/itswritten/`) are full custom multi-file landing pages with their own CSS/JS/assets, served verbatim by the router's custom-app-site branch — they don't go through `app.html` or the site's main stylesheets. They do share `web/css/landing.css` (layout/components; each app's own `style.css` is just its theme tokens and page-specific rules) and `web/js/landing-reveal.js`, referenced by absolute path because the custom-app-site branch only serves files inside the app's folder.
 
 `svelte` and `bun-plugin-svelte` are in `package.json` but unused — leftovers from an abandoned Svelte migration whose plan and prototype worktree have been deleted. Whether to drop them is an open item in `TODO.md`.
 
