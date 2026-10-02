@@ -9,7 +9,7 @@ const APPLE_DEVELOPER_ID = "1690376038";
 const CACHE_MS = 10 * 60 * 1000;
 
 // Published apps that also have their own custom landing page under
-// public/<slug>/ instead of just linking straight out to Apple.
+// web/<slug>/ instead of just linking straight out to Apple.
 const CUSTOM_APP_PAGES = {
   6449893371: "drinko", // Drinko: Cocktail Recipes
   6757445119: "itswritten", // itsWritten: AI Journal

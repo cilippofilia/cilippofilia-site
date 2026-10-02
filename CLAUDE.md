@@ -30,6 +30,7 @@ Default to using Bun instead of Node.js.
 - `bun server.js` — run the server directly, no rebuild (fine if you haven't touched `src/client/`)
 - `bun test` — run all tests (uses `bun:test`, colocated as `*.test.js` next to the code they cover, e.g. `src/server/router.test.js`, `web/js/app-card.test.js`)
 - `bun test src/server/router.test.js` — run a single test file
+- `bun run format` / `bun run format:check` — Prettier (`.prettierrc`: 120 columns, es5 trailing commas). Most files predate the config and aren't formatted yet, so formatting the whole repo is a separate, deliberate change; don't let it ride along in an unrelated diff
 - Tests write their score databases to `data/.test/` instead of the real `data/*.db`: `bun test` auto-loads `.env.test`, which sets `SCORES_DIR_OVERRIDE` (read by `src/server/static.js` as `SCORES_DIR`), and the `bunfig.toml` preload `src/test-setup.js` wipes that folder at the start of each run so tables never carry over between runs. Keep new persisted state behind `SCORES_DIR` so tests can't touch the files a running server reads.
 - The server binds to `127.0.0.1` only and listens on port 4321 by default (`PORT=xxxx bun server.js` to change it). Open `http://localhost:4321/home`.
 
@@ -52,8 +53,6 @@ Client side (`web/`) is static HTML/CSS/vanilla JS, no build step for most of it
 Design tokens and the Liquid Glass visual language (translucent blurred cards, hairline borders, `--glass-*` custom properties) live in `web/css/tokens.css`; see `/style-guide` (`web/style-guide.html`) for a live reference. CSS load order matters: `tokens.css` → `base.css` → `layout.css` → `components.css` → (page-specific, e.g. `intro.css`).
 
 Some apps (`web/nine-tiles-puzzle/`, `web/drinko/`, `web/iterly/`, `web/itswritten/`) are full custom multi-file landing pages with their own CSS/JS/assets, served verbatim by the router's custom-app-site branch — they don't go through `app.html` or the site's main stylesheets. They do share `web/css/landing.css` (layout/components; each app's own `style.css` is just its theme tokens and page-specific rules) and `web/js/landing-reveal.js`, referenced by absolute path because the custom-app-site branch only serves files inside the app's folder.
-
-`svelte` and `bun-plugin-svelte` are in `package.json` but unused — leftovers from an abandoned Svelte migration whose plan and prototype worktree have been deleted. Whether to drop them is an open item in `TODO.md`.
 
 Adding a new in-development app page or a custom app landing page doesn't require touching `server.js`/`router.js` — see `README.md` for the exact steps (`data/apps.json` entry, or a new folder under `web/`).
 

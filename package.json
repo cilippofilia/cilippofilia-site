@@ -5,7 +5,9 @@
     "build": "bun build src/client/floating-icons.js --outfile web/js/floating-icons.bundle.js --minify --target browser",
     "start": "bun run build && bun server.js",
     "dev": "bun run build && bun --watch server.js",
-    "test": "bun test"
+    "test": "bun test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -15,8 +17,6 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "animejs": "^4.5.0",
-    "bun-plugin-svelte": "^0.0.6",
-    "svelte": "^5.57.0"
+    "animejs": "^4.5.0"
   }
 }
