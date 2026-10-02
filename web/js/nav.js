@@ -42,7 +42,12 @@ function renderChrome() {
   footer.className = "site-footer";
   footer.innerHTML = `
     <div class="wrap">
-      © 2026 Filippo Cilia · Manchester, UK
+      <span>© 2026 Filippo Cilia · Manchester, UK</span>
+      <nav class="site-footer-links" aria-label="Legal">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/terms#contact">Contact</a>
+      </nav>
     </div>
   `;
 

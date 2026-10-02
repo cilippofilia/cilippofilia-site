@@ -24,7 +24,7 @@ const SLUG_PATTERN = /^[a-zA-Z0-9-]+$/;
 
 // First path segments the router claims before it ever reaches the app
 // template: redirects, pages, and the whitelisted static dirs.
-const RESERVED_SLUGS = new Set(["app-store", "home", "style-guide", "css", "js", "assets", "api"]);
+const RESERVED_SLUGS = new Set(["app-store", "home", "style-guide", "privacy", "terms", "css", "js", "assets", "api"]);
 
 // One `/slug /app.html 200` line per in-development app. Slugs that the
 // router would route elsewhere first (reserved paths, or a custom site

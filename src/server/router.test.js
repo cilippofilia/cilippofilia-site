@@ -49,6 +49,16 @@ test("/ redirects to /home and /app-store to /home#apps", async () => {
   expect(old.headers.location).toBe("/home#apps");
 });
 
+test("/privacy and /terms serve the legal pages", async () => {
+  const privacy = await request("GET", "/privacy");
+  expect(privacy.status).toBe(200);
+  expect(privacy.body).toContain("<h1>Privacy Policy</h1>");
+
+  const terms = await request("GET", "/terms");
+  expect(terms.status).toBe(200);
+  expect(terms.body).toContain("<h1>Terms of Use</h1>");
+});
+
 test("shared static files and custom app folders are served", async () => {
   const css = await request("GET", "/css/base.css");
   expect(css.status).toBe(200);

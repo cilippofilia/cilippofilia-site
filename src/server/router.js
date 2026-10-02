@@ -38,6 +38,8 @@ const STATIC_DIRS = ["/css/", "/js/", "/assets/"];
 const PAGES = {
   "/home": "index.html",
   "/style-guide": "style-guide.html",
+  "/privacy": "privacy.html",
+  "/terms": "terms.html",
 };
 
 // Paths that have moved. Kept so old links and bookmarks still land.

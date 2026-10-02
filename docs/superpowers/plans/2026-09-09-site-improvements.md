@@ -1223,7 +1223,7 @@ In every landing `index.html` footer, change the `.links` block to add a first l
         <a href="/home">More apps</a>
         <a href="privacy-policy.html">Privacy Policy</a>
         <a href="https://github.com/cilippofilia/REPO">GitHub</a>
-        <a href="mailto:cilia.filippo@icloud.com">Contact</a>
+        <a href="mailto:cilia.filippo.dev@gmail.com">Contact</a>
       </div>
 ```
 

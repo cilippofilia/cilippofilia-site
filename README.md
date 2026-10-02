@@ -54,6 +54,8 @@ Run the tests with `bun test`.
   marketing sites, custom multi-file pages (their own CSS/JS/assets), not
   the generic template
 - `/style-guide` — design tokens and components reference
+- `/privacy`, `/terms` — the site's privacy policy and terms of use, linked
+  from every page's footer (each app keeps its own policy in its folder)
 - anything else gets `web/404.html`, with its whack-a-broken-link minigame
 
 ## The "Published" section
@@ -186,6 +188,7 @@ web/
   app.html           — generic per-app template for in-development apps
   404.html           — not-found page and its minigame
   style-guide.html   — design tokens and components reference
+  privacy.html, terms.html — site privacy policy and terms of use
   css/               — shared styling, linked in this order
     tokens.css       — colours, radii, glass material (start here)
     base.css         — document ground, ambient background, focus rings
@@ -193,6 +196,7 @@ web/
     components.css   — buttons, cards, grids, badges, app detail
     intro.css        — the home page's opening screen (home page only)
     maze-game.css, notfound-game.css — the two minigames
+    legal.css        — prose styling for /privacy and /terms
   js/
     nav.js           — shared header/footer, injected on every page
     app-card.js      — the card shape every app in the grid renders into
