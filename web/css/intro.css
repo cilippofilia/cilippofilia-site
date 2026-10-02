@@ -178,7 +178,10 @@ main:has(.intro-pin) { padding-top: 0; }
 
 /* Backface culling is what makes the swap free: each face disappears the
    moment it turns past edge-on, so there is a single frame at 90deg with
-   nothing on screen at all and no crossfade to arrange. */
+   nothing on screen at all and no crossfade to arrange. WebKit doesn't
+   always cull on first paint, though (a reload in Safari could show the
+   circle side over the cutout), so the circle side also starts hidden here
+   and intro-flip.js swaps the faces' visibility on that same edge-on frame. */
 .hero-flip-face {
   position: absolute;
   inset: 0;
@@ -209,6 +212,7 @@ main:has(.intro-pin) { padding-top: 0; }
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  visibility: hidden;
 }
 
 /* The glint on the circle side, added by intro-flip.js. It is a face of its
@@ -219,6 +223,7 @@ main:has(.intro-pin) { padding-top: 0; }
   border-radius: 50%;
   overflow: hidden;
   pointer-events: none;
+  visibility: hidden;
 }
 
 .hero-flip-sheen .sheen-band {

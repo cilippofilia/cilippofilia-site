@@ -42,6 +42,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const flip = document.getElementById("hero-flip");
   const flipInner = document.getElementById("hero-flip-inner");
+  const flyerFront = document.getElementById("hero-flyer");
   const flyerBack = document.getElementById("hero-flyer-back");
   const flyerBlur = document.getElementById("hero-flyer-blur");
   const ghost = document.getElementById("intro-photo-ghost");
@@ -140,6 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let smoothY = window.scrollY; // eased scroll position the phases read
   let ticking = false;
   let flipIdle = null; // whether the flip card's layers are currently parked
+  let backShown = null; // whether the circle side is the one facing the viewer
   let stacked = false; // single-column layout, see singleColumn
   let viewH = window.innerHeight; // viewport height the parking spot fits the card into
   let measuredW = window.innerWidth;
@@ -154,6 +156,20 @@ document.addEventListener("DOMContentLoaded", () => {
     flipIdle = idle;
     flip.style.willChange = idle ? "auto" : "transform, opacity";
     flipInner.style.willChange = idle ? "auto" : "transform";
+  }
+
+  // Backface culling alone should hide whichever face is turned away, but
+  // WebKit doesn't always honour it on first paint, and a reload in Safari
+  // could show the circle side over the cutout before any scrolling. So the
+  // faces are also shown and hidden outright, swapping at 90deg where both
+  // are edge-on and nothing is drawn anyway. Edge-triggered, like
+  // setFlipIdle.
+  function setBackShown(shown) {
+    if (shown === backShown) return;
+    backShown = shown;
+    if (flyerFront) flyerFront.style.visibility = shown ? "hidden" : "visible";
+    if (flyerBack) flyerBack.style.visibility = shown ? "visible" : "hidden";
+    flipSheen.style.visibility = shown ? "visible" : "hidden";
   }
 
   function measure() {
@@ -353,6 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
     flip.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
     flip.style.opacity = String(1 - pHand);
     flipInner.style.transform = `rotateY(${pFlip * 180}deg) scale(${lift})`;
+    setBackShown(pFlip >= 0.5);
     setFlipIdle(pHand >= 1);
     // The blurred ghost belongs to the cutout's resting pose — it stops
     // lining up the moment the card starts turning, so it goes early.
