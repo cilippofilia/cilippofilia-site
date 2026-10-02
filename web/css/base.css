@@ -12,6 +12,9 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* Every control here has its own pressed state (buttons settle on
+     :active), so iOS's grey tap flash on top of it is just noise. */
+  -webkit-tap-highlight-color: transparent;
   position: relative;
   overflow-x: hidden;
 }
@@ -44,13 +47,34 @@ body::after {
   background: radial-gradient(circle, var(--bloom-2), rgba(249, 115, 22, 0) 70%);
 }
 
+/* Headings balance their lines so a title never ends on one stranded word
+   ("…they run / on."); body copy only avoids a lone last word. */
+h1, h2, h3, h4, .intro-heading { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+::selection {
+  background: rgba(var(--accent-rgb), 0.35);
+  color: #fff;
+}
+
+/* Page to page, the header stays put and the content crossfades, instead of
+   the whole window blanking and redrawing (same-origin links only; browsers
+   without cross-document view transitions just navigate as before). */
+@view-transition { navigation: auto; }
+header.site-header { view-transition-name: site-header; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.25s; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); text-decoration: underline; }
 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: var(--radius-xs);
 }
 
 .card:focus-visible {

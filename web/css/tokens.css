@@ -5,6 +5,9 @@
    never stacked two layers deep (a control sitting on a glass card gets a
    flat tint, not its own blur). See the --glass-* tokens below. */
 :root {
+  /* Dark only (nav.js), so the browser's own chrome matches: dark
+     scrollbars, form controls and overscroll instead of light ones. */
+  color-scheme: dark;
   --bg: #000000;
   --bg-alt: #1c1c1e;
   --bg-raised: #1c1c1e;

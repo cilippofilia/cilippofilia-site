@@ -55,6 +55,13 @@
 .fi-4 { top: 84%; left: 12%; --fi-max: 96px; }
 .fi-5 { top: 63%; left: 87%; --fi-max: 100px; }
 
+/* Two columns: the hero headline comes up the right-hand column during the
+   intro and is resting there when the pin releases (intro-flip.js), over
+   roughly 40-70% of this band — so this one sits below it instead. */
+@media (min-width: 721px) {
+  .fi-5 { top: 86%; }
+}
+
 /* The two smallest sit furthest back: a touch of blur and a little less
    opacity gives the constellation depth instead of one flat layer. */
 .fi-2, .fi-3 { filter: blur(1.5px); opacity: 0.46; }
@@ -100,14 +107,15 @@ main:has(.intro-pin) { padding-top: 0; }
 /* While the shared-element card-build animation is running (see
    intro-flip.js), #intro is given a class + extra height by JS so
    .intro-pin (position: sticky, top set to the header's height) stays
-   parked on screen for that extra scroll distance — the page doesn't
-   visually scroll until the card has finished forming. One screen's worth
-   is enough: the turn, the shrink and the build all overlap, and holding
-   longer only made the intro feel stuck. Only added outside
+   parked on screen for that extra scroll distance while the card forms
+   (on wide screens the greeting beside it still scrolls on — see
+   intro-flip.js). Under a screen's worth is enough: the turn, the shrink
+   and the build all overlap, and holding longer only left the photo
+   sitting alone once the greeting had gone. Only added outside
    prefers-reduced-motion, so reduced-motion visitors just get the plain,
    non-pinned block above. */
 .intro.pin-active {
-  min-height: calc(100svh - 120px + 100vh);
+  min-height: calc(100svh - 120px + 80vh);
 }
 
 .intro.pin-active .intro-pin {
@@ -201,6 +209,21 @@ main:has(.intro-pin) { padding-top: 0; }
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* The glint on the circle side, added by intro-flip.js. It is a face of its
+   own, turned like the circle, so it shows and culls exactly with it; its
+   .sheen-band (components.css) sweeps across as the circle comes round. */
+.hero-flip-sheen {
+  transform: rotateY(180deg);
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-flip-sheen .sheen-band {
+  width: 55%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
 }
 
 /* A softly blurred duplicate of the same cutout, sitting just behind the
