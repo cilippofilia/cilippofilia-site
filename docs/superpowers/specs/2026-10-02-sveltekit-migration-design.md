@@ -33,7 +33,7 @@ Rewrite cilippofilia.dev as a SvelteKit app. All HTML, CSS and client JS moves i
 ## Dependencies
 
 - Runtime: `svelte`, `@sveltejs/kit`, `animejs` (existing).
-- Dev: `vite`, `@sveltejs/vite-plugin-svelte`, `@sveltejs/adapter-netlify`.
+- Dev: `vite`, `@sveltejs/vite-plugin-svelte`, `@sveltejs/adapter-netlify`, `prettier-plugin-svelte` (registered in `.prettierrc` under `plugins`, with an `overrides` entry for `*.svelte`).
 - No other additions.
 
 ## Architecture
@@ -234,7 +234,7 @@ Before merging, check by hand on a Netlify deploy preview: click through every r
 | `build` | `bunx --bun vite build` |
 | `preview` | `bunx --bun vite preview` |
 | `test` | `bun test` |
-| `format` / `format:check` | unchanged, with `prettier-plugin-svelte` only if you approve it; otherwise `.svelte` files are left unformatted |
+| `format` / `format:check` | unchanged commands; `prettier-plugin-svelte` makes them cover `.svelte` files. New `.svelte` files are formatted as they're written. |
 
 `netlify.toml` `[build]`: `command = "bun run build"`, and `publish` set to whatever adapter-netlify requires (`build`).
 
