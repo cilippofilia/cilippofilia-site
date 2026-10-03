@@ -8,6 +8,7 @@
   import "#lib/styles/components.css";
   import Header from "#lib/components/Header.svelte";
   import Footer from "#lib/components/Footer.svelte";
+  import PullToRefresh from "#lib/components/PullToRefresh.svelte";
 
   let { children } = $props();
 </script>
@@ -18,5 +19,6 @@
 </svelte:head>
 
 <Header />
+<PullToRefresh />
 {@render children()}
 <Footer />

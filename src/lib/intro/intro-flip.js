@@ -333,7 +333,11 @@ export function initIntroFlip({ signal }) {
   function update() {
     if (signal.aborted) return;
     ticking = false;
-    const scrollY = window.scrollY;
+    // Safari can report a negative scrollY while the page rubber-bands past
+    // the top. PullToRefresh switches that bounce off, but older Safari
+    // ignores overscroll-behavior, and a negative value here pushes the
+    // pinned hero and the floating icons away from where the page is.
+    const scrollY = Math.max(0, window.scrollY);
     // Chase the real scroll position. ~0.22 per frame settles a wheel
     // step in about a quarter of a second — enough to glide, not enough
     // to feel like the page is dragging behind the finger.

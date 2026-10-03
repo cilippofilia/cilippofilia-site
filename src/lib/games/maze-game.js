@@ -244,6 +244,19 @@ export function initMazeGame(container, { signal }) {
     },
     { signal }
   );
+  // While a round is on, a swipe on the maze steers the player instead of
+  // scrolling the page; the page still scrolls from anywhere outside the
+  // canvas. Only single-finger drags are claimed, so pinch-zoom keeps
+  // working. The listener has to be non-passive for preventDefault to count.
+  canvas.addEventListener(
+    "touchmove",
+    (e) => {
+      if (phase !== "ready" && phase !== "playing") return;
+      if (e.touches.length !== 1) return;
+      e.preventDefault();
+    },
+    { signal, passive: false }
+  );
   canvas.addEventListener(
     "touchend",
     (e) => {

@@ -37,8 +37,9 @@ paths:
   classes never reach, and scoping would also change specificity.
 - Scoped `<style>` blocks are for new rules that belong to one component and only style markup that component renders.
 - The root `+error.svelte` loads on every page as SvelteKit's fallback, so it must not `import` CSS: it links its
-  stylesheets with `?url` imports inside `<svelte:head>`. A test fails if anything the root layout or error page loads
-  carries CSS.
+  stylesheets with `?url` imports inside `<svelte:head>`. A component it renders that needs its own styles uses
+  `<svelte:options css="injected" />` (see `PullToRefresh.svelte`), so the styles arrive only where it mounts. A test
+  fails if anything the root layout or error page loads carries CSS.
 - Any animation or transition gets a `@media (prefers-reduced-motion: reduce)` override.
 - Hover effects go inside `@media (hover: hover)` so touch devices don't get stuck hover states.
 - After changing a shared component, check that `/style-guide` (`src/routes/(site)/style-guide/+page.svelte`,

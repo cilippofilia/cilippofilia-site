@@ -14,6 +14,7 @@
   import Header from "#lib/components/Header.svelte";
   import Footer from "#lib/components/Footer.svelte";
   import NotFoundGame from "#lib/components/NotFoundGame.svelte";
+  import PullToRefresh from "#lib/components/PullToRefresh.svelte";
 </script>
 
 <svelte:head>
@@ -25,6 +26,7 @@
 </svelte:head>
 
 <Header />
+<PullToRefresh />
 {#if page.status === 404}
   <Seo
     title="Not found · cilippofilia.dev"

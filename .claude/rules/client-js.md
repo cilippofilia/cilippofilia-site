@@ -25,7 +25,7 @@ These cover everything under `src/lib/` and `src/routes/` except `src/lib/server
 
 - Pure logic (state, maths, data shaping) lives in a plain `.js` module with no DOM access and a colocated test:
   `src/lib/games/maze-wilson.js`, `maze-move.js`, `notfound-game-logic.js`, `src/lib/apps/feed.js`,
-  `app-status.js`, `names.js`, `meta.js`, `dev-apps.js`.
+  `app-status.js`, `names.js`, `meta.js`, `dev-apps.js`, `src/lib/pull-to-refresh.js`.
 - The big imperative modules (`src/lib/intro/intro-flip.js`, `src/lib/games/maze-game.js`, `maze-explainer.js`,
   `notfound-game.js`) export `init…(root, { signal })`. The owning component renders **static** markup for them (no
   reactive bindings on nodes they mutate), calls `init…` from `onMount` with an `AbortController`'s signal, and
@@ -41,6 +41,10 @@ These cover everything under `src/lib/` and `src/routes/` except `src/lib/server
 - Respect `prefers-reduced-motion`: check `matchMedia("(prefers-reduced-motion: reduce)")` and skip or shorten
   animation (see `reveal.js`, `intro-flip.js`, `FloatingIcons.svelte`).
 - Prefer `IntersectionObserver` over scroll listeners for scroll-triggered state.
+- Site pages replace Safari's native pull-to-refresh with `PullToRefresh.svelte`, which sets
+  `overscroll-behavior-y: none` on `<html>` while mounted. Safari's rubber-band at the top drags the page out from
+  under the intro's fixed hero image, so don't bring it back on site pages. New touch-driven game areas go in its
+  `GAME_AREAS` selector so a swipe there is never read as a pull.
 - Network calls fail quietly: check `r.ok`, and on failure contribute nothing rather than showing an alert or
   throwing. The score APIs answer 503 on Netlify, so the games must keep working when they fail.
 - Don't render a heading over an empty section; render the section only when there's something in it.
