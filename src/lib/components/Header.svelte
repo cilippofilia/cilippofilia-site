@@ -1,6 +1,6 @@
 <script>
   import { page } from "$app/state";
-  import { replaceState } from "$app/navigation";
+  import { goto } from "$app/navigation";
 
   // The shared header. intro-flip.js measures the pin offset against
   // header.site-header, so the class name and markup are load-bearing.
@@ -29,7 +29,9 @@
     if (!target) return;
     event.preventDefault();
     target.scrollIntoView({ behavior: "smooth", block: "start" });
-    replaceState("/home#apps", {});
+    // Shallow: updates the address bar without navigating or resetting the
+    // scroll the smooth scroll above has just started.
+    goto("/home#apps", { replace: true, shallow: true });
   }
 </script>
 
