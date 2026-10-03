@@ -1,0 +1,121 @@
+<script>
+  import "#lib/styles/landing.css";
+  import "#lib/styles/apps/drinko.css";
+  import Seo from "#lib/components/Seo.svelte";
+</script>
+
+<Seo
+  title="Privacy Policy · Drinko"
+  description="Privacy Policy for the Drinko cocktail app."
+  url="https://cilippofilia.dev/drinko/privacy-policy.html"
+  image="https://cilippofilia.dev/drinko/assets/icon.png"
+/>
+
+<svelte:head>
+  <link rel="icon" href="/drinko/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/drinko/assets/apple-touch-icon.png" />
+</svelte:head>
+
+<div class="aurora" aria-hidden="true">
+  <div
+    class="float"
+    style="width:130px; height:130px; top:6%; left:6%; --float-rotate:-12deg; --float-opacity:0.05; --float-duration:19s; --float-delay:-2s;"
+  ></div>
+  <div
+    class="float"
+    style="width:90px; height:90px; top:22%; left:84%; --float-rotate:26deg; --float-opacity:0.06; --float-duration:16s; --float-delay:-6s; --float-mask:var(--shaker-svg);"
+  ></div>
+  <div
+    class="float"
+    style="width:150px; height:150px; top:60%; left:-5%; --float-rotate:12deg; --float-opacity:0.045; --float-duration:21s; --float-delay:-9s; --float-mask:var(--shaker-svg);"
+  ></div>
+  <div
+    class="float"
+    style="width:80px; height:80px; top:80%; left:78%; --float-rotate:-30deg; --float-opacity:0.06; --float-duration:14s; --float-delay:-3s;"
+  ></div>
+</div>
+
+<nav class="site">
+  <div class="wrap">
+    <img src="/drinko/assets/icon.png" alt="" />
+    <span>Drinko</span>
+  </div>
+</nav>
+
+<div class="wrap legal">
+  <a class="back-link" href="./">← Back home</a>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: September 6, 2026</p>
+
+  <p>
+    Drinko ("the app") is developed by Filippo Cilia. This page explains what happens to your data when you use the app.
+    The short version: there is no account, no analytics, no advertising, and no server operated by us. Everything you
+    add to the app stays on your device or in your own iCloud account.
+  </p>
+
+  <h2>Data we collect</h2>
+  <p>
+    We do not collect, transmit, or have access to any personal data. The app contains no analytics, advertising, or
+    tracking software of any kind. The recipes, lessons and reference content are bundled inside the app, so browsing
+    them never contacts a server.
+  </p>
+
+  <h2>Data stored on your device</h2>
+  <p>The app keeps a small amount of data locally so it can work the way you left it:</p>
+  <ul>
+    <li>The cocktails you mark as favourites.</li>
+    <li>The categories and products you add to your Cabinet.</li>
+    <li>The custom cocktails you create.</li>
+    <li>Your preferences, such as ounces or millilitres and which content the Cocktail of the Day widget shows.</li>
+  </ul>
+  <p>All of this is stored in the app's own container. Deleting the app deletes it.</p>
+
+  <h2>iCloud sync</h2>
+  <p>
+    Your Cabinet and your custom cocktails can sync between your devices through iCloud, using Apple's CloudKit. This
+    data is stored in your private iCloud database, which only you can access with your Apple Account. We cannot read
+    it, and it is governed by <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a>. Turning off
+    iCloud Drive for Drinko in your device settings stops syncing.
+  </p>
+
+  <h2>Widgets</h2>
+  <p>
+    The Cocktail of the Day widget reads your favourites from the app's shared container on your device so it can show
+    them. It does not send anything anywhere.
+  </p>
+
+  <h2>Contact and feedback</h2>
+  <p>
+    If you use the "Contact" options in Settings to report a bug or request a feature, the app opens an email draft in
+    your mail app. Nothing is sent until you choose to send it, and anything you include is used only to reply to you.
+    If you ask to rate the app, Apple's standard review prompt appears and is handled entirely by Apple.
+  </p>
+
+  <h2>Children</h2>
+  <p>
+    Drinko is about alcoholic drinks and is not meant for children. We do not knowingly collect any information from
+    children, and, as described above, we do not collect information from anyone.
+  </p>
+
+  <h2>Changes to this policy</h2>
+  <p>
+    If the app ever starts handling data differently, this page will be updated and the date at the top will change.
+    Continued use of the app after a change means you accept the updated policy.
+  </p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy: <a href="mailto:cilia.filippo.dev@gmail.com">cilia.filippo.dev@gmail.com</a>.</p>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="links">
+      <a href="./">Home</a>
+      <a href="/home">More apps</a>
+      <a href="https://github.com/cilippofilia/Drinko">GitHub</a>
+      <a href="mailto:cilia.filippo.dev@gmail.com">Contact</a>
+    </div>
+    <div>© 2026 Filippo Cilia</div>
+  </div>
+</footer>

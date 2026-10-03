@@ -1,10 +1,11 @@
 ---
 paths:
-  - "server.js"
-  - "src/server/**"
-  - "src/build/**"
-  - "netlify/**"
+  - "src/hooks.js"
+  - "src/hooks.server.js"
+  - "src/routes/**/+server.js"
+  - "src/lib/server/**"
   - "netlify.toml"
+  - "vite.config.js"
   - "data/**"
 ---
 
@@ -12,60 +13,65 @@ paths:
 
 ## Module style
 
-- `server.js`, `src/server/*.js` and `src/build/*.js` are **CommonJS** (`require` / `module.exports`) using
-  `node:http`, `fs`, `path`. Keep new server modules the same; don't mix ESM into them.
-- `src/server/appstore.js` is also imported by the Netlify Function `netlify/functions/appstore-apps.mjs`, which runs
-  on Netlify's Node runtime, **not Bun**. Never use Bun-only APIs (`Bun.file`, `bun:sqlite`, `Bun.$`) in
-  `appstore.js` or anything it requires.
-- `bun:sqlite` is fine in the score modules, since they are local-only and never deployed.
-- Resolve paths from `ROOT` / `PUBLIC_DIR` / `DATA_DIR` in `static.js` (based on `__dirname`), never `process.cwd()`.
+- Everything is ES modules (`package.json` has `"type": "module"`). Import shared code with the `#lib/...` subpath
+  alias (it maps to `src/lib/`; SvelteKit 3 has no `$lib`), or with relative paths inside `src/lib/`. Bun resolves
+  both, so tested files can use either.
+- `src/lib/server/appstore.js` also runs inside the Netlify Function on Node, **not Bun**. Never use Bun-only APIs
+  (`Bun.file`, `bun:sqlite`, `Bun.$`) in it or anything it imports.
+- `bun:sqlite` is only ever loaded by `maze-scores.js` / `notfound-scores.js`, through a non-literal dynamic
+  `import()` so neither Vite nor Netlify's bundler follows it, and those two modules are only ever loaded by
+  `score-stores.js`, which returns `null` when not on Bun. Keep it that way.
+- Resolve paths from `process.cwd()` (see `src/lib/server/paths.js`), not `__dirname`, which stops pointing into
+  `src/` once Vite has bundled the server code.
 
-## Routing (`src/server/router.js`)
+## Endpoints (`src/routes/**/+server.js`)
 
-- `route()` is an ordered chain: `REDIRECTS` → JSON APIs → `/apps.json` → favicon → `STATIC_DIRS` → `PAGES` →
-  custom app folder → `app.html` template → 404. Put a new route in the right bucket instead of adding ad hoc checks,
-  and keep the order meaningful.
-- New top-level static folders must be opted in to `STATIC_DIRS`. Never serve arbitrary paths under `web/`.
-- Any file served from a user-controlled path goes through `serveWithin()` (path traversal guard). Don't build file
-  paths from the URL any other way.
-- Use `send()` / `redirect()` / `serveFile()` from `static.js` so `Content-Type`, `Content-Length`,
-  `Cache-Control` and HEAD handling stay consistent.
-- JSON API handlers: parse the body in `try`/`catch`, treat a malformed body as "no input", and still return the
-  current state with 200. Validate numbers (`Number.isFinite`, `Number.isInteger`, `> 0`) before persisting.
-- `handleRequest` is the only entry point and must never let an exception escape. Keep the decode and route
-  `try` blocks.
-- `handleRequest` refuses (403) any request whose `Host` isn't a local hostname, and any non-GET/HEAD whose `Origin`
-  is another site. That's what stops other web pages, or DNS rebinding, from writing to the score APIs. Don't remove
-  it, and keep `readBody` capped (`MAX_BODY_BYTES`).
-- The path is percent-decoded before routing, so the custom-app-folder branch only accepts a first segment matching
-  `FOLDER_SEGMENT`. Never derive a directory from a decoded segment without a pattern check like that.
+- Keep them thin: export `prerender = false` and hand the request to a function in `src/lib/server/` that takes a
+  `Request` (and any store) and returns a `Response`. That function is what gets tested.
+- JSON handlers treat a malformed or oversized body (`MAX_BODY_BYTES`) as "no input" and still answer 200 with the
+  current state. Validate numbers (`Number.isFinite`, `Number.isInteger`, `> 0`) before persisting.
+- Score endpoints answer `503` JSON when there is no store (Netlify). Client code must treat any non-OK response as
+  "no scores" and play on.
+- `/api/appstore-apps` keeps its cache and stale fallback in `appstore.js`, and sends `appstoreCacheControl(apps)`
+  so an empty cold-start result is never cached by the CDN.
 
-## Security headers
+## Hooks
 
-- `SECURITY_HEADERS` in `static.js` (CSP, nosniff, frame denial, ...) goes on every local response, and must equal
-  the `[[headers]] for = "/*"` block in `netlify.toml`. A router test compares them, so change both together.
-- A new external image, script or API host must be added to the CSP in both places, or the browser will block it.
+- `src/hooks.server.js` `handle` answers the dev redirects and `/favicon.ico`, refuses (403) any non-GET/HEAD to
+  `/api/*` whose `Origin` differs from the request's own origin, and puts `SECURITY_HEADERS` on every response it
+  handles. The CSP is **appended**, not set, so SvelteKit's own hashed policy on on-demand pages survives alongside
+  it. Don't weaken the origin check; SvelteKit's built-in CSRF check only covers form content types.
+- `src/hooks.js` `reroute` maps the landing pages' old `/<app>/privacy-policy.html` URLs onto their routes. App
+  Store listings link to those URLs; keep them working.
 
-## Matching Netlify change (required)
+## Security headers and CSP
 
-When you add, rename or remove a route in `router.js`, also update:
+- `SECURITY_HEADERS` in `src/lib/server/security-headers.js` must equal the `[[headers]] for = "/*"` block in
+  `netlify.toml`. `src/build-output.test.js` compares them, so change both together.
+- `csp` in `vite.config.js` sets only `script-src`, in hash mode, which SvelteKit writes as a `<meta>` tag on every
+  prerendered page. Never add `style-src` there: SvelteKit would hash it and switch off `'unsafe-inline'`, breaking
+  every `style="..."` attribute. The header's `script-src 'self' 'unsafe-inline'` is safe only because that meta
+  policy narrows it; the build test checks every page carries it.
+- A new external image, script or API host must be added to the CSP in both header places.
 
-- `netlify.toml` `[[redirects]]` for fixed pages and redirects;
-- `RESERVED_SLUGS` in `src/build/netlify.js` for any new reserved first path segment (new page, static dir, API);
-- `netlify/functions/` if it's an API that should work in production.
+## Redirects
 
-Score APIs (`/api/notfound-score`, `/api/maze-score`) are deliberately local-only. Client code must tolerate them
-failing.
+- `REDIRECTS` in `src/hooks.server.js` must match the `[[redirects]]` in `netlify.toml` (`/` → `/home`,
+  `/app-store` → `/home#apps`). Prerendered pages on Netlify never reach the hook, so a redirect missing from
+  `netlify.toml` works locally and not in production.
 
 ## Persisted state
 
-- New persisted state lives under `SCORES_DIR` (from `static.js`), never directly in `DATA_DIR`, so tests write to
-  `data/.test/` and not to the real DBs.
+- New persisted state lives under `SCORES_DIR` (`paths.js`), created with `ensureScoresDir()` when first used, so
+  tests write to `data/.test/` and importing a module never touches the filesystem.
+- Dev checks that POST scores should run the server with `SCORES_DIR_OVERRIDE=data/.test` so they don't land in the
+  real leaderboard.
 - Add any new runtime files to `.gitignore`.
 
 ## `data/apps.json`
 
 - Entry shape: `slug`, `name`, `tagline`, `description`, `platforms`, `status`, `icon`, `appStoreUrl`.
 - `status` is one of `Beta`, `In development`, `Planning`, `Discovery`.
-- Slugs must match `^[a-zA-Z0-9-]+$` and must not collide with reserved paths or a folder under `web/`.
-- It's read fresh on every request; don't add caching.
+- It's imported at build time (`src/lib/apps/dev-apps.js`): each valid entry is prerendered to `/<slug>`, so a change
+  shows up after a restart of `vite dev` or the next deploy. Slugs must match `SLUG_PATTERN` and must not be in
+  `RESERVED_SLUGS` (fixed routes plus `LANDING_APPS`); `validDevApps` drops any that are.

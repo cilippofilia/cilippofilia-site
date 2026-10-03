@@ -1,0 +1,544 @@
+<script>
+  import "#lib/styles/style-guide.css";
+  import Seo from "#lib/components/Seo.svelte";
+
+  // Fills each token label with its current value from tokens.css, so this
+  // page can't drift from the real thing.
+  let root;
+  $effect(() => {
+    const rootStyle = getComputedStyle(document.documentElement);
+    root.querySelectorAll("[data-token]").forEach((el) => {
+      el.textContent = rootStyle.getPropertyValue(el.dataset.token).trim();
+    });
+  });
+</script>
+
+<Seo
+  title="Style Guide · cilippofilia.dev"
+  description="The design tokens and components behind cilippofilia.dev: colour, Liquid Glass material, spacing, radius, type, buttons and app cards."
+  url="https://cilippofilia.dev/style-guide"
+/>
+
+<main bind:this={root}>
+  <div class="wrap guide">
+    <!-- Everything below is rendered by the site's shared stylesheets
+           (tokens.css → base.css → layout.css → components.css). Values next
+           to each token are read live from tokens.css by this page's script, so this page can't drift from the real thing. -->
+    <section class="hero">
+      <p class="kicker">Style guide</p>
+      <h1>The parts this site is built from.</h1>
+      <p class="lede">
+        A live reference: every swatch, bar and component on this page is drawn with the real tokens and classes from <code
+          >src/lib/styles/</code
+        >. Change a token there and it changes here.
+      </p>
+      <div class="button-row">
+        <a class="button" href="#colour">Tokens <span class="chevron">›</span></a>
+        <a class="button secondary" href="#components">Components <span class="chevron">›</span></a>
+      </div>
+    </section>
+
+    <section id="colour">
+      <h2>Colour</h2>
+      <p class="guide-desc">
+        Black ground, near-white text, one dimmed grey for everything secondary, and one blue for anything you can act
+        on. Status colours always come as a pair: the colour for text, a translucent <code>-bg</code> to sit behind it.
+      </p>
+
+      <h3 class="guide-sub">Ground and text</h3>
+      <div class="guide-swatches">
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--bg)"></div>
+          <div class="guide-token"><code>--bg</code><span class="guide-value" data-token="--bg"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--bg-alt)"></div>
+          <div class="guide-token"><code>--bg-alt</code><span class="guide-value" data-token="--bg-alt"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--bg-raised)"></div>
+          <div class="guide-token">
+            <code>--bg-raised</code><span class="guide-value" data-token="--bg-raised"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--border)"></div>
+          <div class="guide-token"><code>--border</code><span class="guide-value" data-token="--border"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--text)"></div>
+          <div class="guide-token"><code>--text</code><span class="guide-value" data-token="--text"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--text-dim)"></div>
+          <div class="guide-token">
+            <code>--text-dim</code><span class="guide-value" data-token="--text-dim"></span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="guide-sub">Accent</h3>
+      <div class="guide-swatches">
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--accent)"></div>
+          <div class="guide-token"><code>--accent</code><span class="guide-value" data-token="--accent"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--accent-hover)"></div>
+          <div class="guide-token">
+            <code>--accent-hover</code><span class="guide-value" data-token="--accent-hover"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:rgba(var(--accent-rgb), 0.18)"></div>
+          <div class="guide-token">
+            <code>--accent-rgb</code><span class="guide-value" data-token="--accent-rgb"></span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="guide-sub">Status</h3>
+      <div class="guide-swatches">
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--green)"></div>
+          <div class="guide-token"><code>--green</code><span class="guide-value" data-token="--green"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--green-bg)"></div>
+          <div class="guide-token">
+            <code>--green-bg</code><span class="guide-value" data-token="--green-bg"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--orange)"></div>
+          <div class="guide-token"><code>--orange</code><span class="guide-value" data-token="--orange"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--orange-bg)"></div>
+          <div class="guide-token">
+            <code>--orange-bg</code><span class="guide-value" data-token="--orange-bg"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--purple)"></div>
+          <div class="guide-token"><code>--purple</code><span class="guide-value" data-token="--purple"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--purple-bg)"></div>
+          <div class="guide-token">
+            <code>--purple-bg</code><span class="guide-value" data-token="--purple-bg"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--teal)"></div>
+          <div class="guide-token"><code>--teal</code><span class="guide-value" data-token="--teal"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--teal-bg)"></div>
+          <div class="guide-token"><code>--teal-bg</code><span class="guide-value" data-token="--teal-bg"></span></div>
+        </div>
+      </div>
+
+      <h3 class="guide-sub">Tints and blooms</h3>
+      <div class="guide-swatches">
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--chip-bg)"></div>
+          <div class="guide-token"><code>--chip-bg</code><span class="guide-value" data-token="--chip-bg"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--flat-tint)"></div>
+          <div class="guide-token">
+            <code>--flat-tint</code><span class="guide-value" data-token="--flat-tint"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--flat-tint-hover)"></div>
+          <div class="guide-token">
+            <code>--flat-tint-hover</code><span class="guide-value" data-token="--flat-tint-hover"></span>
+          </div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--bloom-1)"></div>
+          <div class="guide-token"><code>--bloom-1</code><span class="guide-value" data-token="--bloom-1"></span></div>
+        </div>
+        <div class="guide-swatch">
+          <div class="guide-chip" style="background:var(--bloom-2)"></div>
+          <div class="guide-token"><code>--bloom-2</code><span class="guide-value" data-token="--bloom-2"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glass">
+      <h2>Liquid Glass</h2>
+      <p class="guide-desc">
+        Glass is for functional chrome: the header, floating cards, buttons standing on the page. It never stacks: a
+        control on a glass card gets a flat tint, not a second blur. The ambient blooms behind the page are what the
+        glass refracts.
+      </p>
+      <div class="guide-glass">
+        <div class="guide-swatches">
+          <div class="guide-token">
+            <code>--glass-fill</code><span class="guide-value" data-token="--glass-fill"></span>
+          </div>
+          <div class="guide-token">
+            <code>--glass-fill-strong</code><span class="guide-value" data-token="--glass-fill-strong"></span>
+          </div>
+          <div class="guide-token">
+            <code>--glass-border</code><span class="guide-value" data-token="--glass-border"></span>
+          </div>
+          <div class="guide-token">
+            <code>--glass-highlight</code><span class="guide-value" data-token="--glass-highlight"></span>
+          </div>
+          <div class="guide-token">
+            <code>--glass-blur</code><span class="guide-value" data-token="--glass-blur"></span>
+          </div>
+          <div class="guide-token">
+            <code>--glass-shadow</code><span class="guide-value" data-token="--glass-shadow"></span>
+          </div>
+          <div class="guide-token">
+            <code>--glass-shadow-hover</code><span class="guide-value" data-token="--glass-shadow-hover"></span>
+          </div>
+          <div class="guide-token">
+            <code>--ease-spring</code><span class="guide-value" data-token="--ease-spring"></span>
+          </div>
+        </div>
+      </div>
+      <p class="guide-desc" style="margin-top:var(--space-16)">
+        <code>--glass-fill-strong</code> is the fallback when a browser can't blur or the visitor asks for reduced
+        transparency. <code>--ease-spring</code> is the one curve for anything that moves on hover, press or scroll.
+      </p>
+    </section>
+
+    <section id="spacing">
+      <h2>Spacing</h2>
+      <p class="guide-desc">
+        A 4px grid, with tokens named by their pixel value. <code>--space-14</code> is the one off-grid step: the gap between
+        stacked items inside a card.
+      </p>
+      <div class="guide-scale">
+        <div class="guide-token"><code>--space-4</code></div>
+        <div class="guide-bar" style="width:var(--space-4)"></div>
+        <div class="guide-token"><code>--space-8</code></div>
+        <div class="guide-bar" style="width:var(--space-8)"></div>
+        <div class="guide-token"><code>--space-12</code></div>
+        <div class="guide-bar" style="width:var(--space-12)"></div>
+        <div class="guide-token"><code>--space-14</code></div>
+        <div class="guide-bar" style="width:var(--space-14)"></div>
+        <div class="guide-token"><code>--space-16</code></div>
+        <div class="guide-bar" style="width:var(--space-16)"></div>
+        <div class="guide-token"><code>--space-20</code></div>
+        <div class="guide-bar" style="width:var(--space-20)"></div>
+        <div class="guide-token"><code>--space-24</code></div>
+        <div class="guide-bar" style="width:var(--space-24)"></div>
+        <div class="guide-token"><code>--space-32</code></div>
+        <div class="guide-bar" style="width:var(--space-32)"></div>
+        <div class="guide-token"><code>--space-40</code></div>
+        <div class="guide-bar" style="width:var(--space-40)"></div>
+        <div class="guide-token"><code>--space-48</code></div>
+        <div class="guide-bar" style="width:var(--space-48)"></div>
+        <div class="guide-token"><code>--space-64</code></div>
+        <div class="guide-bar" style="width:var(--space-64)"></div>
+        <div class="guide-token"><code>--space-96</code></div>
+        <div class="guide-bar" style="width:var(--space-96)"></div>
+      </div>
+
+      <h3 class="guide-sub">Semantic spacing</h3>
+      <div class="guide-scale">
+        <div class="guide-token"><code>--gutter</code><span class="guide-value">.wrap side padding</span></div>
+        <div class="guide-bar" style="width:var(--gutter)"></div>
+        <div class="guide-token"><code>--grid-gap</code><span class="guide-value">between cards</span></div>
+        <div class="guide-bar" style="width:var(--grid-gap)"></div>
+        <div class="guide-token">
+          <code>--pad-surface</code><span class="guide-value">inside every glass surface</span>
+        </div>
+        <div class="guide-bar" style="width:var(--pad-surface)"></div>
+        <div class="guide-token">
+          <code>--gap-columns</code><span class="guide-value">between two layout columns</span>
+        </div>
+        <div class="guide-bar" style="width:var(--gap-columns)"></div>
+        <div class="guide-token"><code>--space-section</code><span class="guide-value">between page blocks</span></div>
+        <div class="guide-bar" style="width:var(--space-section)"></div>
+        <div class="guide-token">
+          <code>--max-width</code><span class="guide-value" data-token="--max-width"></span>
+        </div>
+        <div class="guide-bar" style="width:100%"></div>
+      </div>
+    </section>
+
+    <section id="radius">
+      <h2>Radius</h2>
+      <p class="guide-desc">
+        <code>--radius-lg</code> is every floating glass surface, <code>--radius</code> a surface nested one level
+        inside one, and <code>--radius-pill</code> anything fully rounded. App icons use <code>--radius-icon</code>, a
+        share of the tile's size, so every icon rounds off the same.
+      </p>
+      <div class="guide-radii">
+        <div>
+          <div class="guide-radius" style="border-radius:var(--radius-xs)"></div>
+          <div class="guide-token">
+            <code>--radius-xs</code><span class="guide-value" data-token="--radius-xs"></span>
+          </div>
+        </div>
+        <div>
+          <div class="guide-radius" style="border-radius:var(--radius-sm)"></div>
+          <div class="guide-token">
+            <code>--radius-sm</code><span class="guide-value" data-token="--radius-sm"></span>
+          </div>
+        </div>
+        <div>
+          <div class="guide-radius" style="border-radius:var(--radius)"></div>
+          <div class="guide-token"><code>--radius</code><span class="guide-value" data-token="--radius"></span></div>
+        </div>
+        <div>
+          <div class="guide-radius" style="border-radius:var(--radius-lg)"></div>
+          <div class="guide-token">
+            <code>--radius-lg</code><span class="guide-value" data-token="--radius-lg"></span>
+          </div>
+        </div>
+        <div>
+          <div class="guide-radius" style="border-radius:var(--radius-pill); height:var(--space-40)"></div>
+          <div class="guide-token">
+            <code>--radius-pill</code><span class="guide-value" data-token="--radius-pill"></span>
+          </div>
+        </div>
+        <div>
+          <div class="guide-radius" style="border-radius:var(--radius-icon)"></div>
+          <div class="guide-token">
+            <code>--radius-icon</code><span class="guide-value" data-token="--radius-icon"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="type">
+      <h2>Typography</h2>
+      <p class="guide-desc">
+        San Francisco on Apple devices, a system sans everywhere else. Nothing is bolder than semibold (600), and large
+        sizes get slightly negative tracking. Each specimen below is the real class.
+      </p>
+      <div class="guide-specimen hero" style="padding:var(--space-24) 0">
+        <h1>Hero headline</h1>
+        <p class="guide-value"><code>.hero h1</code> · clamp(2.25rem, 6vw, 3.5rem) · 600</p>
+      </div>
+      <div class="guide-specimen hero" style="padding:var(--space-24) 0">
+        <p class="lede">Lede: the one sentence under a headline that says what the page is.</p>
+        <p class="guide-value"><code>.hero p.lede</code> · 1.2rem · text-dim</p>
+      </div>
+      <div class="guide-specimen">
+        <p class="apps-heading" style="margin:0">Section heading</p>
+        <p class="guide-value"><code>section h2</code>, <code>.apps-heading</code> · 2rem · 600</p>
+      </div>
+      <div class="guide-specimen">
+        <p class="kicker" style="margin:0">Kicker label</p>
+        <p class="guide-value"><code>.kicker</code> · 0.78rem · 600 · uppercase</p>
+      </div>
+      <div class="guide-specimen">
+        <p style="margin:0">
+          Body copy runs at the browser's base size with a line height of 1.5, in <code>--text</code> on
+          <code>--bg</code>. <a href="#type">Links</a> are <code>--accent</code> and underline on hover.
+        </p>
+        <p class="guide-value"><code>body</code> · 1rem / 1.5 · 400</p>
+      </div>
+    </section>
+
+    <section id="components">
+      <h2>Components</h2>
+      <p class="guide-desc">
+        The pieces in <code>components.css</code>, with the same markup the site's scripts render.
+      </p>
+
+      <h3 class="guide-sub">Buttons on the page</h3>
+      <div class="button-row">
+        <a class="button" href="#components">Primary</a>
+        <a class="button secondary" href="#components">Secondary</a>
+        <a class="button secondary" href="#components">With chevron <span class="chevron">›</span></a>
+        <button type="button" class="button" disabled>Disabled</button>
+      </div>
+
+      <h3 class="guide-sub">Buttons inside a glass card</h3>
+      <p class="guide-desc">The same classes, inside <code>.card</code>: no second blur, a flat tint instead.</p>
+      <div class="card">
+        <div class="button-row">
+          <a class="button" href="#components">Primary</a>
+          <a class="button secondary" href="#components">Secondary</a>
+          <button type="button" class="button secondary" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <h3 class="guide-sub">Badges and chips</h3>
+      <div class="button-row">
+        <span class="badge live">Live</span>
+        <span class="badge beta">Beta</span>
+        <span class="badge dev">In development</span>
+        <span class="badge planning">Planning</span>
+        <span class="badge concept">Concept</span>
+        <span class="badge discovery">Discovery</span>
+        <span class="badge example">Example</span>
+        <span class="badge">Default</span>
+        <span class="featured-eyebrow" style="margin:0">Preorder</span>
+        <span class="chip">iPhone</span>
+        <span class="chip">Mac</span>
+      </div>
+
+      <h3 class="guide-sub">App cards</h3>
+      <p class="guide-desc">
+        The markup from <code>src/lib/components/AppCard.svelte</code>, minus the scroll-reveal class.
+      </p>
+      <div class="grid">
+        <article class="card">
+          <div class="card-head">
+            <img class="icon-img" src="/assets/app-icons/thumb/drinko-icon.png" alt="" width="48" height="48" />
+            <div class="card-title">
+              <h3>Drinko</h3>
+              <p class="card-subtitle">Cocktail Recipes</p>
+            </div>
+          </div>
+          <span class="badge live">Live</span>
+          <p>Classic recipes, bartending tutorials and a smart cabinet.</p>
+          <div class="card-actions">
+            <a class="button secondary" href="/drinko/">Website</a>
+            <a class="button" href="#components">App Store</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head">
+            <img class="icon-img" src="/assets/app-icons/thumb/relay-icon.png" alt="" width="48" height="48" />
+            <div class="card-title">
+              <h3>relay</h3>
+            </div>
+          </div>
+          <span class="badge dev">In development</span>
+          <p>An unreleased app keeps its App Store button, disabled, so every row reads the same.</p>
+          <div class="card-actions">
+            <button type="button" class="button" disabled>App Store</button>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head">
+            <span class="icon">🧪</span>
+            <div class="card-title">
+              <h3>Emoji icon</h3>
+              <p class="card-subtitle">Placeholder</p>
+            </div>
+          </div>
+          <span class="badge concept">Concept</span>
+          <p>Before there's a real icon, an emoji stands in.</p>
+          <div class="card-actions">
+            <a class="button secondary" href="#components">Website</a>
+            <button type="button" class="button" disabled>App Store</button>
+          </div>
+        </article>
+      </div>
+
+      <h3 class="guide-sub">Featured strip</h3>
+      <p class="guide-desc">
+        Shown above the app grid when an app is in preorder, rendered by <code
+          >src/lib/components/FeaturedStrip.svelte</code
+        >.
+      </p>
+      <div class="featured">
+        <img class="featured-icon" src="/assets/app-icons/thumb/9tiles-icon.png" alt="" width="64" height="64" />
+        <div class="featured-body">
+          <span class="featured-eyebrow">Preorder</span>
+          <h3>9 Tiles Puzzle</h3>
+          <p>Turn any photo into a sliding puzzle. Releases 28 Sept 2026.</p>
+        </div>
+        <a class="button secondary" href="/nine-tiles-puzzle/">Preorder <span class="chevron">›</span></a>
+      </div>
+
+      <h3 class="guide-sub">Feature grid</h3>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg
+            >
+          </div>
+          <h4>On-device</h4>
+          <p>Data stays on your phone wherever it can.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" /></svg
+            >
+          </div>
+          <h4>iCloud when asked</h4>
+          <p>Sync is opt-in, never the default.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"><path d="m16 18 6-6-6-6" /><path d="m8 6-6 6 6 6" /></svg
+            >
+          </div>
+          <h4>Swift and SwiftUI</h4>
+          <p>Built on the frameworks Apple ships.</p>
+        </div>
+      </div>
+
+      <h3 class="guide-sub">App detail panel and loading state</h3>
+      <p class="guide-desc">
+        The side rail from an in-development app's page (<code>src/lib/components/AppDetail.svelte</code>), and the
+        loading skeleton styles from <code>components.css</code>.
+      </p>
+      <div class="guide-detail app-detail">
+        <div class="app-detail-side">
+          <div>
+            <h4>Platforms</h4>
+            <div class="platforms"><span class="chip">iPhone</span><span class="chip">iPad</span></div>
+          </div>
+          <div>
+            <button type="button" class="button secondary" disabled>Not yet published</button>
+          </div>
+          <div>
+            <a class="back-link" href="#components"><span class="chevron">‹</span> Go back</a>
+          </div>
+        </div>
+        <div class="guide-skeleton" aria-hidden="true">
+          <div class="skeleton-block skeleton-icon"></div>
+          <div>
+            <div class="skeleton-block skeleton-line skeleton-line-badge"></div>
+            <div class="skeleton-block skeleton-line skeleton-line-title"></div>
+            <div class="skeleton-block skeleton-line skeleton-line-lede"></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="guide-sub">Profile card</h3>
+      <div style="max-width:300px">
+        <aside class="profile-card" style="top:0">
+          <img class="profile-photo" src="/assets/profile.jpg" alt="Filippo Cilia" width="116" height="116" />
+          <h3 class="profile-name">Filippo Cilia</h3>
+          <p class="profile-role">Software Engineer, iOS</p>
+          <p class="profile-location">Manchester, UK</p>
+          <p class="profile-bio">
+            The one surface that's solid rather than glass, so the floating icons behind it never read through the text.
+          </p>
+        </aside>
+      </div>
+    </section>
+  </div>
+</main>
