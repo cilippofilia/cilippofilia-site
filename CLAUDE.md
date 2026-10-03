@@ -4,24 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Canary rule:** Start each reply to the user with the word "Billy", once per response, not per sentence or line. It does not apply to code, commit messages, or files you write. If you notice you've stopped doing this, the conversation context has degraded.
 
-This is a vanilla HTML/CSS/JS website run with Bun, not an Xcode project. The Swift/SwiftUI rules in the global `~/.claude/CLAUDE.md` don't apply here.
-
-**SvelteKit migration in progress.** The `svelte-migration` branch is rewriting the site in SvelteKit
-(adapter-netlify, prerendered pages, Vite run under Bun). The agreed design is
-`docs/superpowers/specs/2026-10-02-sveltekit-migration-design.md`; follow it for any ported code. Until the migration
-finishes, the rest of this file describes the current vanilla site. Rewriting this file and `.claude/rules/` for
-SvelteKit is part of the migration's final step, not something to do piecemeal.
+This is a SvelteKit site (Svelte 5, adapter-netlify, prerendered) run with Bun, not an Xcode project. The Swift/SwiftUI rules in the global `~/.claude/CLAUDE.md` don't apply here.
 
 ## Rules
 
 Detailed conventions live in `.claude/rules/`. Follow them; they win over anything more general in this file.
 
-- [`general.md`](.claude/rules/general.md): always loaded. Scope, copy style, git, and keeping local and Netlify in sync.
-- [`server.md`](.claude/rules/server.md): `server.js`, `src/server/`, `src/build/`, `netlify/`, `netlify.toml`, `data/`. Covers CommonJS, routing order, path safety, and the matching Netlify change for every route.
-- [`client-js.md`](.claude/rules/client-js.md): `web/js/`, `src/client/`. Covers ES modules, keeping logic separate from the DOM, `escapeHtml`, reduced motion, and failing quietly.
-- [`css.md`](.claude/rules/css.md): `web/css/`, app `style.css`. Covers tokens, Liquid Glass (never stacked, with fallbacks), load order, and dark only.
-- [`html-pages.md`](.claude/rules/html-pages.md): `web/**/*.html`. Covers required meta/OG tags, the nav include, landing page path rules, and accessibility.
-- [`testing.md`](.claude/rules/testing.md): `*.test.js` and test setup. Covers `bun:test`, colocated tests, and score DB isolation.
+- [`general.md`](.claude/rules/general.md): always loaded. Scope, copy style, git, iCloud conflict copies, and the two things kept in sync with Netlify by hand.
+- [`server.md`](.claude/rules/server.md): hooks, `+server.js` endpoints, `src/lib/server/`, `netlify.toml`, `vite.config.js`, `data/`. Covers the Node-vs-Bun split, `bun:sqlite` loading, the CSP setup, redirects and persisted state.
+- [`client-js.md`](.claude/rules/client-js.md): components and browser JS under `src/lib/` and `src/routes/`. Covers runes, prerender-safe components, the `init…(root, { signal })` pattern, actions, reduced motion and failing quietly.
+- [`css.md`](.claude/rules/css.md): `src/lib/styles/` and component styles. Covers tokens, Liquid Glass (never stacked, with fallbacks), global page CSS, the error page's `?url` stylesheets, and dark only.
+- [`pages.md`](.claude/rules/pages.md): routes and `src/app.html`. Covers `<Seo>`, one `<h1>`, sitemap lists, landing page and privacy URL rules, and accessibility.
+- [`testing.md`](.claude/rules/testing.md): `*.test.js` and test setup. Covers `bun:test`, colocated tests, endpoint and hook tests, the build-output test, and score DB isolation.
 
 Rules with `paths:` frontmatter load only when you work on matching files. When you learn a new convention, add it to the matching rule file, not here.
 
@@ -31,65 +25,57 @@ Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
 - Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
 - Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
 - Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
 - Use `bunx <package> <command>` instead of `npx <package> <command>`
 - Bun automatically loads .env, so don't use dotenv.
+- Vite is run under Bun (`bunx --bun vite …`), which is what lets the score endpoints use `bun:sqlite` in dev.
 
 ## APIs
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
 - `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile in new standalone scripts. Existing server modules use CommonJS + `fs`; match them (see `.claude/rules/server.md`).
-- Bun.$`ls` instead of execa.
-- Exception: `src/server/appstore.js` and anything it requires also run in a Netlify Function on Node. No Bun-only APIs there.
+- Prefer `Bun.file` over `node:fs` in new standalone scripts. Code under `src/` uses `node:fs`/`node:path`, because the build and the Netlify Function run it on Node.
+- Exception: `src/lib/server/appstore.js` also runs on Node inside the Netlify Function, so it gets no Bun-only APIs. `bun:sqlite` is only loaded through `src/lib/server/score-stores.js`.
 
 ## Commands
 
-- `bun run dev` — build the JS bundle, then run the server with `--watch` (restarts on file changes)
-- `bun run build` — bundle `src/client/floating-icons.js` into `web/js/floating-icons.bundle.js` (minified); run this after editing that file, since the bundle is gitignored and not auto-rebuilt by `bun server.js` (Netlify builds it on deploy)
-- `bun run start` — build once, then run the server without `--watch`
-- `bun server.js` — run the server directly, no rebuild (fine if you haven't touched `src/client/`)
-- `bun test` — run all tests (uses `bun:test`, colocated as `*.test.js` next to the code they cover, e.g. `src/server/router.test.js`, `web/js/app-card.test.js`)
-- `bun test src/server/router.test.js` — run a single test file
-- `bun run format` / `bun run format:check` — Prettier (`.prettierrc`: 120 columns, es5 trailing commas). Most files predate the config and aren't formatted yet, so formatting the whole repo is a separate, deliberate change; don't let it ride along in an unrelated diff
-- Tests write their score databases to `data/.test/` instead of the real `data/*.db`: `bun test` auto-loads `.env.test`, which sets `SCORES_DIR_OVERRIDE` (read by `src/server/static.js` as `SCORES_DIR`), and the `bunfig.toml` preload `src/test-setup.js` wipes that folder at the start of each run so tables never carry over between runs. Keep new persisted state behind `SCORES_DIR` so tests can't touch the files a running server reads.
-- The server binds to `127.0.0.1` only and listens on port 4321 by default (`PORT=xxxx bun server.js` to change it). Open `http://localhost:4321/home`.
+- `bun run dev` — `vite dev` under Bun on `http://localhost:4321` (bound to `127.0.0.1`), with hot reload. Open `http://localhost:4321/home`.
+- `bun run build` — `vite build`: prerenders every page into `build/` and writes the Netlify Function into `.netlify/`
+- `bun run preview` — serve the last build locally (prerendered pages only get their security headers on Netlify)
+- `bun run start` — build, then preview
+- `bun test` — run all tests (uses `bun:test`, colocated as `*.test.js`). Includes `src/build-output.test.js`, which runs a full build, so expect a couple of seconds.
+- `bun test src/lib/apps/feed.test.js` — run a single test file
+- `bun run format` / `bun run format:check` — Prettier with `prettier-plugin-svelte` (`.prettierrc`: 120 columns, es5 trailing commas). Most older files aren't formatted yet, so formatting the whole repo is a separate, deliberate change; don't let it ride along in an unrelated diff
+- Tests write their score databases to `data/.test/` instead of the real `data/*.db`: `bun test` auto-loads `.env.test`, which sets `SCORES_DIR_OVERRIDE` (read by `src/lib/server/paths.js` as `SCORES_DIR`), and the `bunfig.toml` preload `src/test-setup.js` wipes that folder at the start of each run. For manual dev checks that post scores, run `SCORES_DIR_OVERRIDE=data/.test bun run dev`.
 
-There is no lint/typecheck script configured; `tsconfig.json` exists for editor IntelliSense over the JS (`allowJs`, `checkJs` not set) rather than a build step.
+There is no lint/typecheck script configured; `tsconfig.json` (extending `$app/tsconfig`) exists for editor IntelliSense over the JS.
 
 ## Architecture
 
-This is a hand-rolled multi-page site (no framework, no bundler-driven SPA) with two ways to serve it: a local-only Node/Bun HTTP server for development, and a static Netlify deploy (see "Netlify" below). Locally, two request-handling layers matter:
+A SvelteKit app with every page prerendered to static HTML, plus a few on-demand endpoints. SvelteKit 3 keeps its config in `vite.config.js` (adapter, `csp`); there is no `svelte.config.js`. Shared code is imported as `#lib/...` (a `package.json` subpath import for `src/lib/`; `$lib` no longer exists).
 
-- **`server.js`** — just binds `http.createServer` to `127.0.0.1:4321` and delegates to `handleRequest`. Deliberately local-only (see the file's own comment) — not a public-facing config.
-- **`src/server/router.js`** — the actual routing table (`handleRequest` → `route`). It's structured as a chain of checks, roughly in this order: hardcoded redirects (`REDIRECTS`) → JSON APIs (`/api/appstore-apps`, `/api/notfound-score`, `/api/maze-score`, `/apps.json`) → `favicon.ico` → whitelisted static directories (`STATIC_DIRS`: `/css/`, `/js/`, `/assets/`) → exact page routes (`PAGES`: `/home`, `/style-guide`, `/privacy`, `/terms`, `/robots.txt`, `/sitemap.xml`) → custom multi-file app sites (any first path segment that is a folder under `web/` with its own `index.html`) → generic app template (`web/app.html`) for any single-segment slug present in `data/apps.json` → `404.html`. When adding a new route, decide which bucket it belongs to rather than adding ad hoc logic — the ordering is meaningful (e.g. `STATIC_DIRS` opt-in is what stops arbitrary folders under `web/` from being exposed).
-- **`src/server/static.js`** — low-level file serving: MIME types, cache-control (`no-cache` for HTML/JSON, 5s for everything else), and `serveWithin`, which resolves a path against a base directory and rejects anything that escapes it (path traversal guard) — used both for the whitelisted static dirs and for custom app-site folders.
-- **`src/server/appstore.js`** — fetches the developer's real App Store apps live from Apple's iTunes lookup API (`APPLE_DEVELOPER_ID`), cached in-memory for 10 minutes, with a stale-cache fallback on fetch failure. `CUSTOM_APP_PAGES` (keyed by App Store track id) is what makes a published app's card link to its own local page under `web/<slug>/` instead of out to Apple.
-- **`src/server/dev-apps.js`** — reads `data/apps.json` fresh on every call (cheap, small file) to back "in development" app pages; `hasDevApp(slug)` gates the generic `web/app.html` template route.
-- **`src/server/notfound-scores.js`** — persists the 404 page's whack-a-broken-link minigame high score in a `bun:sqlite` DB at `SCORES_DIR/notfound-scores.db` (normally `data/`). It's a single shared best score, not per-visitor, by design.
-- **`src/server/maze-scores.js`** — same idea for the home page maze minigame: a shared leaderboard of winning runs (time, then moves) in `SCORES_DIR/maze-scores.db`.
+- **`src/app.html`** — the document shell. `<body data-sveltekit-reload>` makes every link a full page load, like the old multi-page site, so each page's global CSS and window listeners start fresh.
+- **Routes (`src/routes/`)** — two layout groups:
+  - `(site)/` — `home`, `privacy`, `terms`, `style-guide`, and `[slug]` (one prerendered page per valid `data/apps.json` entry). Its `+layout.svelte` imports the global CSS (`tokens` → `base` → `layout` → `components`) and renders `Header`/`Footer`.
+  - `(landing)/` — `drinko`, `iterly`, `itswritten`, `nine-tiles-puzzle`, each with a `privacy-policy/` page. These import only `landing.css` and their own `src/lib/styles/apps/<app>.css`. Privacy pages have `csr = false` and prerender to `<app>/privacy-policy.html`; `src/hooks.js` `reroute` maps that `.html` URL onto the route in dev.
+  - `+error.svelte` — the 404 page with the whack-a-broken-link game. It loads on every page as SvelteKit's fallback, so it links its stylesheets via `?url` imports rather than importing CSS.
+  - `api/appstore-apps`, `api/maze-score`, `api/notfound-score` — `+server.js` endpoints with `prerender = false`, delegating to `src/lib/server/`.
+  - `sitemap.xml/+server.js` — prerendered from `src/lib/site-pages.js`.
+- **`src/hooks.server.js`** — dev redirects (`/` → `/home`, `/app-store` → `/home#apps`), `/favicon.ico`, a cross-origin write guard on `/api/*`, and the security headers (`src/lib/server/security-headers.js`).
+- **`src/lib/server/`** — `appstore.js` fetches the developer's App Store apps live from Apple's iTunes lookup API (`APPLE_DEVELOPER_ID`), cached 10 minutes with a stale-cache fallback; `CUSTOM_APP_PAGES` makes a published app's card link to its landing page. `maze-scores.js` / `notfound-scores.js` are the `bun:sqlite` stores under `SCORES_DIR`; `score-stores.js` loads them only on Bun; `score-api.js` holds the endpoint logic.
+- **`src/lib/apps/`** — data helpers: `dev-apps.js` (the `apps.json` import, slug validation, `DEV_SLUGS_TO_SHOW`), `feed.js` (the home page's App Store block), `app-status.js`, `names.js`, `meta.js`, `landing-apps.js`.
+- **`src/lib/components/`** — `Seo`, `Header`, `Footer`, `FloatingIcons` (animejs drift), `AppsSection`/`AppCard`/`FeaturedStrip`, `AppDetail`, `MazeSection`, `NotFoundGame`, `LandingCountdown`.
+- **`src/lib/games/`, `src/lib/intro/`** — the maze, maze explainer, 404 game and intro flip are imperative modules exposed as `init…(root, { signal })`, called from `onMount` on static markup; their pure logic (`maze-wilson.js`, `maze-move.js`, `notfound-game-logic.js`) is tested separately.
+- **CSP** — `csp` in `vite.config.js` (hash mode, `script-src` only) puts a `<meta>` CSP with the bootstrap script's hash on every prerendered page; the header CSP allows `'self' 'unsafe-inline'` scripts and the browser enforces both, so only that hashed script runs.
 
-Client side (`web/`) is static HTML/CSS/vanilla JS, no build step for most of it — `web/index.html` is the landing page pulling both the live App Store feed (`web/js/apps-feed.js`) and `data/apps.json` into shared card components (`web/js/app-card.js`). The one exception is `src/client/floating-icons.js`, which is bundled via `bun build --minify` into the gitignored `web/js/floating-icons.bundle.js` (see `bun run build`) instead of being loaded straight from source or a CDN.
+Design tokens and the Liquid Glass visual language (translucent blurred cards, hairline borders, `--glass-*` custom properties) live in `src/lib/styles/tokens.css`; see `/style-guide` for a live reference.
 
-Design tokens and the Liquid Glass visual language (translucent blurred cards, hairline borders, `--glass-*` custom properties) live in `web/css/tokens.css`; see `/style-guide` (`web/style-guide.html`) for a live reference. CSS load order matters: `tokens.css` → `base.css` → `layout.css` → `components.css` → (page-specific, e.g. `intro.css`).
-
-Some apps (`web/nine-tiles-puzzle/`, `web/drinko/`, `web/iterly/`, `web/itswritten/`) are full custom multi-file landing pages with their own CSS/JS/assets, served verbatim by the router's custom-app-site branch — they don't go through `app.html` or the site's main stylesheets. They do share `web/css/landing.css` (layout/components; each app's own `style.css` is just its theme tokens and page-specific rules) and `web/js/landing-reveal.js`, referenced by absolute path because the custom-app-site branch only serves files inside the app's folder.
-
-Adding a new in-development app page or a custom app landing page doesn't require touching `server.js`/`router.js` — see `README.md` for the exact steps (`data/apps.json` entry, or a new folder under `web/`).
+Adding an in-development app page is just a `data/apps.json` entry. Adding a landing page is a new `(landing)/<app>/` folder plus its slug in `LANDING_APPS` and `src/hooks.js`; see `README.md`.
 
 ## Netlify
 
-`server.js` doesn't run on Netlify; `netlify.toml` recreates the router for a static deploy of `web/`:
+`netlify.toml` runs `bun run build` and publishes `build/`. adapter-netlify puts the prerendered pages and `static/` there, and everything not prerendered (`/api/*`, and unknown paths, which render the 404 page with status 404) into one Netlify Function.
 
-- **Build** (`bun run build && bun src/build/netlify.js`) — bundles floating-icons, then `src/build/netlify.js` copies `data/apps.json` to `web/apps.json` and writes `web/_redirects` with one `app.html` rewrite per in-development slug (mirroring `hasDevApp`). Both outputs are gitignored. Unknown paths get `web/404.html` from Netlify itself.
-- **Fixed routes** (`/` → `/home`, `/app-store`, `/home`, `/style-guide`, `/privacy`, `/terms`, `/favicon.ico`) are `[[redirects]]` in `netlify.toml`. `robots.txt` and `sitemap.xml` sit at the root of `web/`, so Netlify serves them as plain files.
-- **`/api/appstore-apps`** is the Netlify Function `netlify/functions/appstore-apps.mjs`, reusing `src/server/appstore.js`.
-- **Not deployed:** `/api/notfound-score` and `/api/maze-score` (they need local `bun:sqlite` files). The games catch the failed request and play on without saving scores.
-- Everything under `web/` is published — the `STATIC_DIRS` opt-in only protects the local server.
-
-When adding or changing a route in `router.js`, make the matching change in `netlify.toml` or `src/build/netlify.js`, or it will work locally and be missing on Netlify.
+- `[[redirects]]` in `netlify.toml` repeat `REDIRECTS` from `src/hooks.server.js`, plus the `/favicon.ico` rewrite. Prerendered pages never reach the hook, so a redirect only in the hook works locally and not in production.
+- `[[headers]]` repeat `SECURITY_HEADERS`; `src/build-output.test.js` fails if they drift.
+- `/api/maze-score` and `/api/notfound-score` answer 503 on Netlify (no Bun, so no SQLite). The games catch it and play on without saving scores.

@@ -1,44 +1,50 @@
 ---
 paths:
-  - "web/js/**"
-  - "src/client/**"
-  - "web/*/app.js"
+  - "src/lib/**/*.js"
+  - "src/lib/**/*.svelte"
+  - "src/routes/**/*.svelte"
+  - "src/routes/**/+page.js"
+  - "src/routes/**/+layout.js"
 ---
 
-# Client JavaScript rules
+# Client code rules (Svelte components and browser JS)
 
-## Modules and loading
+These cover everything under `src/lib/` and `src/routes/` except `src/lib/server/` (see `server.md`).
 
-- `web/js/*.js` is plain browser JS with no build step. Page scripts are ES modules loaded with
-  `<script type="module" src="/js/...">` and import siblings with relative `./x.js` specifiers (include the `.js`).
-- `nav.js` and `landing-reveal.js` are classic (non-module) scripts. Keep them that way, since every page includes
-  them.
-- `src/client/floating-icons.js` is the one bundled file (it imports `animejs`). After editing it, run
-  `bun run build`. Never edit or commit `web/js/floating-icons.bundle.js`.
-- Don't add CDN script tags or npm imports in `web/js/`. If something needs a library, ask first; the answer is
-  probably a bundle like floating-icons.
+## Components
 
-## Separate logic from DOM
+- Svelte 5 runes: `$props()`, `$state()`, `$derived()`, `$effect()`, `{@render children()}`, `onclick={...}`.
+  No `export let`, `$:` or `on:click`.
+- Pages are prerendered, so a component must render the same markup on the server as on first load. Anything that
+  needs `window` or `document` runs in `onMount`, `$effect` or an action.
+- `<body data-sveltekit-reload>` makes every link a full page load. Don't rely on client-side navigation, and don't
+  remove it without dealing with the per-page global CSS and window listeners that it keeps from carrying over.
+- Svelte escapes every `{value}`. Never use `{@html ...}` for App Store data or `apps.json` fields.
 
-- Put pure logic (state, maths, rendering to an HTML string) in its own module with no DOM access, and test it
-  (`maze-move.js`, `maze-wilson.js`, `notfound-game-logic.js`, `app-card.js`, `app-detail.js`, `app-status.js`).
-  The DOM-wiring file (`maze-game.js`, `notfound-game.js`, `app-page.js`) imports it.
-- New non-trivial logic needs a colocated `*.test.js`. See `testing.md`.
+## Separate logic from the DOM
 
-## HTML injection
-
-- Any interpolated value in an `innerHTML` template goes through `escapeHtml` from `./html.js`
-  (`import { escapeHtml as esc } from "./html.js"`). That includes App Store data, `apps.json` fields, URLs in
-  `href`/`src`, and class names. Numbers you computed yourself are the only exception.
-- Prefer `textContent` when writing plain text into a single element.
+- Pure logic (state, maths, data shaping) lives in a plain `.js` module with no DOM access and a colocated test:
+  `src/lib/games/maze-wilson.js`, `maze-move.js`, `notfound-game-logic.js`, `src/lib/apps/feed.js`,
+  `app-status.js`, `names.js`, `meta.js`, `dev-apps.js`.
+- The big imperative modules (`src/lib/intro/intro-flip.js`, `src/lib/games/maze-game.js`, `maze-explainer.js`,
+  `notfound-game.js`) export `init…(root, { signal })`. The owning component renders **static** markup for them (no
+  reactive bindings on nodes they mutate), calls `init…` from `onMount` with an `AbortController`'s signal, and
+  aborts it on destroy. Inside, every `addEventListener` takes `{ signal }`, every self-rescheduling timer or
+  `requestAnimationFrame` callback starts with `if (signal.aborted) return;`, and anything appended outside the root
+  is removed on `"abort"`. Never pass `{ signal }` to a listener on the signal itself: it would be removed before the
+  abort event fires.
+- Scroll reveals are actions: `use:reveal` (`src/lib/actions/reveal.js`) on `.reveal` elements on site pages,
+  `use:landingReveal` on a landing page's `<main>`.
 
 ## Behaviour
 
 - Respect `prefers-reduced-motion`: check `matchMedia("(prefers-reduced-motion: reduce)")` and skip or shorten
-  animation (see `reveal.js`, `intro-flip.js`).
+  animation (see `reveal.js`, `intro-flip.js`, `FloatingIcons.svelte`).
 - Prefer `IntersectionObserver` over scroll listeners for scroll-triggered state.
-- Network calls fail quietly. A failed fetch contributes nothing or shows a short empty-state line, never an alert
-  or a thrown error. The score APIs don't exist on Netlify, so games must keep working when they fail.
-- Hide headings over empty sections (`el.hidden = true`) rather than rendering a heading over nothing.
+- Network calls fail quietly: check `r.ok`, and on failure contribute nothing rather than showing an alert or
+  throwing. The score APIs answer 503 on Netlify, so the games must keep working when they fail.
+- Don't render a heading over an empty section; render the section only when there's something in it.
 - Dates: `toLocaleDateString("en-GB", …)`.
 - Feature flags like `DEV_SLUGS_TO_SHOW` filter data; don't delete entries from `apps.json` to hide them.
+- `animejs` is imported dynamically inside `onMount` so it only loads in the browser. Don't add CDN scripts; ask
+  before adding any other library.
