@@ -11,6 +11,12 @@
   command = "bun run build"
   publish = "build"
 
+# Pinned so the deploy builds with what the site is tested on locally:
+# SvelteKit 3 needs Node 22.17 or later, and the build runs Vite under Bun.
+[build.environment]
+  NODE_VERSION = "22.17.0"
+  BUN_VERSION = "1.3.14"
+
 # Kept identical to REDIRECTS in src/hooks.server.js.
 [[redirects]]
   from = "/"
