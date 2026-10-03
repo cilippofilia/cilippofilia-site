@@ -3,8 +3,8 @@
 // from empty tables instead of piling up rows from earlier runs — which
 // eventually pushed the maze tests' rows out of getTop's window.
 
-const path = require("path");
-const fs = require("fs");
+import path from "node:path";
+import fs from "node:fs";
 
 const dir = process.env.SCORES_DIR_OVERRIDE;
 if (dir) {

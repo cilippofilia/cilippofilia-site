@@ -1,23 +1,17 @@
-# Netlify deploy of the same site server.js serves locally. server.js itself
-# doesn't run here — these rules recreate src/server/router.js instead.
+# Netlify deploy of the SvelteKit site. adapter-netlify writes the
+# prerendered pages and static/ to the publish folder, and puts the
+# on-demand routes (/api/*, and the 404 page for unknown paths) into a
+# Netlify Function.
 #
-# Not carried over: /api/notfound-score and /api/maze-score. They're backed
-# by bun:sqlite files under data/, which a Netlify Function can't keep. Both
-# games catch the failed request, so they still play — just without saving
-# a best score or leaderboard.
+# /api/maze-score and /api/notfound-score answer 503 here: their scores
+# live in bun:sqlite files, which only exist where the site runs on Bun.
+# Both games treat that as "no saved scores" and play on.
 
 [build]
-  publish = "web"
-  # Bundle floating-icons.js (gitignored, so it has to be built here), then
-  # bake the data/apps.json-driven routes into web/ — see src/build/netlify.js.
-  command = "bun run build && bun src/build/netlify.js"
+  command = "bun run build"
+  publish = "build"
 
-[functions]
-  directory = "netlify/functions"
-
-# Generated per-app rewrites in web/_redirects are applied before these.
-# Unknown paths fall through to web/404.html, which Netlify serves itself.
-
+# Kept identical to REDIRECTS in src/hooks.server.js.
 [[redirects]]
   from = "/"
   to = "/home"
@@ -31,38 +25,20 @@
   force = true
 
 [[redirects]]
-  from = "/home"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/style-guide"
-  to = "/style-guide.html"
-  status = 200
-
-[[redirects]]
-  from = "/privacy"
-  to = "/privacy.html"
-  status = 200
-
-[[redirects]]
-  from = "/terms"
-  to = "/terms.html"
-  status = 200
-
-[[redirects]]
   from = "/favicon.ico"
   to = "/assets/favicon.svg"
   status = 200
 
 # Security headers for every page and file. Kept identical to
-# SECURITY_HEADERS in src/server/static.js (the reasoning for each value
-# lives there); a router test fails if the two drift apart. HSTS isn't set
-# here because Netlify already sends it for the custom domain.
+# SECURITY_HEADERS in src/lib/server/security-headers.js (the reasoning for
+# each value lives there); src/build-output.test.js fails if they drift.
+# script-src allows inline here because every page also carries SvelteKit's
+# hash-based CSP meta tag, which narrows it to the one bootstrap script.
+# HSTS isn't set here because Netlify already sends it for the custom domain.
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.mzstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.mzstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"

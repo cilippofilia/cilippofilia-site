@@ -6,8 +6,7 @@
     "dev": "bunx --bun vite dev",
     "build": "bunx --bun vite build",
     "preview": "bunx --bun vite preview",
-    "legacy:build": "bun build src/client/floating-icons.js --outfile web/js/floating-icons.bundle.js --minify --target browser",
-    "legacy:start": "bun run legacy:build && PORT=4322 bun server.js",
+    "start": "bun run build && bunx --bun vite preview",
     "test": "bun test",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

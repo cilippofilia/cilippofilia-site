@@ -1,6 +1,6 @@
 /* The home page's opening screen: the icons drifting behind the hero, and
    the flip card that turns into the profile card. Paired with
-   web/js/intro-flip.js, which drives all of it from scroll position. */
+   src/lib/intro/intro-flip.js, which drives all of it from scroll position. */
 
 /* Floating app icons — decorative. They drift around the hero background
    as a loose constellation: the layer spans the whole hero screen and each

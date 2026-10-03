@@ -668,12 +668,12 @@ section h2,
   .app-detail-body { grid-template-columns: 1fr; }
 }
 
-/* Loading state for web/app.html — sits inside the same app-detail-head /
+/* Loading skeleton that sits inside the same app-detail-head /
    app-detail-body / app-detail-side wrappers as the real content (see
-   app-detail.js), so it inherits that layout instead of duplicating it,
-   with content swapped for shimmering placeholder blocks. Decorative: the
-   actual "loading" announcement is the .visually-hidden status text next
-   to it in app.html. */
+   AppDetail.svelte), so it inherits that layout instead of duplicating it,
+   with content swapped for shimmering placeholder blocks. Dev app pages are
+   prerendered now and never show it; the style guide still documents it.
+   Decorative: any page using it needs its own .visually-hidden status text. */
 .skeleton-block {
   background: linear-gradient(100deg, var(--glass-fill) 40%, rgba(255, 255, 255, 0.14) 50%, var(--glass-fill) 60%);
   background-size: 200% 100%;

@@ -1,6 +1,6 @@
 /* Shared by the custom app landing pages and their privacy pages
-   (web/drinko/, web/iterly/, web/itswritten/, web/nine-tiles-puzzle/).
-   Each page links this first, then its own style.css, which defines the
+   (src/routes/(landing)/). Each page imports this first, then its own
+   src/lib/styles/apps/<app>.css, which defines the
    theme on :root (light and dark) and any page-specific rules.
 
    A theme must define: --bg, --bg2, --surface, --surface-hover, --text,
