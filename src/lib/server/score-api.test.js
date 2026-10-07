@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { mazeScore, notfoundScore, MAX_BODY_BYTES } from "./score-api.js";
+import { mazeScore, notfoundScore, runnerScore, MAX_BODY_BYTES } from "./score-api.js";
 import { loadScoreStore } from "./score-stores.js";
 
 const post = (body) => new Request("http://localhost/api/x", { method: "POST", body });
@@ -11,6 +11,14 @@ function fakeMaze() {
     calls,
     getTop: () => [{ timeMs: 1, moves: 1 }],
     submitEntry: (t, m) => (calls.push([t, m]), [{ timeMs: t, moves: m }]),
+  };
+}
+function fakeRunner() {
+  const calls = [];
+  return {
+    calls,
+    getTop: () => [{ score: 5, skater: "pip" }],
+    submitEntry: (s, k) => (calls.push([s, k]), [{ score: s, skater: k }]),
   };
 }
 function fakeNotfound() {
@@ -56,8 +64,8 @@ test("missing fields count as no input", async () => {
   expect(maze.calls).toEqual([[0, 3]]);
 });
 
-test("with no store (not on Bun) both endpoints answer 503 JSON", async () => {
-  for (const handler of [mazeScore, notfoundScore]) {
+test("with no store (not on Bun) every endpoint answers 503 JSON", async () => {
+  for (const handler of [mazeScore, notfoundScore, runnerScore]) {
     const res = await handler(get(), null);
     expect(res.status).toBe(503);
     expect(res.headers.get("content-type")).toContain("application/json");
@@ -67,4 +75,24 @@ test("with no store (not on Bun) both endpoints answer 503 JSON", async () => {
 test("loadScoreStore returns the real store modules on Bun", async () => {
   expect(typeof (await loadScoreStore("maze")).getTop).toBe("function");
   expect(typeof (await loadScoreStore("notfound")).getBest).toBe("function");
+  expect(typeof (await loadScoreStore("runner")).submitEntry).toBe("function");
+});
+
+test("loadScoreStore has no store for an unknown name", async () => {
+  expect(await loadScoreStore("leaderboard")).toBeNull();
+  expect(await loadScoreStore("toString")).toBeNull();
+});
+
+test("the runner endpoint reports and submits score and skater", async () => {
+  expect(await (await runnerScore(get(), fakeRunner())).json()).toEqual({ top: [{ score: 5, skater: "pip" }] });
+  const runner = fakeRunner();
+  const res = await runnerScore(post(JSON.stringify({ score: 420, skater: "kit" })), runner);
+  expect(runner.calls).toEqual([[420, "kit"]]);
+  expect(await res.json()).toEqual({ top: [{ score: 420, skater: "kit" }] });
+});
+
+test("a malformed runner submission counts as no input", async () => {
+  const runner = fakeRunner();
+  expect((await runnerScore(post("{oops"), runner)).status).toBe(200);
+  expect(runner.calls).toEqual([[0, ""]]);
 });

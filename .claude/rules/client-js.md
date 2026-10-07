@@ -24,15 +24,19 @@ These cover everything under `src/lib/` and `src/routes/` except `src/lib/server
 ## Separate logic from the DOM
 
 - Pure logic (state, maths, data shaping) lives in a plain `.js` module with no DOM access and a colocated test:
-  `src/lib/games/maze-wilson.js`, `maze-move.js`, `notfound-game-logic.js`, `src/lib/apps/feed.js`,
-  `app-status.js`, `names.js`, `meta.js`, `dev-apps.js`, `src/lib/pull-to-refresh.js`.
+  `src/lib/games/maze-wilson.js`, `maze-move.js`, `notfound-game-logic.js`, `runner-logic.js`, `active-game.js`,
+  `src/lib/apps/feed.js`, `app-status.js`, `names.js`, `meta.js`, `dev-apps.js`, `src/lib/pull-to-refresh.js`.
 - The big imperative modules (`src/lib/intro/intro-flip.js`, `src/lib/games/maze-game.js`, `maze-explainer.js`,
-  `notfound-game.js`) export `init…(root, { signal })`. The owning component renders **static** markup for them (no
-  reactive bindings on nodes they mutate), calls `init…` from `onMount` with an `AbortController`'s signal, and
-  aborts it on destroy. Inside, every `addEventListener` takes `{ signal }`, every self-rescheduling timer or
-  `requestAnimationFrame` callback starts with `if (signal.aborted) return;`, and anything appended outside the root
-  is removed on `"abort"`. Never pass `{ signal }` to a listener on the signal itself: it would be removed before the
-  abort event fires.
+  `runner-game.js`, `notfound-game.js`) export `init…(root, { signal })`. The owning component renders **static**
+  markup for them (no reactive bindings on nodes they mutate), calls `init…` from `onMount` with an
+  `AbortController`'s signal, and aborts it on destroy. Inside, every `addEventListener` takes `{ signal }`, every
+  self-rescheduling timer or `requestAnimationFrame` callback starts with `if (signal.aborted) return;`, and anything
+  appended outside the root is removed on `"abort"`. Never pass `{ signal }` to a listener on the signal itself: it
+  would be removed before the abort event fires.
+- The maze and the runner both listen for arrow keys on `window`. The runner calls `claimKeys("runner")`
+  (`src/lib/games/active-game.js`) while a run is live and `releaseKeys` when it pauses or ends; the maze ignores
+  keys while `keysClaimedByOther("maze")`. Claims last only as long as a run, so a game left mid-round still
+  answers when the player comes back to it.
 - Scroll reveals are actions: `use:reveal` (`src/lib/actions/reveal.js`) on `.reveal` elements on site pages,
   `use:landingReveal` on a landing page's `<main>`.
 

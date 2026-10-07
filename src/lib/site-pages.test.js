@@ -4,6 +4,7 @@ import { sitemapPaths } from "./site-pages.js";
 test("the sitemap lists every public page, matching the old hand-kept file", () => {
   expect(sitemapPaths()).toEqual([
     "https://cilippofilia.dev/home",
+    "https://cilippofilia.dev/games",
     "https://cilippofilia.dev/privacy",
     "https://cilippofilia.dev/terms",
     "https://cilippofilia.dev/drinko/",

@@ -11,6 +11,7 @@ npm-debug.log*
 # Runtime state, not source content
 data/notfound-scores.db
 data/maze-scores.db
+data/runner-scores.db
 data/.test/
 
 # SvelteKit / adapter-netlify output

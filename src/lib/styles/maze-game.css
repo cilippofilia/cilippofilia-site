@@ -1,4 +1,4 @@
-/* Escape the Labyrinth — the home page's maze minigame. A fresh maze is
+/* Escape the Labyrinth — the maze minigame on /games. A fresh maze is
    generated with Wilson's algorithm (see maze-wilson.js) on every
    "Play"/"Play again" tap. The card itself stays consistent with the rest of
    the site's Liquid Glass language; the canvas "screen" inside it gets an

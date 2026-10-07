@@ -1,4 +1,5 @@
-// Request handling for /api/maze-score and /api/notfound-score, kept out of
+// Request handling for /api/maze-score, /api/notfound-score and
+// /api/runner-score, kept out of
 // the +server.js files so it can be tested with plain Request objects and a
 // fake store.
 
@@ -25,6 +26,15 @@ export async function mazeScore(request, store) {
   if (request.method === "POST") {
     const { timeMs = 0, moves = 0 } = await readJson(request);
     return Response.json({ top: store.submitEntry(timeMs, moves) });
+  }
+  return Response.json({ top: store.getTop() });
+}
+
+export async function runnerScore(request, store) {
+  if (!store) return unavailable();
+  if (request.method === "POST") {
+    const { score = 0, skater = "" } = await readJson(request);
+    return Response.json({ top: store.submitEntry(score, skater) });
   }
   return Response.json({ top: store.getTop() });
 }

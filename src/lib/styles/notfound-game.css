@@ -1,6 +1,8 @@
-/* Whack-a-broken-link, the 404 page's minigame. Loaded only on 404.html.
-   .notfound-chip extends the site's existing .chip look (see
-   components.css) so a chip reads as native UI, not custom game art. */
+/* Whack-a-broken-link, the 404 page's minigame, also on /games. Built as
+   the maze's and Skate Run's sibling: the same glass card around a CRT
+   "screen" with phosphor glow and scanlines, so the three read as a row of
+   arcade cabinets. The broken links are terminal-green chips; only their
+   "broken" dot is amber. */
 
 /* The oversized "404" above the headline — the page's dominant element, so
    there's no ambiguity this is an error page even at a glance. Decorative
@@ -20,117 +22,167 @@
 }
 
 .notfound-game {
+  --notfound-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --notfound-phosphor: #39ff14;
+  --notfound-phosphor-dim: rgba(57, 255, 20, 0.45);
+  --notfound-amber: #ffb000;
+
   position: relative;
   margin-top: var(--space-40);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
-  overflow: hidden;
-}
-
-/* A faint grid of link "nodes" so the field never reads as a blank box,
-   even before a round starts. Kept quiet — texture, not decoration. */
-.notfound-game-field {
-  position: relative;
-  min-height: 280px;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+  padding: var(--pad-surface);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--space-16);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .notfound-game {
+    background: var(--glass-fill-strong);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .notfound-game {
+    background: var(--glass-fill-strong);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.notfound-game-stats {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-14);
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-@media (min-width: 640px) {
-  .notfound-game-field { min-height: 360px; }
-}
-
-.notfound-game-hint {
-  margin: 0;
-  text-align: center;
-  color: var(--text-dim);
-  font-size: 0.85rem;
-}
-
-.notfound-game-best {
-  margin: 0;
-  text-align: center;
-  color: var(--orange);
-  font-size: 0.78rem;
+  align-items: baseline;
+  gap: var(--space-8) var(--space-24);
+  font-family: var(--notfound-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .notfound-game-score {
-  position: absolute;
-  /* The pill is much wider than it is tall, so an equal linear inset on
-     both edges (the strict "concentric corner" formula: outer radius minus
-     this pill's own corner radius) reads as unbalanced — the gap above
-     spans the pill's full width and looks far bigger than the narrow gap
-     to its right, which only spans its height. Optically corrected: the
-     top inset is pulled in tighter than the formula alone would give. */
-  --score-radius: 13px;
-  top: calc(var(--radius-lg) - var(--score-radius) - 6px);
-  right: calc(var(--radius-lg) - var(--score-radius));
-  height: calc(var(--score-radius) * 2);
-  align-items: center;
-  gap: var(--space-8);
-  font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--green);
-  background: var(--green-bg);
-  padding: 0 var(--space-12);
-  border-radius: var(--radius-pill);
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.notfound-game-score:not([hidden]) {
-  display: inline-flex;
+.notfound-game-misses,
+.notfound-game-best {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
 }
 
-.notfound-game-score::before {
+.notfound-game-best[hidden] {
+  display: none;
+}
+
+.notfound-game-screen {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #050805;
+  border: 1px solid var(--notfound-phosphor-dim);
+  box-shadow:
+    0 0 18px rgba(57, 255, 20, 0.16),
+    inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+  .notfound-game-screen {
+    height: 240px;
+  }
+}
+
+/* Scanlines, purely decorative: above the field, ignoring input. */
+.notfound-game-screen::after {
   content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.22) 0px,
+    rgba(0, 0, 0, 0.22) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
 }
 
-/* Idle chip sits centered with the hint, as one cluster, via the field's
-   flex layout — it's a normal-flow element, not positioned. Chips spawned
-   during a round get position:absolute set inline (random placement). */
+/* Where the chips spawn and the debris settles. A faint grid of phosphor
+   dots keeps it from reading as a dead screen between chips. */
+.notfound-game-field {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(57, 255, 20, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Chips get position:absolute and a random spot inline from
+   notfound-game.js. */
 .notfound-chip {
   display: inline-flex;
   align-items: center;
   gap: var(--space-8);
-  font-size: 0.95rem;
-  padding: calc(var(--space-12) - 1px) calc(var(--space-16) - 1px);
+  padding: 6px 10px;
+  border: 1px solid var(--notfound-phosphor-dim);
+  border-radius: var(--radius-sm);
+  background: rgba(57, 255, 20, 0.08);
+  color: var(--notfound-phosphor);
+  font-family: var(--notfound-mono);
+  font-size: 0.75rem;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+  white-space: nowrap;
   cursor: pointer;
-  transform: scale(1);
-  opacity: 1;
-  transition: transform 0.3s var(--ease-spring), opacity 0.3s var(--ease-spring);
+  animation: notfound-chip-in 0.18s ease-out;
+  transition:
+    transform 0.15s ease-in,
+    opacity 0.15s ease-in;
 }
 
 .notfound-chip::before {
   content: "";
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--orange);
+  background: var(--notfound-amber);
+  box-shadow: 0 0 6px var(--notfound-amber);
 }
 
-.notfound-chip.is-idle {
-  animation: notfound-chip-pulse 2.2s var(--ease-spring) infinite;
+@media (hover: hover) {
+  .notfound-chip:hover {
+    background: rgba(57, 255, 20, 0.16);
+    border-color: var(--notfound-phosphor);
+  }
 }
 
-@keyframes notfound-chip-pulse {
-  0%, 100% { opacity: 0.65; }
-  50% { opacity: 1; }
+.notfound-chip:focus-visible {
+  outline: 2px solid var(--notfound-phosphor);
+  outline-offset: 2px;
+}
+
+@keyframes notfound-chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
 }
 
 /* Tapping a chip "breaks" it: it snaps down and vanishes fast while
-   .notfound-shard granules (appended alongside it) burst outward and fade. */
+   .notfound-shard pixels (appended alongside it) burst outward. */
 .notfound-chip.is-breaking {
-  transition: transform 0.15s ease-in, opacity 0.15s ease-in;
   transform: scale(0.8);
   opacity: 0;
   pointer-events: none;
@@ -143,59 +195,71 @@
   pointer-events: none;
 }
 
-/* Pixelated-explosion debris: flat, sharp-edged squares (no border-radius,
-   no gradient) so they read as blocky pixels, not glass. Position/rotation
-   are driven every frame by the physics loop in notfound-game.js, not a
-   CSS animation — this element only owns the shape and color. */
+/* Pixelated-explosion debris: flat, sharp-edged squares so they read as
+   blocky pixels. Position and rotation are driven every frame by the
+   physics loop in notfound-game.js; this only owns the shape and colour. */
 .notfound-shard {
   position: absolute;
   left: 0;
   top: 0;
-  background: var(--shard-color, #fff);
+  background: var(--shard-color, var(--notfound-phosphor));
 }
 
+.notfound-game-start,
 .notfound-game-result {
   position: absolute;
   inset: 0;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-8);
   text-align: center;
-  padding: var(--space-20);
-  /* Opaque enough to fully cover the field behind it (the idle hint/best
-     line and the settled glass pile) — without this, that content bleeds
-     through and overlaps the result text. */
-  background: var(--glass-fill-strong);
+  padding: var(--space-16);
+  font-family: var(--notfound-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(5, 8, 5, 0.88);
 }
 
-.notfound-game-result:not([hidden]) {
-  display: flex;
+.notfound-game-start[hidden],
+.notfound-game-result[hidden],
+.notfound-game-result-best[hidden] {
+  display: none;
+}
+
+.notfound-game-start-title,
+.notfound-game-result-score {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--notfound-phosphor);
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.65);
+  font-variant-numeric: tabular-nums;
 }
 
 .notfound-game-result-score {
-  margin: 0;
-  font-size: 2.75rem;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.02em;
+  font-size: 2.25rem;
 }
 
+.notfound-game-start-hint,
 .notfound-game-result-text {
   margin: 0 0 var(--space-8);
-  color: var(--text-dim);
-  font-size: 0.9rem;
+  max-width: 40ch;
+  color: var(--notfound-phosphor-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
 }
 
 .notfound-game-result-best {
-  margin: -4px 0 var(--space-8);
-  color: var(--orange);
+  margin: -4px 0 var(--space-4);
+  color: var(--notfound-phosphor-dim);
   font-size: 0.8rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .notfound-chip,
-  .notfound-chip.is-idle,
   .notfound-chip.is-breaking {
     animation: none;
     transition: none;

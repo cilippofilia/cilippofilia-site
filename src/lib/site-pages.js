@@ -7,7 +7,7 @@ import { SITE_ORIGIN } from "./apps/meta.js";
 import { LANDING_APPS } from "./apps/landing-apps.js";
 import { publicDevApps } from "./apps/dev-apps.js";
 
-const SITE_PAGES = ["/home", "/privacy", "/terms"];
+const SITE_PAGES = ["/home", "/games", "/privacy", "/terms"];
 
 export function sitemapPaths() {
   return [
