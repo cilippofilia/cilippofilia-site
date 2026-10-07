@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import { initNotFoundGame } from "#lib/games/notfound-game.js";
 
+  // Static markup the game module drives directly: no reactive bindings in
+  // here, so Svelte never touches the nodes it mutates.
   let container;
 
   onMount(() => {
@@ -12,15 +14,25 @@
 </script>
 
 <div class="notfound-game" bind:this={container}>
-  <p class="notfound-game-score" hidden></p>
-  <div class="notfound-game-field">
-    <p class="notfound-game-hint">Tap the broken link to play.</p>
+  <div class="notfound-game-stats">
+    <p class="notfound-game-score">0 caught</p>
+    <p class="notfound-game-misses">0/4 missed</p>
     <p class="notfound-game-best" hidden></p>
   </div>
-  <div class="notfound-game-result" hidden>
-    <p class="notfound-game-result-score"></p>
-    <p class="notfound-game-result-text"></p>
-    <p class="notfound-game-result-best" hidden></p>
-    <button type="button" class="button secondary notfound-game-replay">Play again</button>
+  <div class="notfound-game-screen">
+    <div class="notfound-game-field"></div>
+    <div class="notfound-game-start">
+      <p class="notfound-game-start-title">Ready to whack?</p>
+      <p class="notfound-game-start-hint">
+        Broken links flash up on the screen. Tap or click each one before it fades. Four misses and you're out.
+      </p>
+      <button type="button" class="button notfound-game-play">Play</button>
+    </div>
+    <div class="notfound-game-result" hidden>
+      <p class="notfound-game-result-score"></p>
+      <p class="notfound-game-result-text"></p>
+      <p class="notfound-game-result-best" hidden></p>
+      <button type="button" class="button secondary notfound-game-replay">Play again</button>
+    </div>
   </div>
 </div>

@@ -1,9 +1,11 @@
-// Whack-a-broken-link: the 404 page's minigame. Idle chips sit in the game
-// area doing nothing; tapping one starts a round (see notfound-game-logic.js
-// for the scoring/timing rules). Purely additive — the real "Back home" /
-// "See the apps" buttons above are untouched and still the fastest way out.
+// Whack-a-broken-link: the 404 page's minigame, also on /games. Play starts
+// a round of broken-link chips to tap before they fade (see
+// notfound-game-logic.js for the scoring/timing rules). Purely additive: on
+// the 404 page the real "Back home" / "See the apps" buttons above are
+// untouched and still the fastest way out.
 
 import {
+  MISS_LIMIT,
   createGameState,
   startRound,
   registerHit,
@@ -16,9 +18,11 @@ import {
 
 export function initNotFoundGame(container, { signal }) {
   const field = container.querySelector(".notfound-game-field");
-  const hint = container.querySelector(".notfound-game-hint");
+  const start = container.querySelector(".notfound-game-start");
   const result = container.querySelector(".notfound-game-result");
-  const idleBest = container.querySelector(".notfound-game-best");
+  const scoreEl = container.querySelector(".notfound-game-score");
+  const missesEl = container.querySelector(".notfound-game-misses");
+  const bestEl = container.querySelector(".notfound-game-best");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let state = createGameState();
@@ -31,36 +35,23 @@ export function initNotFoundGame(container, { signal }) {
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
     .then(({ best: fetched }) => {
       best = fetched || 0;
-      showIdleBest();
+      showBest();
     })
     .catch(() => {});
 
-  function showIdleBest() {
-    const text = bestLineText(0, best);
-    idleBest.textContent = text;
-    idleBest.hidden = !text;
-  }
-
-  spawnIdleChip();
-
-  function spawnIdleChip() {
-    const chip = makeChip(() => {
-      shatter(chip);
-      begin();
-    });
-    chip.classList.add("is-idle");
-    field.appendChild(chip);
+  // Blank until there's a best on record (or when the API isn't there).
+  function showBest() {
+    bestEl.textContent = `Best ${best}`;
+    bestEl.hidden = !best;
   }
 
   function begin() {
+    clearDebris();
     field.querySelectorAll(".notfound-chip").forEach((el) => el.remove());
     liveChips = [];
+    start.hidden = true;
     result.hidden = true;
-    hint.hidden = true;
-    idleBest.hidden = true;
     state = startRound(performance.now());
-    const score = container.querySelector(".notfound-game-score");
-    score.hidden = false;
     updateScore();
     scheduleSpawn();
   }
@@ -77,8 +68,8 @@ export function initNotFoundGame(container, { signal }) {
   // than most rendered chips actually get, since real width depends on the
   // random path text) rather than the true measured size, so a new chip's
   // spot can be checked before it's even in the DOM.
-  const CHIP_W = 170;
-  const CHIP_H = 46;
+  const CHIP_W = 210;
+  const CHIP_H = 32;
   const CHIP_MARGIN = 10;
   const SPAWN_ATTEMPTS = 12;
 
@@ -91,33 +82,15 @@ export function initNotFoundGame(container, { signal }) {
     );
   }
 
-  // The score pill's footprint, in field-relative coordinates, so a chip
-  // never spawns underneath it. null while the pill is hidden.
-  function scoreRect() {
-    const scoreEl = container.querySelector(".notfound-game-score");
-    if (scoreEl.hidden) return null;
-    const scoreBox = scoreEl.getBoundingClientRect();
-    const fieldBox = field.getBoundingClientRect();
-    return {
-      left: scoreBox.left - fieldBox.left,
-      top: scoreBox.top - fieldBox.top,
-      right: scoreBox.right - fieldBox.left,
-      bottom: scoreBox.bottom - fieldBox.top,
-    };
-  }
-
   function pickChipSpot() {
     const maxX = Math.max(0, field.clientWidth - CHIP_W);
     const maxY = Math.max(0, field.clientHeight - CHIP_H);
-    const reserved = scoreRect();
 
     let left = Math.round(Math.random() * maxX);
     let top = Math.round(Math.random() * maxY);
     for (let attempt = 0; attempt < SPAWN_ATTEMPTS; attempt++) {
       const candidate = { left, top, right: left + CHIP_W, bottom: top + CHIP_H };
-      const collides =
-        (reserved && rectsOverlap(candidate, reserved, CHIP_MARGIN)) ||
-        liveChips.some((c) => rectsOverlap(candidate, c.rect, CHIP_MARGIN));
+      const collides = liveChips.some((c) => rectsOverlap(candidate, c.rect, CHIP_MARGIN));
       if (!collides) break;
       left = Math.round(Math.random() * maxX);
       top = Math.round(Math.random() * maxY);
@@ -165,7 +138,8 @@ export function initNotFoundGame(container, { signal }) {
   const RESTITUTION = 0.45;
   const REST_SPEED = 70;
   const MAX_BOUNCES = 3;
-  const SHARD_COLORS = ["#ffffff", "#e4e4e7", "#ffb340", "#f5f5f7"];
+  // Phosphor greens with a little of the chips' amber.
+  const SHARD_COLORS = ["#39ff14", "#b6ffa0", "#ffb000", "#e8ffe0"];
 
   // A tapped chip "breaks": it vanishes fast while a handful of pixel-like
   // square shards burst outward from where it sat, fall under gravity,
@@ -227,10 +201,8 @@ export function initNotFoundGame(container, { signal }) {
     runShardPhysics(shards, floorY, () => {});
   }
 
-  // Clears settled debris from a previous round — called before a replay
-  // starts so each round's pile builds up from empty. Not called from
-  // begin() itself: the very first round's idle-tap shatter fires right
-  // before begin(), and clearing here would delete it before it could run.
+  // Clears settled debris from a previous round, so each round's pile
+  // builds up from empty.
   function clearDebris() {
     field.querySelectorAll(".notfound-shatter").forEach((el) => el.remove());
   }
@@ -279,13 +251,13 @@ export function initNotFoundGame(container, { signal }) {
   }
 
   function updateScore() {
-    container.querySelector(".notfound-game-score").textContent = `${state.score} caught`;
+    scoreEl.textContent = `${state.score} caught`;
+    missesEl.textContent = `${state.misses}/${MISS_LIMIT} missed`;
   }
 
   function endRound() {
     clearTimeout(spawnTimer);
     field.querySelectorAll(".notfound-chip").forEach((el) => el.remove());
-    container.querySelector(".notfound-game-score").hidden = true;
     result.hidden = false;
     result.querySelector(".notfound-game-result-score").textContent =
       state.score === 1 ? "1 caught" : `${state.score} caught`;
@@ -304,7 +276,7 @@ export function initNotFoundGame(container, { signal }) {
         const resultBest = result.querySelector(".notfound-game-result-best");
         resultBest.textContent = text;
         resultBest.hidden = !text;
-        showIdleBest();
+        showBest();
       })
       .catch(() => {});
   }
@@ -312,18 +284,12 @@ export function initNotFoundGame(container, { signal }) {
   function makeChip(onActivate) {
     const chip = document.createElement("button");
     chip.type = "button";
-    chip.className = "chip notfound-chip";
+    chip.className = "notfound-chip";
     chip.textContent = randomPath();
     chip.addEventListener("click", onActivate, { once: true, signal });
     return chip;
   }
 
-  container.querySelector(".notfound-game-replay").addEventListener(
-    "click",
-    () => {
-      clearDebris();
-      begin();
-    },
-    { signal }
-  );
+  container.querySelector(".notfound-game-play").addEventListener("click", begin, { signal });
+  container.querySelector(".notfound-game-replay").addEventListener("click", begin, { signal });
 }
