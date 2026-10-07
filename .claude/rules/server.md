@@ -18,9 +18,10 @@ paths:
   both, so tested files can use either.
 - `src/lib/server/appstore.js` also runs inside the Netlify Function on Node, **not Bun**. Never use Bun-only APIs
   (`Bun.file`, `bun:sqlite`, `Bun.$`) in it or anything it imports.
-- `bun:sqlite` is only ever loaded by `maze-scores.js` / `notfound-scores.js`, through a non-literal dynamic
-  `import()` so neither Vite nor Netlify's bundler follows it, and those two modules are only ever loaded by
-  `score-stores.js`, which returns `null` when not on Bun. Keep it that way.
+- `bun:sqlite` is only ever loaded by `maze-scores.js` / `notfound-scores.js` / `runner-scores.js`, through a
+  non-literal dynamic `import()` so neither Vite nor Netlify's bundler follows it, and those modules are only ever
+  loaded by `score-stores.js`, which returns `null` when not on Bun (or for a name not in its `STORES` map). Keep it
+  that way.
 - Resolve paths from `process.cwd()` (see `src/lib/server/paths.js`), not `__dirname`, which stops pointing into
   `src/` once Vite has bundled the server code.
 

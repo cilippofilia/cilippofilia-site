@@ -14,7 +14,7 @@
   // slides out from under the header instead. The page itself never moves.
 
   // Swipes that start in these are game moves, not pulls.
-  const GAME_AREAS = ".maze-game-screen, .notfound-game-field";
+  const GAME_AREAS = ".maze-game-screen, .runner-game-screen, .notfound-game-field";
   const SIZE = 40;
   const GAP = 12;
 

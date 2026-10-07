@@ -1,0 +1,263 @@
+/* Skate Run, the home page's endless runner (runner-game.js). Built as the
+   maze's sibling: the same glass card around a CRT "screen" with phosphor
+   glow and scanlines, so the two read as a pair of arcade cabinets. The
+   sprites keep their own colours; only the screen chrome is green. */
+
+.runner-lede {
+  color: var(--text-dim);
+  max-width: 80ch;
+}
+
+.runner-game {
+  --runner-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --runner-phosphor: #39ff14;
+  --runner-phosphor-dim: rgba(57, 255, 20, 0.45);
+
+  position: relative;
+  margin-top: var(--space-24);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+  padding: var(--pad-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .runner-game {
+    background: var(--glass-fill-strong);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .runner-game {
+    background: var(--glass-fill-strong);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.runner-game-stats {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-24);
+  font-family: var(--runner-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.runner-game-score {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.runner-game-best {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* The screen's height sets the world's scale in runner-game.js: 280px or
+   taller draws sprites at ×3, shorter at ×2, so phones see further ahead. */
+.runner-game-screen {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #050805;
+  border: 1px solid var(--runner-phosphor-dim);
+  box-shadow:
+    0 0 18px rgba(57, 255, 20, 0.16),
+    inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+  .runner-game-screen {
+    height: 240px;
+  }
+}
+
+/* During a run every press on the screen is a jump or a duck, never a
+   scroll or a double-tap zoom. */
+.runner-game-screen.is-playing {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Scanlines, purely decorative: above the canvas, ignoring input. */
+.runner-game-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.22) 0px,
+    rgba(0, 0, 0, 0.22) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.runner-game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.runner-game-start,
+.runner-game-result {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  text-align: center;
+  padding: var(--space-16);
+  font-family: var(--runner-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(5, 8, 5, 0.88);
+}
+
+.runner-game-start[hidden],
+.runner-game-result[hidden],
+.runner-game-leaderboard[hidden] {
+  display: none;
+}
+
+.runner-game-start-title,
+.runner-game-result-score {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--runner-phosphor);
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.65);
+  font-variant-numeric: tabular-nums;
+}
+
+.runner-game-result-score {
+  font-size: 2.25rem;
+}
+
+.runner-game-result-note {
+  margin: -4px 0 var(--space-4);
+  color: var(--runner-phosphor-dim);
+  font-size: 0.8rem;
+}
+
+.runner-game-start-hint {
+  margin: 0 0 var(--space-8);
+  max-width: 40ch;
+  color: var(--runner-phosphor-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.runner-game-leaderboard {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--runner-phosphor-dim);
+  min-width: 200px;
+}
+
+.runner-game-leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: 0 var(--space-8);
+}
+
+.runner-game-leaderboard li.runner-game-leaderboard-mine {
+  color: var(--runner-phosphor);
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+}
+
+/* The skater picker sits under the screen on the glass card, so its
+   buttons are flat tints rather than a second layer of glass. */
+.runner-game-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.runner-game-skater {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: var(--flat-tint);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.2s var(--ease-spring),
+    border-color 0.2s var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .runner-game-skater:not(:disabled):hover {
+    background: var(--flat-tint-hover);
+  }
+}
+
+.runner-game-skater[aria-pressed="true"] {
+  border-color: var(--runner-phosphor-dim);
+  color: var(--text);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.18);
+}
+
+.runner-game-skater:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.runner-game-skater-preview {
+  display: block;
+  width: 52px;
+  height: 52px;
+  image-rendering: pixelated;
+}
+
+@media (max-width: 600px) {
+  .runner-game-skater {
+    padding: var(--space-4);
+  }
+
+  .runner-game-skater-preview {
+    width: 39px;
+    height: 39px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runner-game-skater {
+    transition: none;
+  }
+}

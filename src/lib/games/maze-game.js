@@ -5,6 +5,7 @@
 
 import { generateMaze } from "./maze-wilson.js";
 import { move } from "./maze-move.js";
+import { keysClaimedByOther } from "./active-game.js";
 
 // Row count is fixed; the screen's height is fixed in CSS so cell height
 // never changes. Column count is derived from the available width each
@@ -226,6 +227,8 @@ export function initMazeGame(container, { signal }) {
     "keydown",
     (e) => {
       if (phase !== "ready" && phase !== "playing") return;
+      // The runner owns the arrow keys during a live run.
+      if (keysClaimedByOther("maze")) return;
       const direction = KEY_DIRECTIONS[e.key];
       if (!direction) return;
       e.preventDefault();
