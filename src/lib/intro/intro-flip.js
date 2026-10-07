@@ -26,11 +26,11 @@
 //     scrolled past and then sink into its slot.)
 //
 // On wide screens only the photo column is held: the greeting beside it
-// is shifted with the scroll (see update) so it reads as a normal page
-// scrolling past a sticky visual, and the hero's headline rises into the
-// same column to take its place just as the card is finished. Below 720px
-// everything is one centred column, the greeting sits above the photo,
-// and it stays put for the whole intro instead.
+// drifts up more slowly than the page and slides across into the hero's
+// column (see measureGreeting), and the hero's headline rises into that
+// column to meet it just as the card is finished. Below 720px everything
+// is one centred column, the greeting sits above the photo, and it stays
+// put for the whole intro instead.
 //
 // All positions are read live via getBoundingClientRect() every frame:
 // while pinned, the wrap's viewport rect simply doesn't change, and once
@@ -152,6 +152,8 @@ export function initIntroFlip({ signal }) {
   let flipIdle = null; // whether the flip card's layers are currently parked
   let backShown = null; // whether the circle side is the one facing the viewer
   let stacked = false; // single-column layout, see singleColumn
+  let copyRate = 1; // the greeting's speed during the pin, as a share of the page's (wide only)
+  let copyShiftX = 0; // how far the greeting slides across to the headline's left edge (wide only)
   let viewH = window.innerHeight; // viewport height the parking spot fits the card into
   let measuredW = window.innerWidth;
 
@@ -205,6 +207,7 @@ export function initIntroFlip({ signal }) {
     // affects layout — but clear it anyway before alignHero measures.
     if (copy) copy.style.transform = "";
     alignHero();
+    measureGreeting();
     // The flip card is sized once, here, and only ever scaled per frame —
     // width/height are layout properties and animating them every frame
     // is what made the shrink stutter. Both faces are inset:0 inside it,
@@ -330,6 +333,29 @@ export function initIntroFlip({ signal }) {
     hero.style.marginTop = baseMargin - (realTopAtRelease - parkCard.top) + "px";
   }
 
+  // Wide screens: where the greeting goes while the photo column is held.
+  // At the page's own speed it was gone long before the headline came up
+  // behind it, leaving the right-hand column empty for most of a screen.
+  // Instead it leaves just fast enough to sit the pin's own bottom padding
+  // above the headline when the pin releases, so the headline rises to
+  // meet it. Its column starts beside the 360px cutout but the headline's
+  // beside the narrower card, so it also slides across as the photo
+  // shrinks, and the two share a left edge from the release on.
+  function measureGreeting() {
+    copyRate = 1;
+    copyShiftX = 0;
+    const h1 = hero.querySelector("h1");
+    if (stacked || !copy || !h1) return;
+    const pinRect = introPin.getBoundingClientRect();
+    const copyRect = copy.getBoundingClientRect();
+    const h1Rect = h1.getBoundingClientRect();
+    const pinnedCopyBottom = headerH + (copyRect.bottom - pinRect.top);
+    const h1TopAtRelease = h1Rect.top + window.scrollY - (pinStart + pinBuffer);
+    const gap = parseFloat(getComputedStyle(introPin).paddingBottom) || 0;
+    copyRate = clamp01((pinnedCopyBottom - (h1TopAtRelease - gap)) / pinBuffer);
+    copyShiftX = h1Rect.left - copyRect.left;
+  }
+
   function update() {
     if (signal.aborted) return;
     ticking = false;
@@ -354,10 +380,14 @@ export function initIntroFlip({ signal }) {
     if (floatingIcons) {
       floatingIcons.style.top = -(Math.min(scrollY, pinStart) + Math.max(0, scrollY - (pinStart + pinBuffer))) + "px";
     }
-    // Wide screens: the greeting scrolls on as if it were not in the pin,
-    // leaving the photo column as the only thing held. The hero headline
-    // comes up the same column behind it and is in place at the release.
-    if (copy) copy.style.transform = stacked || pinnedScroll === 0 ? "" : `translateY(${-pinnedScroll}px)`;
+    // Wide screens: the greeting drifts up and across while the photo
+    // column is held (see measureGreeting), and the hero headline comes up
+    // the same column to meet it, in place at the release.
+    if (copy) {
+      const across = copyShiftX * smoothstep(pinnedScroll / pinBuffer);
+      copy.style.transform =
+        stacked || pinnedScroll === 0 ? "" : `translate(${across}px, ${-pinnedScroll * copyRate}px)`;
+    }
 
     const wrapRect = ghost.getBoundingClientRect();
     const realCardRect = realCard.getBoundingClientRect();
