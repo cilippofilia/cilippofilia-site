@@ -1,5 +1,5 @@
 /**
- * Ollie the skate frog — editable pixel sprites for the home page's skate runner (runner-game.js).
+ * Ollie the skate frog — editable pixel sprites for the skate runner on /games (runner-game.js).
  *
  * HOW TO EDIT
  * Each frame is an array of equal-length strings; one character = one pixel.

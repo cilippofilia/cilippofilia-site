@@ -1,4 +1,4 @@
-/* Whack-a-broken-link, the 404 page's minigame. Loaded only on 404.html.
+/* Whack-a-broken-link, the 404 page's minigame, also on /games.
    .notfound-chip extends the site's existing .chip look (see
    components.css) so a chip reads as native UI, not custom game art. */
 

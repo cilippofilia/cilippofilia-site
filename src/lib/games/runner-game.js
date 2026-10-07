@@ -1,7 +1,7 @@
-// Skate Run: a dino-style endless runner on the home page, starring the
+// Skate Run: a dino-style endless runner on /games, starring the
 // skaters in runner-sprites.js. The rules live in runner-logic.js; this
 // module owns the canvas, the fixed-tick loop, input, the skater picker,
-// the overlays and the leaderboard. Purely additive to the home page, and
+// the overlays and the leaderboard. Purely additive to the page, and
 // fully playable when the score API isn't there (Netlify answers 503).
 
 import { CHARACTERS, PALETTE, drawSprite } from "./runner-sprites.js";

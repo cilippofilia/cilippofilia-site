@@ -22,8 +22,8 @@
   </p>
   <div class="runner-game" bind:this={game}>
     <div class="runner-game-stats">
-      <p class="runner-game-score">00,000</p>
-      <p class="runner-game-best">Best 00,000</p>
+      <p class="runner-game-score">0</p>
+      <p class="runner-game-best">Best 0</p>
     </div>
     <div class="runner-game-screen">
       <canvas class="runner-game-canvas" aria-label="Skate Run"></canvas>

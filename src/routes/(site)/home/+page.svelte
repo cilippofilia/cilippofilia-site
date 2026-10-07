@@ -1,13 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import "#lib/styles/intro.css";
-  import "#lib/styles/maze-game.css";
-  import "#lib/styles/runner-game.css";
   import Seo from "#lib/components/Seo.svelte";
   import FloatingIcons from "#lib/components/FloatingIcons.svelte";
   import AppsSection from "#lib/components/AppsSection.svelte";
-  import MazeSection from "#lib/components/MazeSection.svelte";
-  import RunnerSection from "#lib/components/RunnerSection.svelte";
   import { initIntroFlip } from "#lib/intro/intro-flip.js";
 
   let { data } = $props();
@@ -118,9 +114,5 @@
     </section>
 
     <AppsSection devApps={data.devApps} />
-
-    <MazeSection />
-
-    <RunnerSection />
   </div>
 </main>

@@ -1,7 +1,7 @@
 // Escape the Labyrinth: a maze generated fresh with Wilson's algorithm
 // (maze-wilson.js) on every "Play"/"Play again" tap. Rendered to a canvas;
 // the player moves one cell at a time via arrow keys/WASD or a swipe, with
-// movement rules in maze-move.js. Purely additive to the home page.
+// movement rules in maze-move.js. Purely additive to /games.
 
 import { generateMaze } from "./maze-wilson.js";
 import { move } from "./maze-move.js";

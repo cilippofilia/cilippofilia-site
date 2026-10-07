@@ -56,7 +56,7 @@ A SvelteKit app with every page prerendered to static HTML, plus a few on-demand
 
 - **`src/app.html`** — the document shell. `<body data-sveltekit-reload>` makes every link a full page load, like the old multi-page site, so each page's global CSS and window listeners start fresh.
 - **Routes (`src/routes/`)** — two layout groups:
-  - `(site)/` — `home`, `privacy`, `terms`, `style-guide`, and `[slug]` (one prerendered page per valid `data/apps.json` entry). Its `+layout.svelte` imports the global CSS (`tokens` → `base` → `layout` → `components`) and renders `Header`/`Footer`.
+  - `(site)/` — `home`, `games` (the maze, Skate Run and the 404 game), `privacy`, `terms`, `style-guide`, and `[slug]` (one prerendered page per valid `data/apps.json` entry). Its `+layout.svelte` imports the global CSS (`tokens` → `base` → `layout` → `components`) and renders `Header`/`Footer`.
   - `(landing)/` — `drinko`, `iterly`, `itswritten`, `nine-tiles-puzzle`, each with a `privacy-policy/` page. These import only `landing.css` and their own `src/lib/styles/apps/<app>.css`. Privacy pages have `csr = false` and prerender to `<app>/privacy-policy.html`; `src/hooks.js` `reroute` maps that `.html` URL onto the route in dev.
   - `+error.svelte` — the 404 page with the whack-a-broken-link game. It loads on every page as SvelteKit's fallback, so it links its stylesheets via `?url` imports rather than importing CSS.
   - `api/appstore-apps`, `api/maze-score`, `api/notfound-score`, `api/runner-score` — `+server.js` endpoints with `prerender = false`, delegating to `src/lib/server/`.
