@@ -2,6 +2,7 @@
   import "#lib/styles/landing.css";
   import "#lib/styles/apps/iterly.css";
   import Seo from "#lib/components/Seo.svelte";
+  import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
 </script>
 
@@ -65,7 +66,7 @@
       A lightweight project tracker for indie developers. Plan by release, track by task, and watch your momentum build.
     </p>
     <div class="badge-row">
-      <a class="btn primary" href="https://apps.apple.com/app/id6760037639">Download on the App Store</a>
+      <a class="btn primary" href={campaignUrl("https://apps.apple.com/app/id6760037639", "site-iterly")}>Download on the App Store</a>
       <a class="btn secondary" href="https://github.com/cilippofilia/Iterly">View on GitHub</a>
     </div>
     <p class="platforms">Free on iPhone. Local-first, no account, nothing to sign up for.</p>

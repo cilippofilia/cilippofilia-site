@@ -5,6 +5,11 @@
 // featured preorder strip instead.
 
 import { badgeClass, sortByStatus } from "./app-status.js";
+import { campaignUrl } from "./campaign.js";
+
+// Every App Store link on the home page shares one campaign token, so App
+// Analytics can compare it with the landing pages.
+export const HOME_CAMPAIGN = "site-home";
 
 export const formatReleaseDate = (iso) =>
   new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -19,7 +24,7 @@ export function publishedCard(app) {
   return {
     status: "Live",
     websiteUrl: app.localUrl,
-    appStoreUrl: app.url,
+    appStoreUrl: campaignUrl(app.url, HOME_CAMPAIGN),
     icon: app.icon,
     name: app.name,
     badge: "Live",
@@ -32,7 +37,7 @@ export function devCard(app) {
   return {
     status: app.status,
     websiteUrl: `/${app.slug}`,
-    appStoreUrl: app.appStoreUrl,
+    appStoreUrl: campaignUrl(app.appStoreUrl, HOME_CAMPAIGN),
     icon: app.icon,
     name: app.name,
     badge: app.status || "",

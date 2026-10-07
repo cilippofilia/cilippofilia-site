@@ -2,6 +2,7 @@
   import "#lib/styles/landing.css";
   import "#lib/styles/apps/nine-tiles-puzzle.css";
   import Seo from "#lib/components/Seo.svelte";
+  import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
   import LandingCountdown from "#lib/components/LandingCountdown.svelte";
 </script>
@@ -68,7 +69,7 @@
     <LandingCountdown release="2026-09-28T00:00:00" />
     <p class="release-live" id="release-live" hidden>🎉 Available now!</p>
     <div class="badge-row" id="badge-pre">
-      <a class="btn primary" href="https://apps.apple.com/app/id6776386637">Pre-order on the App Store</a>
+      <a class="btn primary" href={campaignUrl("https://apps.apple.com/app/id6776386637", "site-nine-tiles-puzzle")}>Pre-order on the App Store</a>
       <a class="btn secondary" href="https://testflight.apple.com/join/7FvEWNPR">Test the Beta*</a>
     </div>
     <p class="beta-note" id="beta-note">
@@ -76,7 +77,7 @@
       forever.
     </p>
     <div class="badge-row" id="badge-post" hidden>
-      <a class="btn primary" href="https://apps.apple.com/app/id6776386637">Download on the App Store</a>
+      <a class="btn primary" href={campaignUrl("https://apps.apple.com/app/id6776386637", "site-nine-tiles-puzzle")}>Download on the App Store</a>
     </div>
   </header>
 
