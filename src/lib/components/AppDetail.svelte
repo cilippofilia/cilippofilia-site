@@ -1,6 +1,7 @@
 <script>
   import { isImageIcon } from "#lib/apps/names.js";
   import { badgeClass } from "#lib/apps/app-status.js";
+  import { campaignUrl } from "#lib/apps/campaign.js";
 
   let { app } = $props();
 </script>
@@ -29,7 +30,7 @@
       </div>
       <div>
         {#if app.appStoreUrl}
-          <a class="button" href={app.appStoreUrl}>View on the App Store</a>
+          <a class="button" href={campaignUrl(app.appStoreUrl, `site-${app.slug}`)}>View on the App Store</a>
         {:else}
           <button type="button" class="button secondary" disabled>Not yet published</button>
         {/if}

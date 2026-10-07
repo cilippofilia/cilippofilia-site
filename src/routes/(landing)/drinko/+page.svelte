@@ -2,6 +2,7 @@
   import "#lib/styles/landing.css";
   import "#lib/styles/apps/drinko.css";
   import Seo from "#lib/components/Seo.svelte";
+  import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
 </script>
 
@@ -66,7 +67,7 @@
       have.
     </p>
     <div class="badge-row">
-      <a class="btn primary" href="https://apps.apple.com/app/id6449893371">Download on the App Store</a>
+      <a class="btn primary" href={campaignUrl("https://apps.apple.com/app/id6449893371", "site-drinko")}>Download on the App Store</a>
       <a class="btn secondary" href="https://github.com/cilippofilia/Drinko">View on GitHub</a>
     </div>
     <p class="platforms">Free on iPhone, iPad and Mac. No account required.</p>

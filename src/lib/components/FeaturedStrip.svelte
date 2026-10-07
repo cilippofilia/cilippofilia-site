@@ -1,6 +1,7 @@
 <script>
   import { reveal } from "#lib/actions/reveal.js";
-  import { formatReleaseDate } from "#lib/apps/feed.js";
+  import { formatReleaseDate, HOME_CAMPAIGN } from "#lib/apps/feed.js";
+  import { campaignUrl } from "#lib/apps/campaign.js";
 
   let { app } = $props();
 </script>
@@ -12,5 +13,5 @@
     <h3>{app.name}</h3>
     <p>{app.tagline} Releases {formatReleaseDate(app.releaseDate)}.</p>
   </div>
-  <a class="button secondary" href={app.localUrl || app.url}>Preorder <span class="chevron">›</span></a>
+  <a class="button secondary" href={app.localUrl || campaignUrl(app.url, HOME_CAMPAIGN)}>Preorder <span class="chevron">›</span></a>
 </div>

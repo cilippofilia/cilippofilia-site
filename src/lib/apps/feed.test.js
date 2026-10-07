@@ -1,5 +1,6 @@
 import { test, expect } from "bun:test";
 import { buildAppsBlock, findUpcoming, formatReleaseDate, publishedCard, devCard } from "./feed.js";
+import { PROVIDER_TOKEN } from "./campaign.js";
 
 const now = new Date("2026-10-02T12:00:00Z");
 const live = {
@@ -37,7 +38,7 @@ test("publishedCard and devCard normalise both feeds to card props", () => {
   expect(publishedCard(live)).toEqual({
     status: "Live",
     websiteUrl: "/drinko",
-    appStoreUrl: "https://apps.apple.com/d",
+    appStoreUrl: `https://apps.apple.com/d?pt=${PROVIDER_TOKEN}&ct=site-home`,
     icon: "/d.png",
     name: "Drinko: Cocktail Recipes",
     badge: "Live",

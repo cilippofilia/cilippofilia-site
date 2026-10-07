@@ -2,6 +2,7 @@
   import "#lib/styles/landing.css";
   import "#lib/styles/apps/itswritten.css";
   import Seo from "#lib/components/Seo.svelte";
+  import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
 </script>
 
@@ -65,7 +66,7 @@
       A private journal that writes first and reflects second, with Apple Intelligence on your device.
     </p>
     <div class="badge-row">
-      <a class="btn primary" href="https://apps.apple.com/app/id6757445119">Download on the App Store</a>
+      <a class="btn primary" href={campaignUrl("https://apps.apple.com/app/id6757445119", "site-itswritten")}>Download on the App Store</a>
     </div>
     <p class="platforms">Free on iPhone. No account, no cloud chat, nothing leaves your device.</p>
   </header>
