@@ -1,9 +1,11 @@
 <script>
   import { onMount } from "svelte";
   import "#lib/styles/intro.css";
+  import "#lib/styles/journey.css";
   import Seo from "#lib/components/Seo.svelte";
   import FloatingIcons from "#lib/components/FloatingIcons.svelte";
   import AppsSection from "#lib/components/AppsSection.svelte";
+  import JourneySection from "#lib/components/JourneySection.svelte";
   import { initIntroFlip } from "#lib/intro/intro-flip.js";
 
   let { data } = $props();
@@ -114,5 +116,7 @@
     </section>
 
     <AppsSection devApps={data.devApps} />
+
+    <JourneySection />
   </div>
 </main>
