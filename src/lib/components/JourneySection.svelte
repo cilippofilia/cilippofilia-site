@@ -61,6 +61,21 @@
       />
       <img class="journey-icon" src={photo.icon} alt={photo.alt} width={photo.width} height={photo.height} />
     </div>
+  {:else if photo.still}
+    <!-- An animated photo shows its still first frame when motion is turned down. -->
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset={photo.still} />
+      <img
+        class="journey-img"
+        class:natural={photo.natural}
+        src={photo.src}
+        alt={photo.alt}
+        width={photo.width}
+        height={photo.height}
+        loading="lazy"
+        draggable="false"
+      />
+    </picture>
   {:else}
     <img
       class="journey-img"

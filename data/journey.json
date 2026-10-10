@@ -53,7 +53,8 @@
         "src": "/assets/journey/skate-trips-1.webp",
         "alt": "Skating the ledges at the Blast! The Big One contest in front of a crowd",
         "width": 780,
-        "height": 520
+        "height": 520,
+        "still": "/assets/journey/skate-trips-1-still.webp"
       },
       {
         "src": "/assets/journey/skate-trips-2.webp",

@@ -264,9 +264,10 @@
   }
 }
 
+/* Inset, because the scrolling list clips anything drawn outside a pill. */
 .journey-pills button:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 .journey-pill-year {
@@ -402,6 +403,11 @@
   border-radius: var(--radius-sm);
 }
 
+/* The wrapper around an animated photo and its still frame. */
+.journey-photo picture {
+  display: block;
+}
+
 /* A screenshot keeps its own shape, so its text stays readable. */
 .journey-img.natural {
   aspect-ratio: auto;
@@ -475,9 +481,10 @@
 .journey-track::-webkit-scrollbar {
   display: none;
 }
+/* Inset, because the track's clip-path hides anything drawn outside it. */
 .journey-track:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: -3px;
 }
 
 .journey-slide {

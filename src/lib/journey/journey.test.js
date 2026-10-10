@@ -124,10 +124,11 @@ test("every stop and photo place is on the map", () => {
   }
 });
 
-test("every photo exists under static/, with alt text and a size", () => {
+test("every photo (and any still frame) exists under static/, with alt text and a size", () => {
   for (const p of everyPhoto) {
     const src = p.src ?? p.icon;
     expect(existsSync(join(process.cwd(), "static", src))).toBe(true);
+    if (p.still) expect(existsSync(join(process.cwd(), "static", p.still))).toBe(true);
     expect(p.alt.trim().length).toBeGreaterThan(0);
     expect(Number.isInteger(p.width) && p.width > 0).toBe(true);
     expect(Number.isInteger(p.height) && p.height > 0).toBe(true);
