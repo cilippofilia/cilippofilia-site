@@ -1,0 +1,624 @@
+/* "How I got here" on the home page (JourneySection.svelte). One glass panel
+   holds the pixel map with the date pills stacked beside it; the selected
+   place's stops sit below as cards. Everything inside the panel is a flat
+   tint: glass never stacks. Global rather than scoped because journey-map.js
+   creates the map markers in JS. */
+
+.journey-section {
+  --journey-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* The map's sea, behind the canvas before it first draws (journey-map.js
+     paints the same colour). */
+  --journey-sea: #0a1322;
+}
+
+.journey-lede {
+  color: var(--text-dim);
+  max-width: 80ch;
+}
+
+.journey {
+  margin-top: var(--space-24);
+  display: grid;
+  gap: var(--space-20);
+  padding: var(--pad-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .journey {
+    background: var(--glass-fill-strong);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .journey {
+    background: var(--glass-fill-strong);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.journey-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 236px;
+  gap: var(--space-16);
+}
+
+/* ---------- Map ---------- */
+
+.journey-map {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--journey-sea);
+  user-select: none;
+  /* Vertical swipes still scroll the page; horizontal ones pan the map. */
+  touch-action: pan-y;
+}
+
+.journey-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  cursor: grab;
+}
+
+.journey-canvas:active {
+  cursor: grabbing;
+}
+
+.journey-tools {
+  position: absolute;
+  top: var(--space-12);
+  right: var(--space-12);
+  z-index: 2;
+  display: flex;
+  gap: var(--space-8);
+}
+
+.journey-tool {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 var(--space-12);
+  border: 0;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(10, 19, 34, 0.72);
+  box-shadow: inset 0 0 0 1px var(--glass-border);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .journey-tool:hover {
+    background: rgba(30, 44, 70, 0.9);
+  }
+}
+
+.journey-tool:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journey-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+/* `display: grid` above would otherwise beat `hidden`, which journey-map.js
+   sets on markers panned out of view. */
+.journey-marker[hidden] {
+  display: none;
+}
+
+.journey-marker::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: var(--orange);
+  box-shadow: 0 0 0 2px #1b1b2a;
+  transition:
+    background 0.2s var(--ease-spring),
+    transform 0.2s var(--ease-spring);
+}
+
+/* A trip-only place: smaller, in teal. */
+.journey-marker.minor::before {
+  width: 8px;
+  height: 8px;
+  background: var(--teal);
+}
+
+@media (hover: hover) {
+  .journey-marker:hover::before {
+    transform: scale(1.25);
+  }
+}
+
+.journey-marker.selected {
+  z-index: 1;
+}
+.journey-marker.selected::before {
+  background: var(--text);
+  transform: scale(1.3);
+}
+
+.journey-marker.selected::after {
+  content: "";
+  position: absolute;
+  inset: var(--space-4);
+  border: 2px solid var(--text);
+  animation: journey-ping 1.6s var(--ease-spring) infinite;
+}
+
+.journey-marker:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.journey-marker-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 5px;
+  border-radius: var(--radius-xs);
+  font: 600 0.6875rem/1 var(--journey-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text);
+  background: rgba(10, 19, 34, 0.75);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-spring);
+}
+
+/* Labels show once the map is zoomed in, on the selected place, and on focus. */
+.journey-map.close .journey-marker-label,
+.journey-marker.selected .journey-marker-label,
+.journey-marker:focus-visible .journey-marker-label {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .journey-marker:hover .journey-marker-label {
+    opacity: 1;
+  }
+}
+
+@keyframes journey-ping {
+  from {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* ---------- Date pills ---------- */
+
+/* The list fills its column absolutely, so the map alone sets the row's
+   height and the pills scroll inside it. */
+.journey-pills-col {
+  position: relative;
+  min-width: 0;
+}
+
+.journey-pills {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0 var(--space-4) 0 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.journey-pills button {
+  width: 100%;
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-16);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: var(--flat-tint);
+  cursor: pointer;
+  transition:
+    background 0.2s var(--ease-spring),
+    border-color 0.2s var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .journey-pills button:hover {
+    background: var(--flat-tint-hover);
+  }
+}
+
+/* Inset, because the scrolling list clips anything drawn outside a pill. */
+.journey-pills button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.journey-pill-year {
+  font: 600 0.75rem/1 var(--journey-mono);
+  letter-spacing: 0.04em;
+  color: var(--orange);
+  font-variant-numeric: tabular-nums;
+}
+
+.journey-pill-place {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  color: var(--text-dim);
+}
+
+/* The selected place's pills, and the one that was tapped. */
+.journey-pills button.here {
+  border-color: rgba(255, 179, 64, 0.35);
+}
+.journey-pills button.here .journey-pill-place {
+  color: var(--text);
+}
+.journey-pills button.picked {
+  border-color: var(--orange);
+  background: var(--orange-bg);
+}
+
+/* ---------- Cards ---------- */
+
+.journey-detail {
+  display: grid;
+  gap: var(--space-16);
+}
+
+.journey-place {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+}
+
+.journey-place h3 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.journey-place span {
+  font: 600 0.75rem/1 var(--journey-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Cards in a row stretch to the tallest one. */
+.journey-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-16);
+  align-items: stretch;
+  animation: journey-cards-in 0.45s var(--ease-spring);
+}
+
+@keyframes journey-cards-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0.2;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.journey-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  padding: var(--space-20);
+  border-radius: var(--radius);
+  background: var(--flat-tint);
+}
+
+.journey-card.picked {
+  box-shadow: inset 0 0 0 1px var(--orange);
+}
+
+.journey-card-meta {
+  margin: 0;
+  font: 600 0.75rem/1 var(--journey-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.journey-card-year {
+  color: var(--orange);
+}
+
+.journey-card h4 {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.journey-card-body {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+/* ---------- Photos ---------- */
+
+.journey-photo {
+  margin: 0;
+  display: grid;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.journey-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+/* The wrapper around an animated photo and its still frame. */
+.journey-photo picture {
+  display: block;
+}
+
+/* A screenshot keeps its own shape, so its text stays readable. */
+.journey-img.natural {
+  aspect-ratio: auto;
+  object-fit: contain;
+  background: #000;
+}
+
+.journey-caption {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
+.journey-caption[hidden] {
+  display: none;
+}
+.journey-caption a {
+  color: var(--accent);
+}
+
+/* An app icon in a photo's place, on a blurred glow of its own colours. */
+.journey-icon-tile {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #000;
+}
+
+.journey-icon-glow {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  filter: blur(48px) saturate(1.4);
+  opacity: 0.55;
+}
+
+.journey-icon {
+  position: relative;
+  width: 38%;
+  max-width: 160px;
+  height: auto;
+  border-radius: var(--radius-icon);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- Carousel (actions/carousel.js) ---------- */
+
+.journey-viewport {
+  position: relative;
+}
+
+.journey-track {
+  position: relative; /* so each slide's offsetLeft is measured from the track */
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  /* Card widths are fractional, so a snap can land a pixel short; clipping a
+     hairline off each side keeps the neighbouring photo from peeking in. */
+  clip-path: inset(0 1px round var(--radius-sm));
+}
+
+.journey-track::-webkit-scrollbar {
+  display: none;
+}
+/* Inset, because the track's clip-path hides anything drawn outside it. */
+.journey-track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.journey-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.journey-slide .journey-img,
+.journey-slide .journey-icon-tile {
+  border-radius: 0;
+}
+
+/* Faint arrows on hover say the halves are tappable; touch has no hover. */
+.journey-hint {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.375rem;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease-spring);
+}
+
+.journey-hint.prev {
+  left: var(--space-12);
+}
+.journey-hint.next {
+  right: var(--space-12);
+}
+
+@media (hover: hover) {
+  .journey-viewport:hover .journey-hint {
+    opacity: 0.75;
+  }
+}
+
+/* The dots sit on the photo in a dark pill, not glass: the card is already
+   inside the glass panel. */
+.journey-dots {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-12);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  padding: 2px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.journey-dots button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.journey-dots button::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: #fff;
+  opacity: 0.5;
+  transition:
+    width 0.25s var(--ease-spring),
+    opacity 0.2s var(--ease-spring);
+}
+
+.journey-dots button.on::before {
+  width: 16px;
+  opacity: 1;
+}
+
+.journey-dots button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 760px) {
+  .journey {
+    padding: var(--space-12);
+  }
+  .journey-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* The pills become one scrolling row above the map. */
+  .journey-pills-col {
+    order: -1;
+  }
+  .journey-pills {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 var(--space-4);
+    scrollbar-width: none;
+  }
+  .journey-pills li {
+    flex: none;
+  }
+  .journey-pills button {
+    width: auto;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-marker.selected::after,
+  .journey-cards {
+    animation: none;
+  }
+  .journey-marker::before,
+  .journey-marker-label,
+  .journey-pills button,
+  .journey-hint,
+  .journey-dots button::before {
+    transition: none;
+  }
+}

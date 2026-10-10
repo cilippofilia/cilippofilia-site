@@ -1,0 +1,260 @@
+[
+  {
+    "id": "cantu",
+    "place": "Cantù",
+    "coords": [45.74, 9.13],
+    "year": "1994–2018",
+    "title": "Where it started",
+    "body": "Born and bred in Cantù, near Lake Como. I started skateboarding in 2007, and in 2012 a nollie flip ran in 6:00am magazine, my first photo in print. From 2014 I helped friends build a concrete skatepark in town.",
+    "photos": [
+      {
+        "src": "/assets/journey/lake-como.webp",
+        "alt": "Nollie flip in a dark underpass, against the light from the stairs behind",
+        "caption": "Nollie flip, 6:00am, 2012",
+        "credit": {
+          "name": "@theycallmeosde",
+          "url": "https://www.instagram.com/theycallmeosde/"
+        },
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/cantu-skatepark.webp",
+        "alt": "Skating a quarter pipe at the concrete park in Cantù, reflected in a puddle",
+        "caption": "The skatepark we built",
+        "credit": {
+          "name": "@theycallmeosde",
+          "url": "https://www.instagram.com/theycallmeosde/"
+        },
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/skate-trips-5.webp",
+        "alt": "Ollie off a concrete barrier under a motorway bridge",
+        "credit": {
+          "name": "@theycallmeosde",
+          "url": "https://www.instagram.com/theycallmeosde/"
+        },
+        "width": 1080,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "skate-trips",
+    "place": "Como",
+    "coords": [45.81, 9.09],
+    "year": "2014–2018",
+    "title": "Skateboarding and trips around Europe",
+    "body": "Italian brand FVTVRA put me on their board team. That meant small skate trips around Italy, Slovenia and Spain, filming and shooting photos wherever we found a spot.",
+    "photos": [
+      {
+        "src": "/assets/journey/skate-trips-1.webp",
+        "alt": "Skating the ledges at the Blast! The Big One contest in front of a crowd",
+        "width": 780,
+        "height": 520,
+        "still": "/assets/journey/skate-trips-1-still.webp"
+      },
+      {
+        "src": "/assets/journey/skate-trips-2.webp",
+        "alt": "Fisheye shot of a kickflip at a skatepark under a flyover",
+        "place": "Udine",
+        "coords": [46.06, 13.24],
+        "width": 900,
+        "height": 600
+      },
+      {
+        "src": "/assets/journey/skate-trips-3.webp",
+        "alt": "Magazine page with a gap to frontside smith grind on a ledge in L’Aquila",
+        "caption": "Gap to frontside smith, L’Aquila, 2016",
+        "credit": {
+          "name": "Davide Biondani"
+        },
+        "place": "L’Aquila",
+        "coords": [42.35, 13.4],
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/skate-trips-4.webp",
+        "alt": "Framed prints of skate photos laid out on a tiled floor",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/skate-trips-malaga.webp",
+        "alt": "Backside tailslide down a concrete pyramid in Málaga",
+        "caption": "Backside tailslide",
+        "place": "Málaga",
+        "coords": [36.72, -4.42],
+        "width": 912,
+        "height": 608
+      }
+    ]
+  },
+  {
+    "id": "skate-teacher",
+    "place": "Gargano, Puglia",
+    "coords": [41.86, 16.14],
+    "year": "2015–2017",
+    "title": "First job: skate teacher",
+    "body": "For three summers I taught skateboarding at Gattarella Resort on the Gargano coast. My students were resort guests of every age, from small kids to their parents.",
+    "photos": [
+      {
+        "src": "/assets/journey/skate-teacher.webp",
+        "alt": "Two of us on the rocks at Gattarella at sunset, looking out to the islands",
+        "width": 867,
+        "height": 578
+      }
+    ]
+  },
+  {
+    "id": "brighton",
+    "place": "Brighton",
+    "coords": [50.82, -0.14],
+    "year": "2019–2020",
+    "title": "Brighton, behind the bar",
+    "body": "In January 2019 I moved to Brighton, took a bartending course and started working at the Hilton. That year I made the final of Hilton's UK & Ireland cocktail competition, with a finger I'd broken skating in London.",
+    "photos": [
+      {
+        "src": "/assets/journey/brighton-1.webp",
+        "alt": "Holding a certificate on stage at the Flavour & Flair final with three Hilton hosts",
+        "caption": "Flavour & Flair, Hilton UK & Ireland final, 2019",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/brighton-2.webp",
+        "alt": "Straining two pink cocktails into coupes at the bar",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  },
+  {
+    "id": "drinko",
+    "place": "Brighton",
+    "coords": [50.82, -0.14],
+    "year": "2020",
+    "title": "First app: Drinko",
+    "body": "Since getting that MacBook Pro, I'd been teaching myself Xcode through YouTube, e-books and courses. During the pandemic it finally clicked, and I built Drinko, a cocktail app that put the bar handbook in my colleagues' pockets.",
+    "photos": [
+      {
+        "icon": "/assets/app-icons/thumb/drinko-icon.png",
+        "alt": "Drinko app icon",
+        "width": 320,
+        "height": 320
+      },
+      {
+        "src": "/assets/journey/drinko-shoot.webp",
+        "alt": "Photographing a mojito against a white backdrop",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  },
+  {
+    "id": "cocktails-to-go",
+    "place": "Como",
+    "coords": [45.81, 9.09],
+    "year": "2020–2021",
+    "title": "Cocktails to go",
+    "body": "Covid sent me home, and I started at a new bar. Then lockdown shut that too, so it was time to sell frozen cocktails and deliver them ourselves. The wrestling mask was optional.",
+    "photos": [
+      {
+        "src": "/assets/journey/cocktails-to-go.webp",
+        "alt": "In a luchador mask behind the bar, holding up two bags of frozen cocktails",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  },
+  {
+    "id": "head-bartender",
+    "place": "Brighton",
+    "coords": [50.82, -0.14],
+    "year": "2021–2023",
+    "title": "Back to Brighton: head bartender",
+    "body": "A few months later the Hilton called me back to Brighton, this time as head bartender. I created my own drinks there, down to the homemade spiced pineapple bitters in the photo.",
+    "photos": [
+      {
+        "src": "/assets/journey/head-bartender-2.webp",
+        "alt": "Pouring a clear drink into a coupe with a crisp garnish",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/head-bartender-3.webp",
+        "alt": "A clear cocktail in a coupe with a crisp garnish, on a marble table",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "src": "/assets/journey/head-bartender-4.webp",
+        "alt": "Handing over a short drink topped with foam",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  },
+  {
+    "id": "monkey-47",
+    "place": "Black Forest",
+    "coords": [48.41, 8.45],
+    "year": "2022",
+    "title": "Making my own gin",
+    "body": "In 2022 I became the hotel's Monkey 47 ambassador, which took me to the distillery in the Black Forest. I stirred a barrel of botanicals with a power drill and went home with a bottle of gin I'd made myself.",
+    "photos": [
+      {
+        "src": "/assets/journey/monkey-47.webp",
+        "alt": "Holding my own bottle of gin in its box at the Monkey 47 distillery",
+        "width": 1140,
+        "height": 760
+      }
+    ]
+  },
+  {
+    "id": "manchester",
+    "place": "Manchester",
+    "coords": [53.48, -2.24],
+    "year": "2024–2026",
+    "title": "One tweet",
+    "body": "I was a head bartender when a tweet changed my life. One DM, a CV and a few interviews later, I swapped the bar for SwiftUI.",
+    "photos": [
+      {
+        "src": "/assets/journey/manchester-tweet.webp",
+        "alt": "Tweet from @tundsdev: Soooo My workplace is currently looking 3 iOS devs 👀 Specifically 1 Junior & 2 mids. We’re based in Manchester UK & have a 3 day a week office policy We’re working on a fully SwiftUI app for a brand new project. If you’re interested in the role drop me a DM 🤝 Any RT & shares would be greatly appreciated 🫂",
+        "natural": true,
+        "width": 1179,
+        "height": 1207
+      }
+    ]
+  },
+  {
+    "id": "freelance",
+    "place": "Manchester",
+    "coords": [53.48, -2.24],
+    "year": "2026",
+    "title": "Freelancing on the side",
+    "body": "Alongside my day job I started freelancing, building a macOS app for a Brighton company. It helps them process music royalty and revenue reports. Today I'm an iOS engineer with four apps shipped.",
+    "photos": []
+  },
+  {
+    "id": "running",
+    "place": "Manchester",
+    "coords": [53.48, -2.24],
+    "year": "2026",
+    "title": "Running 22 km",
+    "body": "On 4 October 2026 I ran 22 km around Manchester in 2h 15m. I’d prepped for a few months, and it was still a tough run, but worth the effort.",
+    "photos": [
+      {
+        "src": "/assets/journey/manchester-run.webp",
+        "alt": "Strava summary over a selfie: 22.01 km, 6:08 per km, 2h 15m, 217 m elevation gain, 164 bpm average heart rate.",
+        "natural": true,
+        "width": 1178,
+        "height": 1180
+      }
+    ]
+  }
+]

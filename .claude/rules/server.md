@@ -76,3 +76,18 @@ paths:
 - It's imported at build time (`src/lib/apps/dev-apps.js`): each valid entry is prerendered to `/<slug>`, so a change
   shows up after a restart of `vite dev` or the next deploy. Slugs must match `SLUG_PATTERN` and must not be in
   `RESERVED_SLUGS` (fixed routes plus `LANDING_APPS`); `validDevApps` drops any that are.
+
+## `data/journey.json`
+
+- The home page's "How I got here" stops, in journey order, imported at build time by `src/lib/journey/journey.js`.
+  Stop shape: `id` (unique), `place`, `coords` (`[lat, lon]`, inside the map's bounds in `europe-map.js`), `year`
+  (`"2019"` or `"2019–2020"`), `title`, `body`, `photos`.
+- A photo is `src` (or `icon` for an app icon slide), `alt`, `width`, `height`, and optionally `caption`, `credit`
+  (`{ name, url? }`, https only), `place` + `coords` (a trip: the stop is also listed under that place's marker),
+  `natural` (keeps its own shape instead of the 3:2 frame; for screenshots) and `still` (a still first frame for an
+  animated photo, shown when motion is turned down).
+- Photos live in `static/assets/journey/` as WebP cropped to 3:2, at most 1200×800, unless `natural`.
+  `width`/`height` are the file's real size. Back-to-back stops in the same place share a date pill; places closer
+  than `NEAR` share a map marker.
+- `src/lib/journey/journey.test.js` checks the real file: unique ids, every place on the map, every photo present
+  with alt text and a size, https credit links.
