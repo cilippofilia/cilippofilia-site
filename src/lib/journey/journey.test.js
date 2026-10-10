@@ -85,13 +85,25 @@ test("back-to-back stops in one place share a pill; a return visit gets its own"
   const runs = pillRuns([
     stop("a", "Brighton", [50.82, -0.14], "2019–2020"),
     stop("b", "Brighton", [50.82, -0.14], "2020"),
-    stop("c", "Como", [45.81, 9.09], "2020–2021"),
+    stop("c", "Black Forest", [48.41, 8.45], "2022"),
     stop("d", "Brighton", [50.82, -0.14], "2021–2023"),
   ]);
   expect(runs.map((r) => [r.year, r.place, r.stops])).toEqual([
     ["2019–2020", "Brighton", [0, 1]],
-    ["2020–2021", "Como", [2]],
+    ["2022", "Black Forest", [2]],
     ["2021–2023", "Brighton", [3]],
+  ]);
+});
+
+test("back-to-back stops under one shared marker share a pill naming both places", () => {
+  const runs = pillRuns([
+    stop("home", "Cantù", [45.74, 9.13], "1994–2018"),
+    stop("trips", "Como", [45.81, 9.09], "2014–2018"),
+    stop("gargano", "Gargano, Puglia", [41.86, 16.14], "2015–2017"),
+  ]);
+  expect(runs.map((r) => [r.year, r.place, r.stops])).toEqual([
+    ["1994–2018", "Cantù · Como", [0, 1]],
+    ["2015–2017", "Gargano, Puglia", [2]],
   ]);
 });
 

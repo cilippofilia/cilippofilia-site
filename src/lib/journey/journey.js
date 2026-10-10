@@ -88,18 +88,23 @@ export function yearSpan(first, last) {
 }
 
 /**
- * The date pills: one per run of back-to-back stops in the same place,
- * spanning their years. A place visited twice with somewhere in between gets
- * two pills.
+ * The date pills: one per run of back-to-back stops under the same map
+ * marker, spanning their years and naming their places. A marker returned to
+ * with somewhere in between gets another pill.
  */
-export function pillRuns(list = stops) {
+export function pillRuns(list = stops, groups = placeGroups(list)) {
   const runs = [];
   list.forEach((stop, index) => {
+    const group = groupOfStop(groups, index);
     const last = runs.at(-1);
-    if (last && list[last.stops.at(-1)].place === stop.place) last.stops.push(index);
-    else runs.push({ place: stop.place, stops: [index] });
+    if (last && last.group === group) last.stops.push(index);
+    else runs.push({ group, stops: [index] });
   });
-  return runs.map((run) => ({ ...run, year: yearSpan(list[run.stops[0]].year, list[run.stops.at(-1)].year) }));
+  return runs.map(({ stops: run }) => ({
+    place: [...new Set(run.map((i) => list[i].place))].join(" · "),
+    stops: run,
+    year: yearSpan(list[run[0]].year, list[run.at(-1)].year),
+  }));
 }
 
 /** A photo's caption line before any credit: its place (unless the caption already names it), then the caption. */
