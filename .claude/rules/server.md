@@ -87,7 +87,7 @@ paths:
   `natural` (keeps its own shape instead of the 3:2 frame; for screenshots) and `still` (a still first frame for an
   animated photo, shown when motion is turned down).
 - Photos live in `static/assets/journey/` as WebP cropped to 3:2, at most 1200×800, unless `natural`.
-  `width`/`height` are the file's real size. Back-to-back stops in the same place share a date pill; places closer
+  `width`/`height` are the file's real size. Back-to-back stops under the same map marker share a date pill; places closer
   than `NEAR` share a map marker.
 - `src/lib/journey/journey.test.js` checks the real file: unique ids, every place on the map, every photo present
   with alt text and a size, https credit links.

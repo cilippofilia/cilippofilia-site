@@ -11,7 +11,7 @@
   // and the first place's cards are prerendered; the map (journey-map.js)
   // draws itself into static markup once the page loads.
   const groups = placeGroups();
-  const runs = pillRuns();
+  const runs = pillRuns(undefined, groups);
 
   let selected = $state(groupOfStop(groups, 0));
   let focused = $state([]); // the stops a date pill picked out
