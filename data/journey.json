@@ -237,15 +237,6 @@
     ]
   },
   {
-    "id": "freelance",
-    "place": "Manchester",
-    "coords": [53.48, -2.24],
-    "year": "2026",
-    "title": "Freelancing on the side",
-    "body": "Alongside my day job I started freelancing, building a macOS app for a Brighton company. It helps them process music royalty and revenue reports. Today I'm an iOS engineer with four apps shipped.",
-    "photos": []
-  },
-  {
     "id": "running",
     "place": "Manchester",
     "coords": [53.48, -2.24],
@@ -261,5 +252,14 @@
         "height": 1180
       }
     ]
+  },
+  {
+    "id": "freelance",
+    "place": "Manchester",
+    "coords": [53.48, -2.24],
+    "year": "2026",
+    "title": "Freelancing on the side",
+    "body": "Alongside my day job I started freelancing, building a macOS app for a Brighton company. It helps them process music royalty and revenue reports. Today I'm an iOS engineer with four apps shipped and you can check them out below.",
+    "photos": []
   }
 ]
