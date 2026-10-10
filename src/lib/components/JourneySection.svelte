@@ -2,6 +2,7 @@
   import { onMount, tick } from "svelte";
   import { reveal } from "#lib/actions/reveal.js";
   import { carousel } from "#lib/actions/carousel.js";
+  import { cardRail } from "#lib/actions/card-rail.js";
   import { placeGroups, pillRuns, groupOfStop, captionText } from "#lib/journey/journey.js";
   import { initJourneyMap } from "#lib/journey/journey-map.js";
 
@@ -25,12 +26,13 @@
     selected = groupOfStop(groups, run.stops[0]);
     focused = run.stops;
     map?.select(selected);
-    // On a phone the cards are below the map, so bring the first one into view.
+    // Bring the first picked card into view: below the map on a phone, and
+    // along the card row when it scrolls.
     await tick();
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     cardsEl
       ?.querySelector(`[data-stop="${run.stops[0]}"]`)
-      ?.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+      ?.scrollIntoView({ block: "nearest", inline: "start", behavior: reduceMotion ? "auto" : "smooth" });
   }
 
   onMount(() => {
@@ -148,56 +150,70 @@
         <span>{count} {count === 1 ? "stop" : "stops"}</span>
       </div>
       {#key selected}
-        <div class="journey-cards" bind:this={cardsEl}>
-          {#each group.entries as entry (entry.index)}
-            <article class="journey-card" class:picked={focused.includes(entry.index)} data-stop={entry.index}>
-              <p class="journey-card-meta">
-                <span class="journey-card-year">{entry.stop.year}</span> · <span>{entry.place}</span>
-              </p>
-              <h4>{entry.stop.title}</h4>
-              {#if entry.away}
-                <p class="journey-card-body">One of the trips from {entry.stop.place}.</p>
-              {:else}
-                <p class="journey-card-body">{entry.stop.body}</p>
-              {/if}
-              {#if entry.photos.length === 1}
-                <figure class="journey-photo">
-                  {@render media(entry.photos[0])}
-                  {@render caption(entry.photos[0], false)}
-                </figure>
-              {:else if entry.photos.length > 1}
-                <figure class="journey-photo journey-carousel" use:carousel>
-                  <div class="journey-viewport">
-                    <div
-                      class="journey-track"
-                      tabindex="0"
-                      role="group"
-                      aria-roledescription="carousel"
-                      aria-label="{entry.photos.length} photos. Use the arrow keys to move between them."
-                    >
-                      {#each entry.photos as photo, i (i)}
-                        <div class="journey-slide">{@render media(photo)}</div>
-                      {/each}
+        <!-- As many cards as fit sit side by side; more than that scroll
+             sideways, with dots and buttons the action shows only then. -->
+        <div class="journey-rail" use:cardRail>
+          <div class="journey-cards" style="--count: {group.entries.length}" bind:this={cardsEl}>
+            {#each group.entries as entry (entry.index)}
+              <article class="journey-card" class:picked={focused.includes(entry.index)} data-stop={entry.index}>
+                <p class="journey-card-meta">
+                  <span class="journey-card-year">{entry.stop.year}</span> · <span>{entry.place}</span>
+                </p>
+                <h4>{entry.stop.title}</h4>
+                {#if entry.away}
+                  <p class="journey-card-body">One of the trips from {entry.stop.place}.</p>
+                {:else}
+                  <p class="journey-card-body">{entry.stop.body}</p>
+                {/if}
+                {#if entry.photos.length === 1}
+                  <figure class="journey-photo">
+                    {@render media(entry.photos[0])}
+                    {@render caption(entry.photos[0], false)}
+                  </figure>
+                {:else if entry.photos.length > 1}
+                  <figure class="journey-photo journey-carousel" use:carousel>
+                    <div class="journey-viewport">
+                      <div
+                        class="journey-track"
+                        tabindex="0"
+                        role="group"
+                        aria-roledescription="carousel"
+                        aria-label="{entry.photos.length} photos. Use the arrow keys to move between them."
+                      >
+                        {#each entry.photos as photo, i (i)}
+                          <div class="journey-slide">{@render media(photo)}</div>
+                        {/each}
+                      </div>
+                      <span class="journey-hint prev" aria-hidden="true">‹</span>
+                      <span class="journey-hint next" aria-hidden="true">›</span>
+                      <div class="journey-dots">
+                        {#each entry.photos as _, i (i)}
+                          <button
+                            type="button"
+                            class={i === 0 ? "on" : ""}
+                            aria-label="Photo {i + 1} of {entry.photos.length}"
+                          ></button>
+                        {/each}
+                      </div>
                     </div>
-                    <span class="journey-hint prev" aria-hidden="true">‹</span>
-                    <span class="journey-hint next" aria-hidden="true">›</span>
-                    <div class="journey-dots">
-                      {#each entry.photos as _, i (i)}
-                        <button
-                          type="button"
-                          class={i === 0 ? "on" : ""}
-                          aria-label="Photo {i + 1} of {entry.photos.length}"
-                        ></button>
-                      {/each}
-                    </div>
-                  </div>
-                  {#each entry.photos as photo, i (i)}
-                    {@render caption(photo, i !== 0)}
-                  {/each}
-                </figure>
-              {/if}
-            </article>
-          {/each}
+                    {#each entry.photos as photo, i (i)}
+                      {@render caption(photo, i !== 0)}
+                    {/each}
+                  </figure>
+                {/if}
+              </article>
+            {/each}
+          </div>
+          <div class="journey-rail-bar" hidden>
+            <button type="button" class="journey-rail-step" data-dir="-1" aria-label="Previous stop">‹</button>
+            <div class="journey-rail-dots">
+              {#each group.entries as entry, i (entry.index)}
+                <button type="button" class={i === 0 ? "on" : ""} aria-label="Stop {i + 1} of {group.entries.length}"
+                ></button>
+              {/each}
+            </div>
+            <button type="button" class="journey-rail-step" data-dir="1" aria-label="Next stop">›</button>
+          </div>
         </div>
       {/key}
     </div>

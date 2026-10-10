@@ -324,13 +324,138 @@
   color: var(--text-dim);
 }
 
-/* Cards in a row stretch to the tallest one. */
+/* How many cards sit side by side depends on the panel's width: one on a
+   phone, with the next one peeking in, then two, then three. A place with
+   fewer cards than that shares the row evenly; one with more scrolls
+   sideways a card at a time (actions/card-rail.js adds the controls). */
+.journey-detail {
+  container-type: inline-size;
+}
+
 .journey-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: var(--space-16);
-  align-items: stretch;
+  --per: 1.14; /* the .14 is the next card peeking in */
+  --gap: var(--space-16);
+  position: relative; /* so each card's offsetLeft is measured from the row */
+  display: flex;
+  gap: var(--gap);
+  align-items: stretch; /* every card as tall as the tallest */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
   animation: journey-cards-in 0.45s var(--ease-spring);
+}
+
+.journey-cards::-webkit-scrollbar {
+  display: none;
+}
+
+@container (min-width: 600px) {
+  .journey-cards {
+    --per: 2;
+  }
+}
+
+@container (min-width: 900px) {
+  .journey-cards {
+    --per: 3;
+  }
+}
+
+.journey-cards > .journey-card {
+  /* The wider of "a share of the row" and "one of --per": so two cards fill
+     a row with room for three, and a fourth card has to scroll. */
+  flex: 0 0
+    max(
+      calc((100% - (var(--per) - 1) * var(--gap)) / var(--per)),
+      calc((100% - (var(--count) - 1) * var(--gap)) / var(--count))
+    );
+  scroll-snap-align: start;
+}
+
+.journey-rail-bar {
+  margin-top: var(--space-12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.journey-rail-bar[hidden] {
+  display: none;
+}
+
+.journey-rail-step {
+  min-width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 1.125rem;
+  color: var(--text);
+  background: var(--flat-tint);
+  cursor: pointer;
+}
+
+.journey-rail-step:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .journey-rail-step:not(:disabled):hover {
+    background: var(--flat-tint-hover);
+  }
+}
+
+.journey-rail-step:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Touch screens swipe the row, so the steps are for a mouse. */
+@media (hover: none) {
+  .journey-rail-step {
+    display: none;
+  }
+}
+
+.journey-rail-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.journey-rail-dots button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.journey-rail-dots button::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--text-dim);
+  transition:
+    width 0.25s var(--ease-spring),
+    background 0.2s var(--ease-spring);
+}
+
+.journey-rail-dots button.on::before {
+  width: 16px;
+  background: var(--orange);
+}
+
+.journey-rail-dots button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius-pill);
 }
 
 @keyframes journey-cards-in {
@@ -618,7 +743,8 @@
   .journey-marker-label,
   .journey-pills button,
   .journey-hint,
-  .journey-dots button::before {
+  .journey-dots button::before,
+  .journey-rail-dots button::before {
     transition: none;
   }
 }
