@@ -108,8 +108,8 @@
         <div>
           <h1>SwiftUI apps, built for the device they run on.</h1>
           <p class="lede">
-            Everything here is written in Swift and SwiftUI, leans on the frameworks Apple ships, and keeps your data on
-            your device wherever it can: on-device intelligence, local storage, iCloud only when you ask for it.
+            Every app is written in Swift and SwiftUI, leans on the frameworks Apple ships, and keeps your data on your
+            device wherever it can: on-device intelligence, local storage, iCloud only when you ask for it.
           </p>
         </div>
       </div>
