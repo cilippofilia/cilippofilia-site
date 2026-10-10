@@ -14,8 +14,9 @@
   // slides out from under the header instead. The page itself never moves.
 
   // Swipes that start in these are game moves, or drags of the journey map
-  // and its photo carousels, not pulls.
-  const GAME_AREAS = ".maze-game-screen, .runner-game-screen, .notfound-game-screen, .journey-map, .journey-track";
+  // its card row and its photo carousels, not pulls.
+  const GAME_AREAS =
+    ".maze-game-screen, .runner-game-screen, .notfound-game-screen, .journey-map, .journey-track, .journey-cards";
   const SIZE = 40;
   const GAP = 12;
 

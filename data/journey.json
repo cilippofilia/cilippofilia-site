@@ -46,7 +46,7 @@
     "place": "Como",
     "coords": [45.81, 9.09],
     "year": "2014–2018",
-    "title": "Skateboarding and trips around Europe",
+    "title": "More skateboarding and trips around Europe",
     "body": "Italian brand FVTVRA put me on their board team. That meant small skate trips around Italy, Slovenia and Spain, filming and shooting photos wherever we found a spot.",
     "photos": [
       {
@@ -77,10 +77,15 @@
         "height": 800
       },
       {
-        "src": "/assets/journey/skate-trips-4.webp",
-        "alt": "Framed prints of skate photos laid out on a tiled floor",
-        "width": 1200,
-        "height": 800
+        "src": "/assets/journey/skate-trips-ad.webp",
+        "alt": "FVTVRA magazine ad: a pole jam across a bent bollard on the left page, three TWIM IV board graphics on the right",
+        "caption": "FVTVRA TWIM IV ad, 2017",
+        "credit": {
+          "name": "@stewe_o",
+          "url": "https://www.instagram.com/stewe_o/"
+        },
+        "width": 1080,
+        "height": 720
       },
       {
         "src": "/assets/journey/skate-trips-malaga.webp",
