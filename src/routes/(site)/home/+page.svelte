@@ -115,8 +115,8 @@
       </div>
     </section>
 
-    <AppsSection devApps={data.devApps} />
-
     <JourneySection />
+
+    <AppsSection devApps={data.devApps} />
   </div>
 </main>
