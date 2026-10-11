@@ -1,0 +1,241 @@
+/* The Work with me page. The hero borrows .hero / .lede from layout.css and
+   the section headings come from components.css, so the page reads as part
+   of the site; what's here is the page's own pieces: the status pill, the
+   glass panels, the numbered process and the closing call to action. */
+
+/* main's 64px top padding plus .hero's own (meant for the home page, where
+   it follows the intro) left a hole under the header. Here the status pill
+   sits a short step below it instead. */
+main:has(.work-hero) { padding-top: var(--space-32); }
+
+.work-hero { padding-top: 0; }
+
+.work-hero h1 { max-width: 16ch; }
+
+.work-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-20);
+  padding: var(--space-4) var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--green-bg);
+  color: var(--green);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* A soft pulse so "taking on projects" reads as live, not a label. It's the
+   page's one bit of motion that isn't a response to the visitor. */
+.work-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.6);
+  animation: work-pulse 2.4s var(--ease-spring) infinite;
+}
+
+@keyframes work-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.55); }
+  70%, 100% { box-shadow: 0 0 0 8px rgba(48, 209, 88, 0); }
+}
+
+.work-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+}
+
+.work-hero .lede { margin-bottom: var(--space-32); }
+
+/* Shared by the service cards and the two recent-work panels. These stand
+   directly on the page, so they're the one glass layer; nothing inside
+   them carries its own blur. No hover lift: they aren't links. */
+.work-panel {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: var(--pad-surface);
+}
+
+.work-panel h3,
+.work-principles h3,
+.work-steps h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-8);
+}
+
+.work-panel p,
+.work-principles p,
+.work-steps p {
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.work-services,
+.work-principles,
+.work-steps,
+.work-icons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.work-services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--grid-gap);
+}
+
+.work-recent {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--grid-gap);
+}
+
+.work-panel .work-tag {
+  font-size: 0.85rem;
+  margin: 0 0 var(--space-12);
+}
+
+.work-case h3 { font-size: 1.5rem; letter-spacing: -0.01em; line-height: 1.2; }
+
+.work-icons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-12);
+  margin-top: var(--space-20);
+}
+
+.work-icons a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.work-icons a:hover { color: var(--text); text-decoration: none; }
+
+.work-icons img {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-icon);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.22s var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .work-icons a:hover img { transform: translateY(-2px); }
+}
+
+/* The principles are plain text on the page, not more cards, so the
+   section has a quieter half before the process. */
+.work-principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-32) var(--grid-gap);
+}
+
+.work-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--grid-gap);
+  margin-top: var(--space-48);
+  padding-top: var(--space-32);
+  border-top: 1px solid var(--border);
+}
+
+.work-step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-bottom: var(--space-14);
+  background: rgba(var(--accent-rgb), 0.14);
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* The closing card. It's a section like the others for spacing, and the
+   page's last glass surface; its button takes the flat-tint variant in
+   components.css so glass never sits on glass. */
+.work-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-32);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow);
+  padding: var(--space-40);
+}
+
+.work-cta-photo {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.work-cta h2 { margin-bottom: var(--space-8); }
+
+/* The hero's "Get in touch" jumps here; this keeps the card's top edge
+   clear of the sticky header rather than tucked under it. */
+.work-cta { scroll-margin-top: 96px; }
+
+.work-cta p {
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0 0 var(--space-20);
+  max-width: 52ch;
+}
+
+@media (max-width: 760px) {
+  .work-recent { grid-template-columns: 1fr; }
+  .work-steps { grid-template-columns: 1fr 1fr; }
+  .work-cta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-20);
+    padding: var(--pad-surface);
+  }
+}
+
+@media (max-width: 420px) {
+  .work-steps { grid-template-columns: 1fr; }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .work-panel,
+  .work-cta { background: var(--glass-fill-strong); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .work-panel,
+  .work-cta {
+    background: var(--glass-fill-strong);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-status-dot { animation: none; }
+  .work-icons img { transition: none; }
+}

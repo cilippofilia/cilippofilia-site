@@ -48,6 +48,7 @@
         <a href="/home" class:active={path === "/home"}>Home</a>
         <a href="/home#apps" onclick={scrollToApps}>App Store</a>
         <a href="/games" class:active={path === "/games"}>Games</a>
+        <a href="/work-with-me" class:active={path === "/work-with-me"}>Work with me</a>
       </nav>
     </div>
   </div>
