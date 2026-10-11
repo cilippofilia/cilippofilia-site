@@ -13,12 +13,12 @@
   <div class="wrap">
     <article class="legal">
       <h1>Privacy Policy</h1>
-      <p class="legal-updated">Last updated: October 2, 2026</p>
+      <p class="legal-updated">Last updated: October 11, 2026</p>
 
       <div class="legal-summary">
         <p>
           <strong>The short version:</strong> this website sets no cookies, stores nothing in your browser, runs no analytics,
-          shows no ads and has no accounts or forms. The only personal data involved is the technical information any website
+          shows no ads and has no accounts, and no forms that send anything to this site (the enquiry helper on Work with me only fills in an email in your own mail app). The only personal data involved is the technical information any website
           receives when you visit it, such as your IP address.
         </p>
       </div>

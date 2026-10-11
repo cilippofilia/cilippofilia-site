@@ -3,9 +3,10 @@
    of the site; what's here is the page's own pieces: the status pill, the
    glass panels, the numbered process and the closing call to action. */
 
-/* main's top padding already spaces the page from the header; .hero's own
-   (meant for the home page, where it follows the intro) would double it. */
-.work-hero { padding-top: 0; }
+/* main's top padding spaces the page from the header; .hero's own (meant
+   for the home page, where it follows the intro) would double it, so this
+   adds a smaller step to give the status pill a little more room. */
+.work-hero { padding-top: var(--space-32); }
 
 .work-hero h1 { max-width: 16ch; }
 
@@ -170,7 +171,7 @@
    components.css so glass never sits on glass. */
 .work-cta {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-32);
   background: var(--glass-fill);
   backdrop-filter: var(--glass-blur);
@@ -190,6 +191,10 @@
   border: 3px solid rgba(255, 255, 255, 0.8);
 }
 
+/* The brief builder makes the card tall, so the photo sits at the top
+   (align-items above) and the body takes the rest of the width. */
+.work-cta-body { flex: 1; min-width: 0; }
+
 .work-cta h2 { margin-bottom: var(--space-8); }
 
 /* The hero's "Get in touch" jumps here; this keeps the card's top edge
@@ -201,6 +206,98 @@
   line-height: 1.55;
   margin: 0 0 var(--space-20);
   max-width: 52ch;
+}
+
+/* The brief builder inside the closing card. The card is already the
+   glass layer, so the field and chips use flat tints, never their own blur. */
+.work-brief {
+  display: grid;
+  gap: var(--space-20);
+  margin-bottom: var(--space-24);
+}
+
+.work-brief-field {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+/* The space under each label is a margin, not the field's grid gap: a
+   <legend> isn't a grid item of its <fieldset>, so a gap never reached the
+   chip rows and left them pressed against their labels. */
+.work-brief-label {
+  padding: 0;
+  margin-bottom: var(--space-12);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.work-brief textarea {
+  width: 100%;
+  resize: vertical;
+  font: inherit;
+  /* 16px or more stops iOS Safari zooming into the field on focus. */
+  font-size: max(1rem, 16px);
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--chip-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-8) var(--space-12);
+}
+
+.work-brief textarea::placeholder { color: var(--text-dim); }
+
+.work-brief-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.work-brief-chip {
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.work-brief-chip:hover { color: var(--text); }
+
+.work-brief-chip[aria-pressed="true"] {
+  background: rgba(var(--accent-rgb), 0.18);
+  border-color: rgba(var(--accent-rgb), 0.6);
+  color: var(--text);
+}
+
+.work-brief textarea:focus-visible,
+.work-brief-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The estimate under the chips. A flat accent tint, not glass, since it
+   sits inside the closing card. */
+.work-estimate {
+  margin-bottom: var(--space-24);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-sm);
+  background: rgba(var(--accent-rgb), 0.1);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+
+.work-cta .work-estimate p { margin: 0; max-width: none; }
+
+.work-cta .work-estimate-figure {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.work-cta .work-estimate-note {
+  margin-top: var(--space-4);
+  font-size: 0.8rem;
 }
 
 @media (max-width: 760px) {
@@ -234,5 +331,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .work-status-dot { animation: none; }
-  .work-icons img { transition: none; }
+  .work-icons img,
+  .work-brief-chip { transition: none; }
 }
