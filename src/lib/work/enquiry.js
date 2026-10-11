@@ -10,7 +10,7 @@ export { TIMELINES } from "./estimate.js";
 export const EMAIL = "cilia.filippo.dev@gmail.com";
 const SUBJECT = "Project enquiry";
 
-export const DEVICES = ["iPhone", "iPad", "Mac", "Apple Watch", "Apple TV", "Vision Pro"];
+export const DEVICES = ["iPhone", "iPhone Duo", "iPad", "Mac", "Apple Watch", "Apple TV", "Vision Pro"];
 export const BUDGETS = ["Under £5k", "£5k–£15k", "£15k+", "Not sure yet"];
 
 // Every prompt stays in the body even when it's blank, so someone who skips
