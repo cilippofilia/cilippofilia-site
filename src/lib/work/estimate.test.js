@@ -60,3 +60,7 @@ test("a timeline that changes the price says so, without the percentage", () => 
   expect(timelineNote("3–6 months")).toBe("");
   expect(timelineNote("")).toBe("");
 });
+
+test("an iPhone Duo layout adds its hours to an iPhone app", () => {
+  expect(estimateHours({ devices: ["iPhone", "iPhone Duo"] })).toBe(96);
+});

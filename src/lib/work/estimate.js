@@ -14,6 +14,8 @@ const BASE_HOURS = 80;
 // iPhone-only one.
 const DEVICE_HOURS = {
   iPhone: 0,
+  // A foldable: the same app has to reflow as the window changes size.
+  "iPhone Duo": 16,
   iPad: 16,
   Mac: 40,
   "Apple Watch": 30,
