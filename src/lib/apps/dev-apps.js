@@ -14,6 +14,7 @@ export const RESERVED_SLUGS = new Set([
   "privacy",
   "terms",
   "games",
+  "work-with-me",
   "app-store",
   "api",
   "assets",

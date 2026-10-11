@@ -76,7 +76,8 @@ button.button:disabled {
 /* Buttons nested inside a glass card: flat tint, no second blur layer */
 .card .button,
 .featured-cta .button,
-.app-detail-side .button {
+.app-detail-side .button,
+.work-cta .button {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   background: rgba(var(--accent-rgb), 0.12);
@@ -87,7 +88,8 @@ button.button:disabled {
 
 .card .button:hover,
 .featured-cta .button:hover,
-.app-detail-side .button:hover {
+.app-detail-side .button:hover,
+.work-cta .button:hover {
   background: rgba(var(--accent-rgb), 0.18);
   color: var(--accent);
   transform: none;
@@ -96,7 +98,8 @@ button.button:disabled {
 
 .card .button.secondary,
 .featured-cta .button.secondary,
-.app-detail-side .button.secondary {
+.app-detail-side .button.secondary,
+.work-cta .button.secondary {
   background: var(--flat-tint);
   color: var(--text-dim);
   border: 1px solid var(--glass-border);
@@ -104,7 +107,8 @@ button.button:disabled {
 
 .card .button.secondary:hover,
 .featured-cta .button.secondary:hover,
-.app-detail-side .button.secondary:hover {
+.app-detail-side .button.secondary:hover,
+.work-cta .button.secondary:hover {
   background: var(--flat-tint-hover);
   border-color: var(--glass-border);
 }
