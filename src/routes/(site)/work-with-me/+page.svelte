@@ -2,23 +2,25 @@
   import "#lib/styles/work.css";
   import Seo from "#lib/components/Seo.svelte";
 
-  // A mailto rather than a form: the site has no forms or accounts (the
-  // privacy policy says so), and an email keeps the enquiry in my inbox
-  // without a new endpoint. The body is a prompt for the three things I'd
-  // ask first anyway.
-  const EMAIL = "cilia.filippo.dev@gmail.com";
-  const SUBJECT = "Project enquiry";
-  const BODY = "Hi Filippo,\n\nWhat I'd like to build:\n\nTimeline:\n\nBudget:\n";
+  import { DEVICES, TIMELINES, BUDGETS, buildEnquiry, mailtoHref, gmailHref } from "#lib/work/enquiry.js";
+  import { FEATURES, estimate, describeEstimate, timelineNote } from "#lib/work/estimate.js";
 
-  // URLSearchParams encodes spaces as "+", which mail apps show literally.
-  const query = (params) => new URLSearchParams(params).toString().replaceAll("+", "%20");
+  // The brief builder's choices. All optional: with nothing picked, the
+  // links carry the same blank template the prerendered page ships with.
+  let idea = $state("");
+  let devices = $state([]);
+  let features = $state([]);
+  let timeline = $state("");
+  let budget = $state("");
 
-  const mailto = `mailto:${EMAIL}?${query({ subject: SUBJECT, body: BODY })}`;
+  const enquiry = $derived(buildEnquiry({ idea, devices, features, timeline, budget }));
+  const range = $derived(estimate({ devices, features, timeline }));
+  const estimateText = $derived(describeEstimate(range));
+  // Only alongside a number; there's nothing to adjust before a device is
+  // picked or for an existing app.
+  const adjustment = $derived(range?.low ? timelineNote(timeline) : "");
 
-  // A mailto does nothing on a device with no mail app set up, which is
-  // common for people who only use Gmail in a browser, so Gmail's own
-  // compose page sits next to it with the same subject and body.
-  const gmail = `https://mail.google.com/mail/?${query({ view: "cm", fs: "1", to: EMAIL, su: SUBJECT, body: BODY })}`;
+  const toggle = (list, item) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item]);
 
   const services = [
     {
@@ -120,7 +122,8 @@
           <p class="work-tag">Client project</p>
           <h3>A royalties app for a Brighton music company</h3>
           <p>
-            A Mac app that helps them process their music royalty and revenue reports, built alongside my day job.
+            A Mac app that helps them process their music royalty and revenue reports. We agreed what to build from
+            the budget they had, with payment on delivery, and a second round is now on the way.
           </p>
         </article>
         <article class="work-panel work-shipped">
@@ -166,10 +169,90 @@
       <img class="work-cta-photo" src="/assets/profile.jpg" alt="" width="96" height="96" loading="lazy" />
       <div class="work-cta-body">
         <h2 id="work-contact">Got an app in mind?</h2>
-        <p>Tell me what you'd like to build, when you need it and roughly what your budget is.</p>
+        <p>A few taps here fill in the email for you. Skip anything you're not sure about yet.</p>
+
+        <div class="work-brief">
+          <label class="work-brief-field">
+            <span class="work-brief-label">What's the idea?</span>
+            <textarea rows="3" placeholder="A habit tracker for climbers, with a widget for the next session" bind:value={idea}
+            ></textarea>
+          </label>
+
+          <fieldset class="work-brief-field">
+            <legend class="work-brief-label">Devices</legend>
+            <div class="work-brief-chips">
+              {#each DEVICES as device (device)}
+                <button
+                  type="button"
+                  class="chip work-brief-chip"
+                  aria-pressed={devices.includes(device)}
+                  onclick={() => (devices = toggle(devices, device))}>{device}</button
+                >
+              {/each}
+            </div>
+          </fieldset>
+
+          <fieldset class="work-brief-field">
+            <legend class="work-brief-label">What does it need?</legend>
+            <div class="work-brief-chips">
+              {#each FEATURES as feature (feature)}
+                <button
+                  type="button"
+                  class="chip work-brief-chip"
+                  aria-pressed={features.includes(feature)}
+                  onclick={() => (features = toggle(features, feature))}>{feature}</button
+                >
+              {/each}
+            </div>
+          </fieldset>
+
+          <!-- Single choice, but a tapped chip can be tapped again to clear
+               it, which radio buttons can't do. -->
+          <fieldset class="work-brief-field">
+            <legend class="work-brief-label">Timeline</legend>
+            <div class="work-brief-chips">
+              {#each TIMELINES as option (option)}
+                <button
+                  type="button"
+                  class="chip work-brief-chip"
+                  aria-pressed={timeline === option}
+                  onclick={() => (timeline = timeline === option ? "" : option)}>{option}</button
+                >
+              {/each}
+            </div>
+          </fieldset>
+
+          <fieldset class="work-brief-field">
+            <legend class="work-brief-label">Budget</legend>
+            <div class="work-brief-chips">
+              {#each BUDGETS as option (option)}
+                <button
+                  type="button"
+                  class="chip work-brief-chip"
+                  aria-pressed={budget === option}
+                  onclick={() => (budget = budget === option ? "" : option)}>{option}</button
+                >
+              {/each}
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- Polite, so a screen reader hears the new range after a tap
+             without it cutting off the chip's own announcement. -->
+        <div class="work-estimate" aria-live="polite">
+          <p class="work-estimate-figure">{estimateText}</p>
+          {#if adjustment}
+            <p class="work-estimate-note">{adjustment}</p>
+          {/if}
+          <p class="work-estimate-note">
+            A ballpark, not a price tag. Pay by the hour or by the project, and if your budget is tight, we can shape
+            what gets built to fit it.
+          </p>
+        </div>
+
         <div class="work-actions">
-          <a class="button" href={mailto}>Email me</a>
-          <a class="button secondary" href={gmail} target="_blank" rel="noopener">Open in Gmail</a>
+          <a class="button" href={mailtoHref(enquiry)}>Email me</a>
+          <a class="button secondary" href={gmailHref(enquiry)} target="_blank" rel="noopener">Open in Gmail</a>
         </div>
       </div>
     </section>
