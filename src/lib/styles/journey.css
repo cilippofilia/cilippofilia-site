@@ -19,6 +19,9 @@
 .journey {
   margin-top: var(--space-24);
   display: grid;
+  /* minmax(0, …) rather than the implicit auto column, which would grow to
+     the card row's full scrolling width and push the panel off a phone. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-20);
   padding: var(--pad-surface);
   border-radius: var(--radius-lg);
@@ -299,6 +302,7 @@
 
 .journey-detail {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* as on .journey */
   gap: var(--space-16);
 }
 
@@ -707,6 +711,9 @@
   }
   .journey-top {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .journey-card {
+    padding: var(--space-16);
   }
   /* The pills become one scrolling row above the map. */
   .journey-pills-col {
