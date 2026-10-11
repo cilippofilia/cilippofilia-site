@@ -3,11 +3,8 @@
    of the site; what's here is the page's own pieces: the status pill, the
    glass panels, the numbered process and the closing call to action. */
 
-/* main's 64px top padding plus .hero's own (meant for the home page, where
-   it follows the intro) left a hole under the header. Here the status pill
-   sits a short step below it instead. */
-main:has(.work-hero) { padding-top: var(--space-32); }
-
+/* main's top padding already spaces the page from the header; .hero's own
+   (meant for the home page, where it follows the intro) would double it. */
 .work-hero { padding-top: 0; }
 
 .work-hero h1 { max-width: 16ch; }
