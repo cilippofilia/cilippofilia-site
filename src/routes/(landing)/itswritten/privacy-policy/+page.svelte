@@ -46,7 +46,7 @@
   <a class="back-link" href="./">← Back home</a>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: September 6, 2026</p>
+  <p class="updated">Last updated: 6 September 2026</p>
 
   <p>
     itsWritten ("the app") is developed by Filippo Cilia. This page explains what happens to your data when you use the

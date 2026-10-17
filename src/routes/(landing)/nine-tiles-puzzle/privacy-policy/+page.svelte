@@ -46,20 +46,20 @@
   <a class="back-link" href="./">← Back home</a>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: July 19, 2026</p>
+  <p class="updated">Last updated: 19 July 2026</p>
 
   <p>
     9 Tiles Puzzle ("the app") is developed by Filippo Cilia. This page explains what happens to your data when you use
-    the app. The short version: there is no account, no analytics, no advertising, and no server operated by us — the
-    app works entirely on your device.
+    the app. The short version: there is no account, no analytics, no advertising, and no server operated by us. The app
+    works entirely on your device.
   </p>
 
   <h2>Data we collect</h2>
   <p>
     We do not collect, transmit, or have access to any personal data. The app contains no analytics, advertising, or
-    tracking software of any kind. All game progress — stats, streaks, achievements, Wall of Fame records, and settings
-    — is stored locally on your device (and shared with the app's own widgets via an iOS App Group), and is never sent
-    to us or to any third party.
+    tracking software of any kind. All game progress (stats, streaks, achievements, Wall of Fame records and settings)
+    is stored locally on your device (and shared with the app's own widgets via an iOS App Group), and is never sent to
+    us or to any third party.
   </p>
 
   <h2>Photos</h2>
@@ -100,7 +100,7 @@
   <h2>Challenge Friends (nearby multiplayer)</h2>
   <p>
     The optional Challenge Friends feature connects directly to another nearby device over local Wi-Fi/Bluetooth to play
-    together. This connection is peer-to-peer — no game data passes through any server we operate.
+    together. This connection is peer-to-peer, so no game data passes through any server we operate.
   </p>
 
   <h2>Purchases</h2>

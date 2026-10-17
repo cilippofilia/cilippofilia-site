@@ -21,10 +21,21 @@ const CUSTOM_APP_PAGES = {
   6776386637: "nine-tiles-puzzle", // 9 Tiles Puzzle
 };
 
+// Subtitles for apps whose App Store name has none, so their card reads
+// "Title: Subtitle" like the rest. Apple's own subtitle wins once it has one.
+const SUBTITLES = {
+  6776386637: "Daily Brain Game & Challenge", // 9 Tiles Puzzle
+};
+
+function withSubtitle(name, trackId) {
+  const subtitle = SUBTITLES[trackId];
+  return subtitle && name && !name.includes(":") ? `${name}: ${subtitle}` : name;
+}
+
 export function toApp(r) {
   return {
     id: r.trackId,
-    name: r.trackName,
+    name: withSubtitle(r.trackName, r.trackId),
     tagline: (r.description || "").split(/\n/)[0].slice(0, 160),
     icon: (r.artworkUrl100 || "").replace("100x100bb", "512x512bb"),
     url: r.trackViewUrl,

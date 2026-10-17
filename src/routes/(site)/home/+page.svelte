@@ -66,8 +66,8 @@
           <p class="profile-role">Software Engineer, iOS</p>
           <p class="profile-location">Manchester, UK</p>
           <p class="profile-bio">
-            iOS by day, macOS for clients, and indie apps in between. Four shipped so far - pizza, pasta, and coffees
-            fuel the rest.
+            iOS by day, macOS for clients, and indie apps in between. Four shipped so far. Pizza, pasta and coffees fuel
+            the rest.
           </p>
           <div class="profile-social">
             <a href="https://github.com/cilippofilia" target="_blank" rel="noopener" aria-label="GitHub">
@@ -106,10 +106,11 @@
           </div>
         </aside>
         <div>
-          <h1>SwiftUI apps, built for the device they run on.</h1>
+          <h1>Passionate about SwiftUI apps, built for the device they run on.</h1>
           <p class="lede">
-            Every app is written in Swift and SwiftUI, leans on the frameworks Apple ships, and keeps your data on your
-            device wherever it can: on-device intelligence, local storage, iCloud only when you ask for it.
+            Every app is written in Swift and SwiftUI on the frameworks Apple ships. Your data stays on your device
+            wherever it can: the intelligence runs on-device, storage is local, and iCloud syncs only when you ask it
+            to.
           </p>
         </div>
       </div>

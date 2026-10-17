@@ -37,6 +37,10 @@
 
 .maze-flip-inner {
   display: grid;
+  /* minmax(0, …) rather than the implicit auto column, which holds each face
+     at its content's min-content width and pushes it off a narrow phone (and,
+     once flipped, off the left edge). */
+  grid-template-columns: minmax(0, 1fr);
   transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
   transform-style: preserve-3d;
 }
@@ -47,6 +51,7 @@
 
 .maze-flip-face {
   grid-area: 1 / 1;
+  display: grid; /* so the card inside fills the face, and both sides are the same height */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -55,8 +60,29 @@
   transform: rotateY(180deg);
 }
 
+/* Safari ignores backface-visibility on these faces (their glass
+   backdrop-filter flattens them), so the turned-away face would show through
+   mirrored. Each face is also hidden outright, switched at 0.2s: with the
+   easing curve below, that's when the card is edge-on at 90deg, so the swap
+   can't be seen. It keeps the hidden face's buttons out of the tab order too. */
+.maze-flip-front,
+.maze-flip-back {
+  transition: visibility 0s linear 0.2s;
+}
+
+.maze-flip-back,
+.maze-flip.is-flipped .maze-flip-front {
+  visibility: hidden;
+}
+
+.maze-flip.is-flipped .maze-flip-back {
+  visibility: visible;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .maze-flip-inner {
+  .maze-flip-inner,
+  .maze-flip-front,
+  .maze-flip-back {
     transition: none;
   }
 }
@@ -67,7 +93,6 @@
   --maze-phosphor-dim: rgba(57, 255, 20, 0.45);
 
   position: relative;
-  margin-top: var(--space-24);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
@@ -248,7 +273,6 @@
   position: relative;
   width: 100%;
   max-width: 360px;
-  aspect-ratio: 1;
   padding: var(--space-12);
   border-radius: var(--radius);
   overflow: hidden;
@@ -257,10 +281,13 @@
   box-shadow: 0 0 18px rgba(57, 255, 20, 0.16), inset 0 0 30px rgba(0, 0, 0, 0.6);
 }
 
+/* The canvas itself is square, not its padded screen: Safari resolves a
+   height: 100% inside an aspect-ratio box against the padding too, which
+   stretched the drawing and cut off its bottom row. */
 .maze-explainer-canvas {
   display: block;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1;
 }
 
 .maze-explainer-controls {
@@ -281,6 +308,27 @@
 
 .maze-explainer-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: var(--space-14);
+}
+
+/* On a phone the Prev / step / Next row is wider than the card leaves room
+   for, so the card and its buttons give up some padding to keep it on one
+   line inside the card. */
+@media (max-width: 600px) {
+  .maze-game,
+  .maze-explainer {
+    padding: var(--space-16);
+  }
+
+  .maze-explainer-controls,
+  .maze-explainer-actions {
+    gap: var(--space-8);
+  }
+
+  .maze-explainer .button {
+    padding-inline: var(--space-16);
+  }
 }

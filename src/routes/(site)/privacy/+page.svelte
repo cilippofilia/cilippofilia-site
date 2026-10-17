@@ -13,7 +13,7 @@
   <div class="wrap">
     <article class="legal">
       <h1>Privacy Policy</h1>
-      <p class="legal-updated">Last updated: October 11, 2026</p>
+      <p class="legal-updated">Last updated: 17 October 2026</p>
 
       <div class="legal-summary">
         <p>
@@ -82,9 +82,9 @@
 
       <h2>The games</h2>
       <p>
-        The maze on the home page and the game on the "page not found" page run entirely in your browser. When you
-        finish a game, the page may send your result (time, number of moves or score) to this site so it can show a best
-        score or leaderboard. That result contains no name, IP address or other identifier, and on the public site it is
+        The games (the maze, Skate Run and Whack a Broken Link, on the Games page and the "page not found" page) run
+        entirely in your browser. When you finish a game, the page may send your result (time, number of moves or score,
+        and in Skate Run the skater you picked) to this site so it can show a best score or leaderboard. That result contains no name, IP address or other identifier, and on the public site it is
         currently not stored at all.
       </p>
 

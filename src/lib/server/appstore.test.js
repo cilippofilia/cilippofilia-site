@@ -28,6 +28,15 @@ test("toApp maps a lookup result and links custom landing pages", () => {
   expect(toApp({ ...result, trackId: 1 }).localUrl).toBeNull();
 });
 
+test("toApp adds a subtitle to an App Store name that has none", () => {
+  const nineTiles = { ...result, trackId: 6776386637, trackName: "9 Tiles Puzzle" };
+  expect(toApp(nineTiles).name).toBe("9 Tiles Puzzle: Daily Brain Game & Challenge");
+  // Once Apple's own name carries a subtitle, that one wins.
+  expect(toApp({ ...nineTiles, trackName: "9 Tiles Puzzle: Photo Puzzles" }).name).toBe(
+    "9 Tiles Puzzle: Photo Puzzles"
+  );
+});
+
 test("getPublishedApps keeps software results only", async () => {
   const store = createAppStore({ fetchImpl: ok([{ wrapperType: "artist" }, result]) });
   expect((await store.getPublishedApps()).map((a) => a.id)).toEqual([6449893371]);
