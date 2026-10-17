@@ -140,8 +140,8 @@
       <span class="eyebrow">Momentum</span>
       <h2>Keep the streak alive</h2>
       <p class="note">
-        Log progress every day and the streak flame on your widget burns brighter. Skip a day and it cools, gradually,
-        as a gentle nudge to get back to it. No notifications, no guilt trips. Just a flame that tells the truth.
+        Log progress every day and the streak flame on your widget burns brighter. Skip a day and it slowly cools, a
+        nudge to get back to it without a single notification.
       </p>
     </section>
   </main>

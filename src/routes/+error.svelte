@@ -38,7 +38,7 @@
       <section class="hero" style="margin-top:0">
         <p class="notfound-code" aria-hidden="true">404</p>
         <h1><span class="visually-hidden">404: </span>Page not found.</h1>
-        <p class="lede">Nothing here — that address doesn't match a page or an app on this site.</p>
+        <p class="lede">Nothing here. That address doesn't match a page or an app on this site.</p>
         <div class="button-row">
           <a class="button" href="/home">Back home</a>
           <a class="button secondary" href="/home#apps">See the apps</a>

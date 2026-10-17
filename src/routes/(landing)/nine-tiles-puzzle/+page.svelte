@@ -64,7 +64,7 @@
     </div>
     <h1 class="title">9 Tiles Puzzle</h1>
     <p class="tagline">
-      Slice any photo into a grid, scramble it, and race to put it back together — seven ways to play.
+      Slice any photo into a grid, scramble it, and race to put it back together, in seven ways to play.
     </p>
     <LandingCountdown release="2026-09-28T00:00:00" />
     <p class="release-live" id="release-live" hidden>🎉 Available now!</p>
@@ -88,7 +88,7 @@
       <ul class="features">
         <li>
           <span class="glyph">🧩</span><strong>Slide</strong><span class="desc"
-            >Classic sliding movement — placed tiles can still be nudged later.</span
+            >Classic sliding movement. Placed tiles can still be nudged later.</span
           >
         </li>
         <li>
@@ -111,12 +111,12 @@
         </li>
         <li>
           <span class="glyph">🌫️</span><strong>Haze</strong><span class="desc"
-            >Tiles hide behind drifting fog — shake to peek.</span
+            >Tiles hide behind drifting fog. Shake to peek.</span
           >
         </li>
         <li>
           <span class="glyph">🌀</span><strong>Chaos</strong><span class="desc"
-            >The source image may be recolored, mirrored, or flipped.</span
+            >The source image may be recoloured, mirrored or flipped.</span
           >
         </li>
       </ul>

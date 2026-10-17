@@ -13,7 +13,7 @@
   <div class="wrap">
     <article class="legal">
       <h1>Terms of Use</h1>
-      <p class="legal-updated">Last updated: October 2, 2026</p>
+      <p class="legal-updated">Last updated: 2 October 2026</p>
 
       <div class="legal-summary">
         <p>
