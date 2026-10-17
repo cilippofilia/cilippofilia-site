@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { validDevApps, findDevApp, publicDevApps } from "./dev-apps.js";
+import { validDevApps, findDevApp, publicDevApps, DEV_SLUGS_TO_SHOW } from "./dev-apps.js";
 
 const app = (slug) => ({ slug, name: slug, status: "In development" });
 
@@ -27,7 +27,10 @@ test("findDevApp finds by exact slug among valid apps only", () => {
 });
 
 test("publicDevApps is the shown subset, in apps.json order", () => {
-  expect(publicDevApps([app("hidden"), app("the-relay")]).map((a) => a.slug)).toEqual(["the-relay"]);
+  const list = [app("hidden"), app("the-relay"), ...DEV_SLUGS_TO_SHOW.map(app)];
+  const shown = publicDevApps(list).map((a) => a.slug);
+  expect(shown).toEqual(list.map((a) => a.slug).filter((slug) => DEV_SLUGS_TO_SHOW.includes(slug)));
+  expect(shown).not.toContain("hidden");
 });
 
 test("the real data/apps.json parses and has the relay page", () => {

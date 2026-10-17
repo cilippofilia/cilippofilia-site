@@ -21,9 +21,9 @@ export const RESERVED_SLUGS = new Set([
   ...LANDING_APPS,
 ]);
 
-// While only relay is ready to show publicly, filter the rest of
-// apps.json out here rather than deleting their entries.
-export const DEV_SLUGS_TO_SHOW = ["the-relay"];
+// No in-development app is ready to show publicly right now, so the grid
+// lists none; filter apps.json here rather than deleting its entries.
+export const DEV_SLUGS_TO_SHOW = [];
 
 export function validDevApps(list = apps) {
   if (!Array.isArray(list)) return [];
