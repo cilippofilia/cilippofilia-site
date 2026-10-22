@@ -432,6 +432,12 @@ a {
   margin-top: 2rem;
 }
 
+/* Subsections sit under an h2, so they stay a step smaller than it. */
+.legal h3 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+}
+
 .legal p, .legal li {
   color: var(--text);
 }

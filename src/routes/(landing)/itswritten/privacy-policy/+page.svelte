@@ -46,12 +46,13 @@
   <a class="back-link" href="./">← Back home</a>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: 6 September 2026</p>
+  <p class="updated">Last updated: 22 October 2026</p>
 
   <p>
     itsWritten ("the app") is developed by Filippo Cilia. This page explains what happens to your data when you use the
     app. The short version: there is no account, no analytics, no tracking, and no server operated by us that receives
-    your writing. Your journal entries and conversations stay on your device.
+    your writing. Your journal entries and conversations are stored on your device. Text only leaves it in the cases
+    described below, and never reaches us.
   </p>
 
   <h2>Data we collect</h2>
@@ -62,11 +63,59 @@
 
   <h2>Your writing and reflections</h2>
   <p>
-    Everything you write, and every reflection the app produces, is stored in the app's own container on your device.
-    Reflections are generated on your device by Apple Intelligence using Apple's Foundation Models framework. Your text
-    is not sent to us or to any third-party AI service. Deleting a thread removes it from the app, and deleting the app
-    deletes everything.
+    Everything you write, and every reflection the app produces, is stored in a local database on your device. It is not
+    synced to iCloud. Deleting a thread removes it from the app, and deleting the app deletes everything. Reflections
+    are generated in one of three ways.
   </p>
+
+  <h3>On your device (the default)</h3>
+  <p>
+    By default, reflections are generated on your device by Apple Intelligence, using Apple's Foundation Models
+    framework. Your text stays on your device.
+  </p>
+
+  <h3>Apple Private Cloud Compute</h3>
+  <p>
+    When the on-device model can't handle a request, the app can use Apple's Private Cloud Compute instead. It asks you
+    before sending anything there. Apple designed Private Cloud Compute so that your data is used only to answer your
+    request and is not stored or made accessible to Apple; see Apple's
+    <a href="https://security.apple.com/documentation/private-cloud-compute" target="_blank" rel="noopener"
+      >Private Cloud Compute security overview</a
+    >.
+  </p>
+
+  <h3>Third-party AI with your own key (optional)</h3>
+  <p>
+    Since version 1.4, you can add your own API key for OpenAI (ChatGPT), Anthropic (Claude) or Google (Gemini). None of
+    what follows happens unless you add a key.
+  </p>
+  <ul>
+    <li>
+      Your text goes straight from your device to that company, under your own account. It never passes through us, and
+      that company's privacy policy and data retention rules apply:
+      <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener">OpenAI</a>,
+      <a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">Anthropic</a>, and Google (<a
+        href="https://policies.google.com/privacy"
+        target="_blank"
+        rel="noopener">privacy policy</a
+      >,
+      <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener">Gemini API terms</a>).
+    </li>
+    <li>
+      The app asks you before a conversation is first sent to a provider. You can turn on "Always Allow" if you don't
+      want to be asked again, and "Keep on Device" is always available.
+    </li>
+    <li>
+      Before anything is sent, the app replaces personal details with placeholders, on your device: names, places,
+      organisations, addresses, phone numbers, email addresses, links, @handles, card numbers, IBANs, government and
+      medical ID numbers, specific dates, GPS coordinates, IP addresses, passwords and keys. You see exactly what will
+      be sent before it goes.
+    </li>
+    <li>
+      This detection is best-effort and not guaranteed to catch everything, so check the preview before sending. When
+      names can't be checked automatically, the app asks you about them.
+    </li>
+  </ul>
 
   <h2>Data stored on your device</h2>
   <ul>
@@ -75,16 +124,35 @@
       Your preferences, such as response style, timer length and the instructions, temperature and sampling settings
       behind each reflection.
     </li>
+    <li>
+      Any API keys you add, stored in the iOS Keychain. Each key is only ever sent to its own provider, never to us.
+    </li>
+    <li>Your provider and consent choices, such as "Always Allow".</li>
     <li>Whether onboarding has been completed.</li>
   </ul>
 
-  <h2>Research lookups (PubMed)</h2>
+  <h2>Research lookups</h2>
   <p>
-    When a health or biomedical question comes up, the app can search PubMed, a public database run by the U.S. National
-    Library of Medicine, so that answers can cite sources. This is the only time the app sends part of a conversation
-    off your device: a short search query, and only for that lookup. The request goes directly to PubMed and is subject
-    to the
-    <a href="https://www.nlm.nih.gov/privacy.html">National Library of Medicine's privacy policy</a>. We never see it.
+    When a health or biomedical question comes up, the app can search public research and drug databases, so that
+    answers can cite sources:
+  </p>
+  <ul>
+    <li>
+      PubMed and ClinicalTrials.gov, both run by the U.S. National Library of Medicine (NIH), covered by the
+      <a href="https://www.nlm.nih.gov/privacy.html" target="_blank" rel="noopener"
+        >National Library of Medicine's privacy policy</a
+      >.
+    </li>
+    <li>
+      openFDA, run by the U.S. Food and Drug Administration, covered by the
+      <a href="https://www.fda.gov/about-fda/about-website/website-policies" target="_blank" rel="noopener"
+        >FDA's website and privacy policies</a
+      >.
+    </li>
+  </ul>
+  <p>
+    Each lookup sends only a short search query, directly to that service. We never see it. The medical calculator runs
+    entirely on your device.
   </p>
 
   <h2>Privacy protections</h2>
@@ -96,9 +164,15 @@
   <h2>Banner for our other apps</h2>
   <p>
     The app shows a small banner promoting other apps by the same developer. To pick which one to show, it downloads a
-    short list of apps from our own website. That request contains no personal data and no identifier, and nothing about
-    you is recorded. There are no third-party ad networks. You can remove the banner with a one-time in-app purchase,
-    which is processed entirely by Apple through the App Store. We do not receive your payment details.
+    short list of apps from GitHub (raw.githubusercontent.com). The request contains no personal data and no identifier
+    from the app, but like any web request it lets GitHub see your IP address; see
+    <a
+      href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+      target="_blank"
+      rel="noopener">GitHub's privacy statement</a
+    >. We don't record anything about you. There are no third-party ad networks. You can remove the banner with a
+    one-time in-app purchase, which is processed entirely by Apple through the App Store. We do not receive your payment
+    details.
   </p>
 
   <h2>Contact and feedback</h2>
