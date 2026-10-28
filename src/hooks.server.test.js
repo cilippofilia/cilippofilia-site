@@ -11,7 +11,7 @@ const resolveOk = async () => new Response("ok", { headers: { "content-type": "t
 
 test("/ and /app-store redirect like before", async () => {
   const home = await handle({ event: event("/"), resolve: resolveOk });
-  expect(home.status).toBe(302);
+  expect(home.status).toBe(301);
   expect(home.headers.get("location")).toBe("/home");
   const store = await handle({ event: event("/app-store"), resolve: resolveOk });
   expect(store.status).toBe(301);

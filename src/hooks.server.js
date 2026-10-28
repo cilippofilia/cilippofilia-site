@@ -10,7 +10,7 @@ import { SECURITY_HEADERS } from "./lib/server/security-headers.js";
 // Paths that have moved. Kept so old links and bookmarks still land.
 // Mirrored by [[redirects]] in netlify.toml.
 export const REDIRECTS = {
-  "/": ["/home", 302],
+  "/": ["/home", 301],
   "/app-store": ["/home#apps", 301],
 };
 
