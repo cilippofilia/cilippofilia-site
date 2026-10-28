@@ -4,13 +4,25 @@
   import Seo from "#lib/components/Seo.svelte";
   import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
+  import { appSchema } from "#lib/structured-data.js";
+
+  const jsonLd = appSchema({
+    name: "Iterly",
+    description:
+      "Iterly is a lightweight project tracker for indie developers on iPhone: projects, tasks and subtasks grouped by release, an activity heatmap with streaks, and Home Screen widgets. Local-first, no account.",
+    slug: "iterly",
+    appStoreId: "6760037639",
+    category: "DeveloperApplication",
+    operatingSystem: "iOS",
+  });
 </script>
 
 <Seo
   title="Iterly"
-  description="Iterly is a lightweight project tracker for indie developers on iPhone: projects, tasks and subtasks grouped by release, an activity heatmap with streaks, and Home Screen widgets. Local-first, no account."
+  description={jsonLd.description}
   url="https://cilippofilia.dev/iterly/"
   image="https://cilippofilia.dev/iterly/assets/icon.png"
+  {jsonLd}
 />
 
 <svelte:head>

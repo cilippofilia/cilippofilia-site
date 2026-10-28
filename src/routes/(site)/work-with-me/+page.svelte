@@ -83,8 +83,8 @@
 </script>
 
 <Seo
-  title="Work with me · cilippofilia.dev"
-  description="Freelance iOS and macOS development: native apps in Swift and SwiftUI, built by the person you talk to."
+  title="Hire an iOS and Mac Developer · cilippofilia.dev"
+  description="Freelance iOS and macOS app developer: native iPhone, iPad and Mac apps in Swift and SwiftUI, from first idea to App Store release, built by the person you talk to."
   url="https://cilippofilia.dev/work-with-me"
 />
 

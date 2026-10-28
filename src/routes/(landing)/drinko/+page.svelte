@@ -4,13 +4,25 @@
   import Seo from "#lib/components/Seo.svelte";
   import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
+  import { appSchema } from "#lib/structured-data.js";
+
+  const jsonLd = appSchema({
+    name: "Drinko",
+    description:
+      "Drinko helps you make better cocktails at home: 100+ classic recipes, bartending lessons, and a cabinet that tracks what you already have. For iPhone, iPad and Mac.",
+    slug: "drinko",
+    appStoreId: "6449893371",
+    category: "LifestyleApplication",
+    operatingSystem: "iOS, iPadOS, macOS",
+  });
 </script>
 
 <Seo
   title="Drinko"
-  description="Drinko helps you make better cocktails at home: 100+ classic recipes, bartending lessons, and a cabinet that tracks what you already have. For iPhone, iPad and Mac."
+  description={jsonLd.description}
   url="https://cilippofilia.dev/drinko/"
   image="https://cilippofilia.dev/drinko/assets/icon.png"
+  {jsonLd}
 />
 
 <svelte:head>

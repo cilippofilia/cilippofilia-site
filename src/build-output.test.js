@@ -69,6 +69,15 @@ test("every page carries the hash-based CSP meta and no stray inline script", ()
   }
 });
 
+test("structured data blocks are valid JSON, on home and every landing page", () => {
+  const withData = ["/home", ...LANDING_APPS.map((app) => `/${app}/`)].map((p) => `https://cilippofilia.dev${p}`);
+  for (const url of pages) {
+    const blocks = [...read(fileFor(url)).matchAll(/<script type="application\/ld\+json">([^<]*)<\/script>/g)];
+    if (withData.includes(url)) expect([url, blocks.length]).toEqual([url, 1]);
+    for (const [, json] of blocks) expect(JSON.parse(json)["@context"]).toBe("https://schema.org");
+  }
+});
+
 test("the old privacy policy URLs are files on disk", () => {
   for (const app of LANDING_APPS) {
     expect(fs.existsSync(path.join(PUBLISH_DIR, app, "privacy-policy.html"))).toBe(true);

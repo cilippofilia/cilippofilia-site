@@ -7,6 +7,7 @@
   import AppsSection from "#lib/components/AppsSection.svelte";
   import JourneySection from "#lib/components/JourneySection.svelte";
   import { initIntroFlip } from "#lib/intro/intro-flip.js";
+  import { PERSON } from "#lib/structured-data.js";
 
   let { data } = $props();
 
@@ -20,9 +21,10 @@
 </script>
 
 <Seo
-  title="Filippo Cilia · Apps for iPhone, iPad and Mac"
-  description="Filippo Cilia's native Apple apps: Drinko, itsWritten, Iterly, 9 Tiles Puzzle and what's next, all written in Swift and SwiftUI."
+  title="Filippo Cilia · iOS and Mac App Developer"
+  description="Filippo Cilia is an indie iOS and macOS developer building native apps in Swift and SwiftUI: Drinko, itsWritten, Iterly, 9 Tiles Puzzle and what's next."
   url="https://cilippofilia.dev/home"
+  jsonLd={PERSON}
 />
 
 <FloatingIcons />

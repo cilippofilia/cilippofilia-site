@@ -18,6 +18,9 @@ paths:
 - Exactly one `<h1>` per page. The style guide is the one exception: its type specimen shows a sample `<h1>`.
 - Pages are prerendered (`prerender = true` in the root `+layout.js`). No inline `<script>` or `on…=` attributes in
   markup: the hash-based CSP only allows SvelteKit's own bootstrap, and the build test fails on them.
+- Structured data (schema.org JSON-LD) goes through `<Seo jsonLd={...}>` with data from `src/lib/structured-data.js`:
+  `PERSON` on the home page, `appSchema(...)` on each landing page. It renders as a `type="application/ld+json"` data
+  block, which never runs, so the CSP allows it.
 
 ## Site pages (`src/routes/(site)/`)
 

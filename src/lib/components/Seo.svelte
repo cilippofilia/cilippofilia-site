@@ -2,12 +2,16 @@
   // The head tags every page carries (see .claude/rules/html-pages.md):
   // title, description, canonical and the Open Graph set. Pages without a
   // fixed public URL (the 404) pass no url and get no canonical or og:url.
+  // jsonLd is optional schema.org data from #lib/structured-data.js.
+  import { jsonLdTag } from "#lib/structured-data.js";
+
   let {
     title,
     description,
     url = null,
     image = "https://cilippofilia.dev/assets/profile.jpg",
     noindex = false,
+    jsonLd = null,
   } = $props();
 </script>
 
@@ -22,4 +26,6 @@
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={image} />
+  <!-- Built by jsonLdTag from our own constants, with "<" escaped. -->
+  {#if jsonLd}{@html jsonLdTag(jsonLd)}{/if}
 </svelte:head>
