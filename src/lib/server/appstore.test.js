@@ -24,8 +24,10 @@ test("toApp maps a lookup result and links custom landing pages", () => {
     genre: "Food & Drink",
     releaseDate: "2023-05-01T00:00:00Z",
     localUrl: "/drinko",
+    platforms: ["iPhone", "iPad", "Mac"],
   });
   expect(toApp({ ...result, trackId: 1 }).localUrl).toBeNull();
+  expect(toApp({ ...result, trackId: 1 }).platforms).toEqual([]);
 });
 
 test("toApp adds a subtitle to an App Store name that has none", () => {

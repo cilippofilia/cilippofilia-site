@@ -27,6 +27,16 @@ const SUBTITLES = {
   6776386637: "Daily Brain Game & Challenge", // 9 Tiles Puzzle
 };
 
+// Where each published app runs, for the platform pills on its card. Kept by
+// hand: Apple's lookup lists device models, and iPad apps that merely run on
+// Apple silicon Macs would read as Mac apps.
+const PLATFORMS = {
+  6449893371: ["iPhone", "iPad", "Mac"], // Drinko
+  6757445119: ["iPhone", "iPad"], // itsWritten
+  6760037639: ["iPhone", "iPad"], // Iterly
+  6776386637: ["iPhone", "iPad"], // 9 Tiles Puzzle
+};
+
 function withSubtitle(name, trackId) {
   const subtitle = SUBTITLES[trackId];
   return subtitle && name && !name.includes(":") ? `${name}: ${subtitle}` : name;
@@ -42,6 +52,7 @@ export function toApp(r) {
     genre: r.primaryGenreName || "",
     releaseDate: r.releaseDate || null,
     localUrl: CUSTOM_APP_PAGES[r.trackId] ? `/${CUSTOM_APP_PAGES[r.trackId]}` : null,
+    platforms: PLATFORMS[r.trackId] || [],
   };
 }
 

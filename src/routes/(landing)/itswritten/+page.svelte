@@ -4,13 +4,25 @@
   import Seo from "#lib/components/Seo.svelte";
   import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
+  import { appSchema } from "#lib/structured-data.js";
+
+  const jsonLd = appSchema({
+    name: "itsWritten",
+    description:
+      "itsWritten is a private journal for iPhone: write first, then reflect with Apple Intelligence on your device. No account, no cloud chat, saved threads you can revisit.",
+    slug: "itswritten",
+    appStoreId: "6757445119",
+    category: "LifestyleApplication",
+    operatingSystem: "iOS",
+  });
 </script>
 
 <Seo
   title="itsWritten"
-  description="itsWritten is a private journal for iPhone: write first, then reflect with Apple Intelligence on your device. No account, no cloud chat, saved threads you can revisit."
+  description={jsonLd.description}
   url="https://cilippofilia.dev/itswritten/"
   image="https://cilippofilia.dev/itswritten/assets/icon.png"
+  {jsonLd}
 />
 
 <svelte:head>

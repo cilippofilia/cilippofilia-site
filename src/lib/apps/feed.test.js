@@ -12,6 +12,7 @@ const live = {
   genre: "Food",
   releaseDate: "2023-01-01T00:00:00Z",
   localUrl: "/drinko",
+  platforms: ["iPhone", "iPad", "Mac"],
 };
 const preorder = {
   ...live,
@@ -43,6 +44,7 @@ test("publishedCard and devCard normalise both feeds to card props", () => {
     name: "Drinko: Cocktail Recipes",
     badge: "Live",
     badgeStyle: "live",
+    platforms: ["iPhone", "iPad", "Mac"],
     tagline: "Cocktails.",
   });
   expect(publishedCard({ ...live, tagline: "" }).tagline).toBe("Food");
@@ -54,6 +56,7 @@ test("publishedCard and devCard normalise both feeds to card props", () => {
     name: "relay",
     badge: "In development",
     badgeStyle: "dev",
+    platforms: [],
     tagline: "Mystery.",
   });
 });

@@ -5,13 +5,25 @@
   import { campaignUrl } from "#lib/apps/campaign.js";
   import { landingReveal } from "#lib/actions/landing-reveal.js";
   import LandingCountdown from "#lib/components/LandingCountdown.svelte";
+  import { appSchema } from "#lib/structured-data.js";
+
+  const jsonLd = appSchema({
+    name: "9 Tiles Puzzle",
+    description:
+      "A sliding-image puzzle for iOS. Fetch a photo, slice it into a grid, scramble the pieces, and put it back together across seven distinct game modes.",
+    slug: "nine-tiles-puzzle",
+    appStoreId: "6776386637",
+    category: "GameApplication",
+    operatingSystem: "iOS",
+  });
 </script>
 
 <Seo
   title="9 Tiles Puzzle"
-  description="A sliding-image puzzle for iOS. Fetch a photo, slice it into a grid, scramble the pieces, and put it back together across seven distinct game modes."
+  description={jsonLd.description}
   url="https://cilippofilia.dev/nine-tiles-puzzle/"
   image="https://cilippofilia.dev/nine-tiles-puzzle/assets/icon.png"
+  {jsonLd}
 />
 
 <svelte:head>

@@ -16,5 +16,6 @@ test("the sitemap lists every public page, matching the old hand-kept file", () 
     "https://cilippofilia.dev/itswritten/privacy-policy.html",
     "https://cilippofilia.dev/nine-tiles-puzzle/",
     "https://cilippofilia.dev/nine-tiles-puzzle/privacy-policy.html",
+    "https://cilippofilia.dev/notchgames",
   ]);
 });

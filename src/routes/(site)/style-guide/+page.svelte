@@ -393,7 +393,12 @@
               <p class="card-subtitle">Cocktail Recipes</p>
             </div>
           </div>
-          <span class="badge live">Live</span>
+          <div class="card-tags">
+            <span class="badge live">Live</span>
+            <span class="chip">iPhone</span>
+            <span class="chip">iPad</span>
+            <span class="chip">Mac</span>
+          </div>
           <p>Classic recipes, bartending tutorials and a smart cabinet.</p>
           <div class="card-actions">
             <a class="button secondary" href="/drinko/">Website</a>
@@ -407,7 +412,10 @@
               <h3>relay</h3>
             </div>
           </div>
-          <span class="badge dev">In development</span>
+          <div class="card-tags">
+            <span class="badge dev">In development</span>
+            <span class="chip">Mac</span>
+          </div>
           <p>An unreleased app keeps its App Store button, disabled, so every row reads the same.</p>
           <div class="card-actions">
             <button type="button" class="button" disabled>App Store</button>
