@@ -29,6 +29,7 @@ export function publishedCard(app) {
     name: app.name,
     badge: "Live",
     badgeStyle: "live",
+    platforms: app.platforms || [],
     tagline: app.tagline || app.genre,
   };
 }
@@ -42,6 +43,7 @@ export function devCard(app) {
     name: app.name,
     badge: app.status || "",
     badgeStyle: badgeClass(app.status),
+    platforms: app.platforms || [],
     tagline: app.tagline,
   };
 }

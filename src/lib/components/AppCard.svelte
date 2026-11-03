@@ -7,7 +7,7 @@
   // that isn't published yet keeps the App Store button but disabled, so the
   // row reads the same across the grid. The card itself is not a link
   // (links can't nest inside links), so the buttons are the only way off it.
-  let { websiteUrl, appStoreUrl, icon, name, badge, badgeStyle, tagline } = $props();
+  let { websiteUrl, appStoreUrl, icon, name, badge, badgeStyle, platforms = [], tagline } = $props();
   let { title, subtitle } = $derived(splitName(name));
 </script>
 
@@ -23,7 +23,10 @@
       {#if subtitle}<p class="card-subtitle">{subtitle}</p>{/if}
     </div>
   </div>
-  <span class="badge {badgeStyle}">{badge}</span>
+  <div class="card-tags">
+    <span class="badge {badgeStyle}">{badge}</span>
+    {#each platforms as platform}<span class="chip">{platform}</span>{/each}
+  </div>
   <p>{tagline}</p>
   <div class="card-actions">
     {#if websiteUrl}<a class="button secondary" href={websiteUrl}>Website</a>{/if}
