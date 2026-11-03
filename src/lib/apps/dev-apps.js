@@ -21,9 +21,9 @@ export const RESERVED_SLUGS = new Set([
   ...LANDING_APPS,
 ]);
 
-// No in-development app is ready to show publicly right now, so the grid
-// lists none; filter apps.json here rather than deleting its entries.
-export const DEV_SLUGS_TO_SHOW = [];
+// Only these in-development apps appear in the grid and sitemap; filter
+// apps.json here rather than deleting its entries.
+export const DEV_SLUGS_TO_SHOW = ["notchgames"];
 
 export function validDevApps(list = apps) {
   if (!Array.isArray(list)) return [];
