@@ -15,8 +15,9 @@
     "tagline": "Tiny Mac games you pull out of the notch, starting with neon Pong.",
     "description": "Move your pointer to the notch and a black drop stretches towards it. Pull it down and a game court grows out of the notch, sized by how far you pull. Play a quick match of Pong against the computer at one of four difficulty levels, then push it back up into the notch and get on with your day. No Dock icon, no window to switch to, no special permissions.",
     "platforms": ["Mac"],
-    "status": "In development",
+    "status": "Beta",
     "icon": "/assets/app-icons/thumb/notchgames-icon.png",
-    "appStoreUrl": ""
+    "appStoreUrl": "",
+    "downloadUrl": "/downloads/NotchGames-1.0.dmg"
   }
 ]
