@@ -29,7 +29,9 @@
         </div>
       </div>
       <div>
-        {#if app.appStoreUrl}
+        {#if app.downloadUrl}
+          <a class="button" href={app.downloadUrl} download>Download {app.status === "Beta" ? "the beta " : ""}for macOS</a>
+        {:else if app.appStoreUrl}
           <a class="button" href={campaignUrl(app.appStoreUrl, `site-${app.slug}`)}>View on the App Store</a>
         {:else}
           <button type="button" class="button secondary" disabled>Not yet published</button>
