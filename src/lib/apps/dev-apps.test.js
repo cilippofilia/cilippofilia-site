@@ -33,6 +33,10 @@ test("publicDevApps is the shown subset, in apps.json order", () => {
   expect(shown).not.toContain("hidden");
 });
 
+test("publicDevApps keeps a shown app that has its own landing page", () => {
+  expect(publicDevApps([app("notchgames"), app("drinko")]).map((a) => a.slug)).toEqual(["notchgames"]);
+});
+
 test("the real data/apps.json parses and has the relay page", () => {
   expect(findDevApp("the-relay")).toBeDefined();
 });

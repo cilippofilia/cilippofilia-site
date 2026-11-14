@@ -6,6 +6,7 @@
 
 import { badgeClass, sortByStatus } from "./app-status.js";
 import { campaignUrl } from "./campaign.js";
+import { LANDING_APPS } from "./landing-apps.js";
 
 // Every App Store link on the home page shares one campaign token, so App
 // Analytics can compare it with the landing pages.
@@ -37,7 +38,7 @@ export function publishedCard(app) {
 export function devCard(app) {
   return {
     status: app.status,
-    websiteUrl: `/${app.slug}`,
+    websiteUrl: LANDING_APPS.includes(app.slug) ? `/${app.slug}/` : `/${app.slug}`,
     appStoreUrl: campaignUrl(app.appStoreUrl, HOME_CAMPAIGN),
     icon: app.icon,
     name: app.name,

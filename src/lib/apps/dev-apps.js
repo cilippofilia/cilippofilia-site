@@ -25,17 +25,25 @@ export const RESERVED_SLUGS = new Set([
 // apps.json here rather than deleting its entries.
 export const DEV_SLUGS_TO_SHOW = ["notchgames"];
 
+const hasValidSlug = (app) => app && typeof app.slug === "string" && SLUG_PATTERN.test(app.slug);
+
 export function validDevApps(list = apps) {
   if (!Array.isArray(list)) return [];
-  return list.filter(
-    (app) => app && typeof app.slug === "string" && SLUG_PATTERN.test(app.slug) && !RESERVED_SLUGS.has(app.slug)
-  );
+  return list.filter((app) => hasValidSlug(app) && !RESERVED_SLUGS.has(app.slug));
 }
 
 export function findDevApp(slug, list = apps) {
   return validDevApps(list).find((app) => app.slug === slug);
 }
 
+// An unreleased app with its own landing page keeps its apps.json entry for
+// the home grid card, which links to the landing page instead of a dev page.
 export function publicDevApps(list = apps) {
-  return validDevApps(list).filter((app) => DEV_SLUGS_TO_SHOW.includes(app.slug));
+  if (!Array.isArray(list)) return [];
+  return list.filter(
+    (app) =>
+      hasValidSlug(app) &&
+      DEV_SLUGS_TO_SHOW.includes(app.slug) &&
+      (LANDING_APPS.includes(app.slug) || !RESERVED_SLUGS.has(app.slug))
+  );
 }

@@ -32,7 +32,7 @@ can reach it.
 | `/home` | The landing page: intro, the app grid, and the maze minigame |
 | `/app-store` | Permanent redirect to `/home#apps`, so old links still work |
 | `/<slug>` | A prerendered page for each in-development app in `data/apps.json` (e.g. `/the-relay`) |
-| `/nine-tiles-puzzle/`, `/drinko/`, `/iterly/`, `/itswritten/` | Each app's own landing page, plus `privacy-policy.html` |
+| `/nine-tiles-puzzle/`, `/drinko/`, `/iterly/`, `/itswritten/`, `/notchgames/` | Each app's own landing page, plus `privacy-policy.html` |
 | `/style-guide` | Live reference for the design tokens and components |
 | `/privacy`, `/terms` | The site's privacy policy and terms of use |
 | `/robots.txt`, `/sitemap.xml` | For search engines (the sitemap is generated) |
@@ -152,7 +152,7 @@ src/
   test-setup.js        clears the test score databases before each run
   routes/
     (site)/            home, privacy, terms, style-guide, [slug] (dev apps)
-    (landing)/         drinko, iterly, itswritten, nine-tiles-puzzle (+ privacy-policy)
+    (landing)/         drinko, iterly, itswritten, nine-tiles-puzzle, notchgames (+ privacy-policy)
     api/               appstore-apps, maze-score, notfound-score
     sitemap.xml/       generated sitemap
     +error.svelte      the 404 page and its minigame
