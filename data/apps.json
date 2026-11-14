@@ -12,12 +12,11 @@
   {
     "slug": "notchgames",
     "name": "NotchGames",
-    "tagline": "Tiny Mac games you pull out of the notch, starting with neon Pong.",
-    "description": "Move your pointer to the notch and a black drop stretches towards it. Pull it down and a game court grows out of the notch, sized by how far you pull. Play a quick match of Pong against the computer at one of four difficulty levels, then push it back up into the notch and get on with your day. No Dock icon, no window to switch to, no special permissions.",
+    "tagline": "Six neon arcade games you pull out of your MacBook's notch.",
+    "description": "A macOS menu bar app with six neon arcade games you pull out of the notch: pong, air hockey, brick breaker, snake, a runner and a shooting gallery. Move the pointer up, play a round, push it back and get on with your day. No Dock icon and no special permissions.",
     "platforms": ["Mac"],
     "status": "Beta",
     "icon": "/assets/app-icons/thumb/notchgames-icon.png",
-    "appStoreUrl": "",
-    "downloadUrl": "/downloads/NotchGames-1.0.dmg"
+    "appStoreUrl": ""
   }
 ]

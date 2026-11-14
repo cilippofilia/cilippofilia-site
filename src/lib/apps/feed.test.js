@@ -59,6 +59,7 @@ test("publishedCard and devCard normalise both feeds to card props", () => {
     platforms: [],
     tagline: "Mystery.",
   });
+  expect(devCard({ ...relay, slug: "notchgames" }).websiteUrl).toBe("/notchgames/");
 });
 
 test("buildAppsBlock pulls the preorder out of the grid and sorts the rest by status", () => {

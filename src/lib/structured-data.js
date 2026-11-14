@@ -28,7 +28,17 @@ export const PERSON = {
 // A free app on the App Store, credited to PERSON. category is one of
 // schema.org's applicationCategory values Google recognises
 // (LifestyleApplication, GameApplication, DeveloperApplication, …).
-export function appSchema({ name, description, slug, appStoreId, category, operatingSystem }) {
+// downloadUrl defaults to the App Store listing; an app distributed from this
+// site passes its own.
+export function appSchema({
+  name,
+  description,
+  slug,
+  appStoreId,
+  category,
+  operatingSystem,
+  downloadUrl = `https://apps.apple.com/app/id${appStoreId}`,
+}) {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -36,7 +46,7 @@ export function appSchema({ name, description, slug, appStoreId, category, opera
     description,
     url: `${SITE_ORIGIN}/${slug}/`,
     image: `${SITE_ORIGIN}/${slug}/assets/icon.png`,
-    downloadUrl: `https://apps.apple.com/app/id${appStoreId}`,
+    downloadUrl,
     applicationCategory: category,
     operatingSystem,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },

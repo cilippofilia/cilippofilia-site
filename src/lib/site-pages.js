@@ -13,6 +13,8 @@ export function sitemapPaths() {
   return [
     ...SITE_PAGES,
     ...LANDING_APPS.flatMap((app) => [`/${app}/`, `/${app}/privacy-policy.html`]),
-    ...publicDevApps().map((app) => `/${app.slug}`),
+    ...publicDevApps()
+      .filter((app) => !LANDING_APPS.includes(app.slug))
+      .map((app) => `/${app.slug}`),
   ].map((p) => SITE_ORIGIN + p);
 }
